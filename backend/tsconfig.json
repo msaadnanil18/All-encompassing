@@ -11,7 +11,7 @@
     "outDir": "./dist",
     "rootDir": "./src",
     "sourceMap": true,
-    "typeRoots": ["./node_modules/@types", "./types"],
+    "typeRoots": ["./node_modules/@types", "./types"]
     // "baseUrl": "./src"
   },
   "files": [
