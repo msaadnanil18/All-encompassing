@@ -4,8 +4,6 @@ import mongoose from 'mongoose';
 // import cookieParser from 'cookie-parser';
 // import bcrypt from 'bcrypt';
 
-
 const app = express();
 
-
-export {app}
+export { app };
