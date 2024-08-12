@@ -13,20 +13,24 @@ export const generateVerificationToken = (userId: string): string => {
 };
 
 export const sendVerificationEmail = async (email: string, token: string) => {
-  const transporter = nodemailer.createTransport({
-    service: 'Gmail',
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS,
-    },
-  });
+  try {
+    const transporter = nodemailer.createTransport({
+      service: 'Gmail',
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+    });
 
-  const mailOptions = {
-    from: process.env.EMAIL_USER,
-    to: email,
-    subject: 'Verify your email',
-    text: `Please verify your email by clicking on the following link: ${process.env.FRONTEND_URL}/verify-email?token=${token}`,
-  };
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: 'Verify your email',
+      text: `Please verify your email by clicking on the following link: ${process.env.CROS_ORIGIN}/verify-email?token=${token}`,
+    };
 
-  await transporter.sendMail(mailOptions);
+    await transporter.sendMail(mailOptions);
+  } catch (error) {
+    console.log('mailOptions', error);
+  }
 };

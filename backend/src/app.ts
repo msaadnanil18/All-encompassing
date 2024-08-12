@@ -1,11 +1,9 @@
 import express, { urlencoded } from 'express';
-import mongoose from 'mongoose';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
-import bcrypt from 'bcrypt';
 import authRouter from './routes/authRouts';
-import dbMiddleware from './middlewares/dbMiddleware';
 import dotenv from 'dotenv';
+import session from 'express-session';
 dotenv.config({
   path: './.env',
 });
@@ -32,7 +30,15 @@ app.use(
 
 app.use(express.static('public'));
 app.use(cookieParser());
-app.use(dbMiddleware);
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET || 'your_secret_key',
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false },
+  })
+);
+// app.use(dbMiddleware);
 
 app.use('/api', authRouter);
 

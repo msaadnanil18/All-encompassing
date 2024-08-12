@@ -9,7 +9,7 @@ const registerUser = async (req: Request, res: Response) => {
   const { name, email, username, password } = req.body.payload;
 
   if ([name, email, username, password].some((field) => field?.trim() === '')) {
-    res.status(400).json({ message: 'all fields are required' });
+    return res.status(400).send({ message: 'All fields are required' });
   }
 
   const exitedUser = await User.findOne({
@@ -17,7 +17,7 @@ const registerUser = async (req: Request, res: Response) => {
   });
 
   if (exitedUser) {
-    res.status(400).json({ message: 'you are all ready exited' });
+    return res.status(409).json({ message: 'User already exists' });
   }
   const user = await User.create({
     name,
@@ -27,6 +27,8 @@ const registerUser = async (req: Request, res: Response) => {
   });
 
   const token = generateVerificationToken(user._id);
+  console.log(token, 'ttt');
+
   await sendVerificationEmail(email, token);
   const createdUseer = await User.findById(user._id).select(
     '-password -refreshToken'
@@ -47,7 +49,7 @@ const verifyEmail = async (req: Request, res: Response) => {
   const token = req.query.token as string;
 
   if (!token) {
-    return res.status(400).send('Token is required');
+    return res.status(400).json('Token is required');
   }
 
   try {
