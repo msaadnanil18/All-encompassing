@@ -1,15 +1,16 @@
-import { useState } from 'react';
-import reactLogo from './assets/react.svg';
-import viteLogo from '/vite.svg';
-import './App.css';
+import React, { useState } from 'react';
+import { RecoilRoot } from 'recoil';
+import Bootstrap from './Bootstrap';
 
 function App() {
   const [count, setCount] = useState(0);
 
   return (
-    <div className=" grid place-content-center h-screen">
-      <h1>he llo</h1>
-    </div>
+    <React.Suspense>
+      <RecoilRoot>
+        <Bootstrap />
+      </RecoilRoot>
+    </React.Suspense>
   );
 }
 
