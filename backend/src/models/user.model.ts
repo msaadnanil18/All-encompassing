@@ -21,6 +21,7 @@ const userSchema = new Schema<IUser>({
     type: 'String',
     required: true,
   },
+  isVerified: { type: Boolean, default: false },
 });
 
 userSchema.pre('save', async function (next) {
