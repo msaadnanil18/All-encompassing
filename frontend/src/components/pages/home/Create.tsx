@@ -1,26 +1,38 @@
 import React from 'react';
-import { Button, Card, Form, Input, Row, Col } from 'antd';
-import Service from '../../helpers/service';
+import { Button, Card, Form, Input, Row, Col, notification } from 'antd';
+import Service from '../../../helpers/service';
+import { PlusCircleOutlined } from '@ant-design/icons';
 
-const Home = () => {
+const Create: React.FC = () => {
+  const [loading, setLoading] = React.useState<boolean>(false);
   const handleOnSubmit = async (value: Record<string, any>) => {
+    setLoading(true);
     try {
       const formData = new FormData();
       formData.append('username', value.username);
       formData.append('email', value.email);
       formData.append('password', value.password);
       formData.append('name', value.name);
-      const response = Service('/api/register')({
+      const response = await Service('/api/register')({
         data: {
           payload: {
             ...value,
           },
         },
       });
-
-      console.log(response);
+      notification.success({
+        message: 'User created',
+        description: response.data.message,
+      });
+      setLoading(false);
     } catch (error) {
+      notification.error({
+        message: 'Error',
+        description: 'something went wrong while register the user',
+      });
       console.log(error);
+    } finally {
+      setLoading(false);
     }
   };
   return (
@@ -77,9 +89,15 @@ const Home = () => {
             >
               <Input.Password />
             </Form.Item>
-            <Form.Item>
-              <Button type="primary" htmlType="submit" className="mt-4">
-                Submit
+            <Form.Item style={{ margin: 0 }}>
+              <Button
+                icon={<PlusCircleOutlined />}
+                type="primary"
+                htmlType="submit"
+                className="mt-4"
+                loading={loading}
+              >
+                Register account
               </Button>
             </Form.Item>
           </Form>
@@ -89,4 +107,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default Create;

@@ -2,10 +2,31 @@ import { Request, Response } from 'express';
 import { User } from '../models/user.model';
 import { ApiError } from '../utils/ApiError';
 import Jwt from 'jsonwebtoken';
-
+import { asyncHandler } from '../utils/asyncHandler';
+import { ApiResponse } from '../utils/ApiResponse';
 import { generateVerificationToken, sendVerificationEmail } from '../utils';
 
-const registerUser = async (req: Request, res: Response) => {
+const gerateAccessAndRefreshToken = async (userId: string) => {
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return {};
+    }
+    const accessToken = user.generateAccessToken();
+    const refreshToken = user.generateRefreshToken();
+    user.refreshToken = refreshToken;
+    await user.save({ validateBeforeSave: false });
+
+    return { accessToken, refreshToken };
+  } catch (error) {
+    throw new ApiError(500, {
+      message:
+        'something went wrong while generating refresh and access tokens',
+    });
+  }
+};
+
+const registerUser = asyncHandler(async (req: Request, res: Response) => {
   const { name, email, username, password } = req.body.payload;
 
   if ([name, email, username, password].some((field) => field?.trim() === '')) {
@@ -27,7 +48,6 @@ const registerUser = async (req: Request, res: Response) => {
   });
 
   const token = generateVerificationToken(user._id);
-  console.log(token, 'ttt');
 
   await sendVerificationEmail(email, token);
   const createdUseer = await User.findById(user._id).select(
@@ -35,44 +55,92 @@ const registerUser = async (req: Request, res: Response) => {
   );
 
   if (!createdUseer) {
-    throw new ApiError(500, {
+    return res.status(500).json({
       message: 'something went wrong while register the user',
     });
   }
 
-  return res
-    .status(201)
-    .json({ createdUseer, message: 'user registered successfully' });
-};
+  return res.status(201).json(
+    new ApiResponse(
+      200,
+      {
+        createdUseer,
+      },
+      'user registered successfully'
+    )
+  );
+});
 
 const verifyEmail = async (req: Request, res: Response) => {
-  const token = req.query.token as string;
+  const { payload } = req.body;
+
+  const { token } = payload;
 
   if (!token) {
-    return res.status(400).json('Token is required');
+    return res.status(400).json({ message: 'Invalid token' });
   }
 
   try {
-    const decoded = Jwt.verify(token, process.env.JWT_SECRET as string) as {
+    const decoded = Jwt.verify(
+      token,
+      process.env.ACCESS_TOKEN_SECRET as string
+    ) as {
       userId: string;
     };
     const user = await User.findById(decoded.userId);
 
     if (!user) {
-      return res.status(404).send('User not found');
+      return res.status(400).json({ message: 'Invalid token' });
     }
 
     if (user.isVerified) {
-      return res.status(400).send('User already verified');
+      return res.status(400).json({ message: 'User already verified' });
     }
 
     user.isVerified = true;
     await user.save();
 
-    res.send('Email successfully verified');
+    res.json({ message: 'Email successfully verified' });
   } catch (err) {
-    res.status(400).send('Invalid or expired token');
+    return res.status(400).json({ message: 'Invalid or expired token' });
   }
 };
 
-export { registerUser, verifyEmail };
+const loginUser = async (req: Request, res: Response) => {
+  const { payload } = req.body;
+  const { username, password } = payload;
+  try {
+    const user = await User.findOne({ username });
+    if (!user) {
+      return res.status(404).json({ message: 'User does not exist' });
+    }
+    const isPasswordValid = await user.isPasswordCorrect(password);
+    const { accessToken, refreshToken } = await gerateAccessAndRefreshToken(
+      user._id
+    );
+
+    const loggendInUser = await User.findById(user._id).select(
+      '-password -refreshToken'
+    );
+    const options = {
+      httpOnly: true,
+      secure: true,
+    };
+
+    return res
+      .status(200)
+      .cookie('accessToken', accessToken, options)
+      .cookie('refreshToken', refreshToken, options)
+      .json(
+        new ApiResponse(
+          200,
+          { user: loggendInUser, accessToken, refreshToken },
+          'user logied In Successfully'
+        )
+      );
+  } catch (error) {
+    console.log(error, 'herere______');
+  }
+};
+
+export { registerUser, verifyEmail, loginUser };

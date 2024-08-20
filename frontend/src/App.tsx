@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import { RecoilRoot } from 'recoil';
 import Bootstrap from './Bootstrap';
+import { $ME } from './components/atoms/root';
 
-function App() {
-  const [count, setCount] = useState(0);
-
+const App = () => {
   return (
     <React.Suspense>
       <RecoilRoot>
@@ -12,6 +11,6 @@ function App() {
       </RecoilRoot>
     </React.Suspense>
   );
-}
+};
 
 export default App;

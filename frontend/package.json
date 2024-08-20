@@ -10,8 +10,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@ant-design/icons": "^5.4.0",
     "@types/lodash-es": "^4.17.12",
-    "antd": "^5.20.1",
+    "antd": "^5.20.2",
     "axios": "^1.7.3",
     "dayjs": "^1.11.12",
     "eslint-config-prettier": "^9.1.0",

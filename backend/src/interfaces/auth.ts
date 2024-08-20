@@ -5,6 +5,10 @@ export interface IUser extends Document {
   email: string;
   password: string;
   isVerified: boolean;
+  refreshToken: string;
+  isPasswordCorrect(password: string): Promise<boolean>;
+  generateAccessToken(): string;
+  generateRefreshToken(): string;
 }
 
 export interface DB {
