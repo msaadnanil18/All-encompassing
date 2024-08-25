@@ -1,41 +1,23 @@
 import React from 'react';
 import { Button, Form, Row, Col, Card, Input } from 'antd';
 import { LoginOutlined, UserAddOutlined } from '@ant-design/icons';
-import Service from '../../../helpers/service';
+import { useAuth } from '../../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
-import useAuth from '../../hooks/useAuth';
-import { useRecoilState } from 'recoil';
-import { $ME } from '../../atoms/root';
+
 const Login: React.FC = () => {
   const navigate = useNavigate();
-  const [loading, setLoading] = React.useState<boolean>(false);
-  // const { me, setMe } = useAuth();
-  const [me, setMe] = useRecoilState($ME);
-  console.log(me, '_______me______');
-
+  const { me, logIn, loading } = useAuth();
+  console.log(me, 'mee');
+  if (me?.user?._id) {
+    navigate(`/app--/${me?.user?._id}`);
+  }
   const formOnSubmit = async (value: Record<string, any>) => {
-    setLoading(true);
-    try {
-      const respose = await Service('/api/login')({
-        data: {
-          payload: { ...value },
-        },
-      });
-      localStorage.setItem('token', respose.data?.data.accessToken);
-      setMe(respose.data?.data);
-
-      // if (respose.data?.data.user._id) {
-      //   navigate(`/app--/${respose.data?.data.user._id}`);
-      // }
-      setLoading(false);
-    } catch (error) {
-      console.log(error);
-    }
+    await logIn(value);
   };
   return (
     <Row>
       <Col span={8}></Col>
-      <Col sm={8} xs={24} className="mt-40">
+      <Col sm={8} xs={24} className=" mt-40">
         <Card className=" w-full h-full">
           <Form layout="vertical" onFinish={formOnSubmit}>
             <Row gutter={[16, 0]}>

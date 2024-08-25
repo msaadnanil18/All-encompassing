@@ -115,29 +115,41 @@ const loginUser = async (req: Request, res: Response) => {
       return res.status(404).json({ message: 'User does not exist' });
     }
     const isPasswordValid = await user.isPasswordCorrect(password);
-    const { accessToken, refreshToken } = await gerateAccessAndRefreshToken(
-      user._id
-    );
-
-    const loggendInUser = await User.findById(user._id).select(
-      '-password -refreshToken'
-    );
-    const options = {
-      httpOnly: true,
-      secure: true,
-    };
-
-    return res
-      .status(200)
-      .cookie('accessToken', accessToken, options)
-      .cookie('refreshToken', refreshToken, options)
-      .json(
-        new ApiResponse(
-          200,
-          { user: loggendInUser, accessToken, refreshToken },
-          'user logied In Successfully'
-        )
+    if (user && isPasswordValid) {
+      const { accessToken, refreshToken } = await gerateAccessAndRefreshToken(
+        user._id
       );
+
+      const loggendInUser = await User.findById(user._id).select(
+        '-password -refreshToken'
+      );
+
+      if (!(loggendInUser as any).isVerified) {
+        return res
+          .status(401)
+          .json(new ApiResponse(401, {}, 'Your email is not verified'));
+      }
+      const options = {
+        httpOnly: true,
+        secure: true,
+      };
+
+      return res
+        .status(200)
+        .cookie('accessToken', accessToken, options)
+        .cookie('refreshToken', refreshToken, options)
+        .json(
+          new ApiResponse(
+            200,
+            { user: loggendInUser, accessToken, refreshToken },
+            'user logied In Successfully'
+          )
+        );
+    } else {
+      return res
+        .status(400)
+        .json(new ApiResponse(400, {}, 'Invalid credentials'));
+    }
   } catch (error) {
     console.log(error, 'herere______');
   }
