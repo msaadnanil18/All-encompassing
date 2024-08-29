@@ -7,10 +7,11 @@ import { useNavigate } from 'react-router-dom';
 const Login: React.FC = () => {
   const navigate = useNavigate();
   const { me, logIn, loading } = useAuth();
-  console.log(me, 'mee');
+
   if (me?.user?._id) {
     navigate(`/app--/${me?.user?._id}`);
   }
+
   const formOnSubmit = async (value: Record<string, any>) => {
     await logIn(value);
   };

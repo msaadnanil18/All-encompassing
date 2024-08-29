@@ -38,7 +38,9 @@ const registerUser = asyncHandler(async (req: Request, res: Response) => {
   });
 
   if (exitedUser) {
-    return res.status(409).json({ message: 'User already exists' });
+    return res
+      .status(201)
+      .json(new ApiResponse(201, {}, 'User already exists'));
   }
   const user = await User.create({
     name,
@@ -112,9 +114,14 @@ const loginUser = async (req: Request, res: Response) => {
   try {
     const user = await User.findOne({ username });
     if (!user) {
-      return res.status(404).json({ message: 'User does not exist' });
+      return res.status(201).json(new ApiResponse(201, {}, 'User not found'));
     }
     const isPasswordValid = await user.isPasswordCorrect(password);
+    if (!isPasswordValid) {
+      return res
+        .status(201)
+        .json(new ApiResponse(201, {}, 'Your password is invalid'));
+    }
     if (user && isPasswordValid) {
       const { accessToken, refreshToken } = await gerateAccessAndRefreshToken(
         user._id
@@ -126,8 +133,8 @@ const loginUser = async (req: Request, res: Response) => {
 
       if (!(loggendInUser as any).isVerified) {
         return res
-          .status(401)
-          .json(new ApiResponse(401, {}, 'Your email is not verified'));
+          .status(201)
+          .json(new ApiResponse(201, {}, 'Your email is not verified'));
       }
       const options = {
         httpOnly: true,
@@ -155,4 +162,37 @@ const loginUser = async (req: Request, res: Response) => {
   }
 };
 
-export { registerUser, verifyEmail, loginUser };
+const updateThemeConfig = async (req: Request, res: Response) => {
+  try {
+    const { token, mode, isCompact } = req.body.payload;
+    const { userId } = req.body.query;
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(201).json({ message: 'User not found' });
+    }
+
+    if (token) {
+      user.themConfig.token = token;
+    }
+    if (mode) {
+      user.themConfig.mode = mode;
+    }
+    if (typeof isCompact === 'boolean') {
+      user.themConfig.isCompact = isCompact;
+    }
+
+    await user.save();
+
+    return res.status(200).json({
+      message: 'Theme configuration updated successfully',
+      themConfig: user,
+    });
+  } catch (error) {
+    console.error('Error updating theme configuration:', error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+export { registerUser, verifyEmail, loginUser, updateThemeConfig };

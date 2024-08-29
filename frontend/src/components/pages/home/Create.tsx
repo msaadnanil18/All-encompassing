@@ -1,9 +1,10 @@
 import React from 'react';
 import { Button, Card, Form, Input, Row, Col, notification } from 'antd';
-import Service from '../../../helpers/service';
+import { userRegisterService } from '../../services/auth';
 import { PlusCircleOutlined } from '@ant-design/icons';
-
+import { useNavigate } from 'react-router-dom';
 const Create: React.FC = () => {
+  const navigate = useNavigate();
   const [loading, setLoading] = React.useState<boolean>(false);
   const handleOnSubmit = async (value: Record<string, any>) => {
     setLoading(true);
@@ -13,18 +14,19 @@ const Create: React.FC = () => {
       formData.append('email', value.email);
       formData.append('password', value.password);
       formData.append('name', value.name);
-      const response = await Service('/api/register')({
+      const { data } = await userRegisterService({
         data: {
           payload: {
             ...value,
           },
         },
       });
-      notification.success({
-        message: 'User created',
-        description: response.data.message,
+      notification.open({
+        message: data.message,
       });
+
       setLoading(false);
+      navigate('/');
     } catch (error) {
       notification.error({
         message: 'Error',

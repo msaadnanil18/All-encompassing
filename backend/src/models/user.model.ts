@@ -26,6 +26,22 @@ const userSchema = new Schema<IUser>(
     refreshToken: {
       type: String,
     },
+    themConfig: {
+      token: {
+        type: Map,
+        of: Schema.Types.Mixed,
+        default: () => ({ colorPrimary: '#129ab5', borderRadius: 8 }),
+      },
+      mode: {
+        type: String,
+        enum: ['DARK', 'LIGHT'],
+        default: 'LIGHT',
+      },
+      isCompact: {
+        type: Boolean,
+        default: false,
+      },
+    },
   },
   {
     timestamps: true,

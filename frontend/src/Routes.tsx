@@ -9,6 +9,7 @@ const App = React.lazy(() => import('./components/pages/chartApp/Index'));
 const NavBar = React.lazy(() => import('./components/pages/home/NavBar'));
 const VerifyEmail = React.lazy(() => import('./components/pages/VerifyEmail'));
 const LoginUser = React.lazy(() => import('./components/pages/home/Login'));
+const Setting = React.lazy(() => import('./components/pages/chartApp/Setting'));
 const AppRoutes = () => {
   return (
     <BrowserRouter>
@@ -19,6 +20,7 @@ const AppRoutes = () => {
           <Route path="/verify-email" Component={VerifyEmail} />
           <Route path="/" Component={LoginUser} />
           <Route path="/app--/:id" Component={App} />
+          <Route path="/setting/:id" Component={Setting} />
         </Routes>
       </QueryParamProvider>
     </BrowserRouter>

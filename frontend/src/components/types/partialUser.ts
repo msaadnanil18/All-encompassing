@@ -8,4 +8,11 @@ export interface User {
 
   updatedAt: string;
   createdAt: string;
+  themConfig: {
+    token?: {
+      [key: string]: any;
+    };
+    mode?: 'DARK' | 'LIGHT';
+    isCompact?: boolean;
+  };
 }

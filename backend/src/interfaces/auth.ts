@@ -5,6 +5,13 @@ export interface IUser extends Document {
   email: string;
   password: string;
   isVerified: boolean;
+  themConfig: {
+    token?: {
+      [key: string]: any;
+    };
+    mode?: 'DARK' | 'LIGHT';
+    isCompact?: boolean;
+  };
   refreshToken: string;
   isPasswordCorrect(password: string): Promise<boolean>;
   generateAccessToken(): string;

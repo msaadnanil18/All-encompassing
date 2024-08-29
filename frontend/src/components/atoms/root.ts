@@ -6,7 +6,9 @@ export interface PartialUser {
   accessToken?: string;
   refreshToken?: string;
   user?: User;
+}
 
+export interface ThemeConfig {
   token?: {
     [key: string]: any;
   };
@@ -14,15 +16,7 @@ export interface PartialUser {
   isCompact?: boolean;
 }
 
-export interface the {
-  token?: {
-    [key: string]: any;
-  };
-  mode?: 'DARK' | 'LIGHT';
-  isCompact?: boolean;
-}
-
-export const $THEME_C0NFIG = atom<the>({
+export const $THEME_C0NFIG = atom<ThemeConfig>({
   key: 'root:config',
   default: {},
 });

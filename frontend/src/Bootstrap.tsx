@@ -23,6 +23,7 @@ const Container = () => {
 const Bootstrap = () => {
   const isDark = useDarkMode();
   const config = useRecoilValue($THEME_C0NFIG);
+
   return (
     <AntdProvider theme={config} isDark={isDark} isCompact={config?.isCompact}>
       <Container />
