@@ -2,7 +2,6 @@ import { ExceptionRes } from '../components/types/service';
 import { notification, Typography } from 'antd';
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { merge } from 'lodash-es';
-import React from 'react';
 
 const { Text } = Typography;
 
@@ -24,7 +23,7 @@ export const Service =
     return axios<Res>({
       url,
       method: options?.method || 'POST',
-      baseURL: 'http://localhost:3001' || '',
+      baseURL: 'http://localhost:3001' || import.meta.env.VITE_SERVER_URI || '',
       withCredentials: true,
       ...(config || {}),
       headers: {

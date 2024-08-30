@@ -19,14 +19,14 @@ const gerateAccessAndRefreshToken = async (userId: string) => {
 
     return { accessToken, refreshToken };
   } catch (error) {
-    throw new ApiError(500, {
-      message:
-        'something went wrong while generating refresh and access tokens',
-    });
+    throw new ApiError(
+      500,
+      'something went wrong while generating refresh and access tokens'
+    );
   }
 };
 
-const registerUser = asyncHandler(async (req: Request, res: Response) => {
+const registerUser = asyncHandler(async (req, res) => {
   const { name, email, username, password } = req.body.payload;
 
   if ([name, email, username, password].some((field) => field?.trim() === '')) {
@@ -73,7 +73,7 @@ const registerUser = asyncHandler(async (req: Request, res: Response) => {
   );
 });
 
-const verifyEmail = async (req: Request, res: Response) => {
+const verifyEmail = asyncHandler(async (req: Request, res: Response) => {
   const { payload } = req.body;
 
   const { token } = payload;
@@ -106,9 +106,9 @@ const verifyEmail = async (req: Request, res: Response) => {
   } catch (err) {
     return res.status(400).json({ message: 'Invalid or expired token' });
   }
-};
+});
 
-const loginUser = async (req: Request, res: Response) => {
+const loginUser = asyncHandler(async (req, res) => {
   const { payload } = req.body;
   const { username, password } = payload;
   try {
@@ -149,7 +149,7 @@ const loginUser = async (req: Request, res: Response) => {
           new ApiResponse(
             200,
             { user: loggendInUser, accessToken, refreshToken },
-            'user logied In Successfully'
+            'User logied In successfully'
           )
         );
     } else {
@@ -160,9 +160,9 @@ const loginUser = async (req: Request, res: Response) => {
   } catch (error) {
     console.log(error, 'herere______');
   }
-};
+});
 
-const updateThemeConfig = async (req: Request, res: Response) => {
+const updateThemeConfig = asyncHandler(async (req, res) => {
   try {
     const { token, mode, isCompact } = req.body.payload;
     const { userId } = req.body.query;
@@ -193,6 +193,6 @@ const updateThemeConfig = async (req: Request, res: Response) => {
     console.error('Error updating theme configuration:', error);
     return res.status(500).json({ message: 'Internal server error' });
   }
-};
+});
 
 export { registerUser, verifyEmail, loginUser, updateThemeConfig };

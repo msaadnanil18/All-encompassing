@@ -3,7 +3,7 @@ import { useRecoilValue } from 'recoil';
 import { $ME } from '../../atoms/root';
 import { useAuth } from '../../hooks/useAuth';
 import { Button } from 'antd';
-
+import Chart from './Chart';
 import { SettingOutlined } from '@ant-design/icons';
 import { useNavigate, useParams } from 'react-router-dom';
 const Index: React.FC = () => {
@@ -22,6 +22,7 @@ const Index: React.FC = () => {
       >
         Setting
       </Button>
+      <Chart id={id} />
     </div>
   );
 };

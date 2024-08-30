@@ -1,9 +1,3 @@
-interface ErrorResponse {
-  message: string;
-  errors?: any[];
-  stack?: string;
-}
-
 class ApiError extends Error {
   public statusCode: number;
   public data: null;
@@ -13,11 +7,9 @@ class ApiError extends Error {
 
   constructor(
     statusCode: number,
-    {
-      message = 'something went wrong',
-      errors = [],
-      stack = '',
-    }: Partial<ErrorResponse> = {}
+    message: string = 'something went wrong',
+    errors: any = [],
+    stack: string = ''
   ) {
     super(message);
     this.statusCode = statusCode;

@@ -12,6 +12,7 @@
   "dependencies": {
     "@ant-design/icons": "^5.4.0",
     "@types/lodash-es": "^4.17.12",
+    "@types/socket.io-client": "^3.0.0",
     "antd": "^5.20.2",
     "axios": "^1.7.3",
     "dayjs": "^1.11.12",

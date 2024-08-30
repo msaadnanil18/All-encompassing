@@ -1,9 +1,10 @@
 import express, { urlencoded } from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
-import authRouter from './routes/authRouts';
 import dotenv from 'dotenv';
 import session from 'express-session';
+import router from './routes/routes';
+import dbMiddleware from './middlewares/dbMiddleware';
 dotenv.config({
   path: './.env',
 });
@@ -38,8 +39,8 @@ app.use(
     cookie: { secure: false },
   })
 );
-// app.use(dbMiddleware);
+app.use(dbMiddleware);
 
-app.use('/api', authRouter);
+app.use('/api', router);
 
 export { app };
