@@ -1,8 +1,6 @@
-import { app } from './app';
+import { server } from './app';
 import connectDB from './db';
 import dotenv from 'dotenv';
-import http from 'http';
-import { setup_socket } from './routes/socket';
 
 import ip from 'ip';
 
@@ -10,9 +8,6 @@ dotenv.config({
   path: './.env',
 });
 
-const server = http.createServer(app);
-
-setup_socket(server);
 connectDB()
   .then(() => {
     server.listen(process.env.PORT || 8000, () => {

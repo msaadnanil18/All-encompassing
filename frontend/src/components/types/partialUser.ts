@@ -5,7 +5,7 @@ export interface User {
   email: string;
   password: string;
   isVerified: boolean;
-
+  avatar: string;
   updatedAt: string;
   createdAt: string;
   themConfig: {

@@ -4,12 +4,24 @@ import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
 import session from 'express-session';
 import router from './routes/routes';
+import http from 'http';
+import { Server as IOServer } from 'socket.io';
 import dbMiddleware from './middlewares/dbMiddleware';
+import { initialize_socket_setup } from './sokets/socket';
 dotenv.config({
   path: './.env',
 });
 
 const app = express();
+const server = http.createServer(app);
+
+const io = new IOServer(server, {
+  cors: {
+    origin: process.env.CROS_ORIGIN,
+    credentials: true,
+  },
+});
+app.set('io', io);
 app.use(
   cors({
     origin: process.env.CROS_ORIGIN,
@@ -42,5 +54,6 @@ app.use(
 app.use(dbMiddleware);
 
 app.use('/api', router);
+initialize_socket_setup(io);
 
-export { app };
+export { server };
