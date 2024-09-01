@@ -1,11 +1,7 @@
-import { Server } from 'socket.io';
 import { Router } from 'express';
-import { ApiResponse } from '../utils/ApiResponse';
-
+import { sendMessage } from '../controllers/chatApp/message.controllers';
 const chartRouts = Router();
 
-chartRouts.route('/char-app').post((req, res) => {
-  res.status(200).json(new ApiResponse(200, {}, 'stable'));
-});
+chartRouts.route('/send-message').post(sendMessage);
 
 export { chartRouts };

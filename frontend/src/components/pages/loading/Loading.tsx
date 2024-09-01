@@ -1,7 +1,7 @@
 import React from 'react';
 import './loading.css';
 
-const Loading = () => {
+const Loading: React.FC = () => {
   return (
     <div
       style={{ backgroundColor: '#212121' }}

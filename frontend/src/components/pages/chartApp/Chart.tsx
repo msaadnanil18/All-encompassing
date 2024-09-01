@@ -1,164 +1,68 @@
-// import { UploadOutlined } from '@ant-design/icons';
-// import { Button, Input, Typography } from 'antd';
-// import React from 'react';
-// import Service from '../../../helpers/service';
-// import socket from '../../../helpers/socket';
-
-// const CONNECTED_EVENT = 'connected';
-// const DISCONNECT_EVENT = 'disconnect';
-// const JOIN_CHAT_EVENT = 'joinChat';
-
-// const Chart = ({ id }: { id: string | undefined }) => {
-//  const { socket } = useSocket();
-
-//   const [messages, setMessages] = React.useState<string[]>([]);
-//   const [input, setInput] = React.useState('');
-//   const [receiverId, setReceiverId] = React.useState<string>('');
-
-//   const [isConnected, setIsConnected] = React.useState(false);
-//   console.log(id, '_______ID____');
-
-//   const onConnect = () => {
-//     setIsConnected(true);
-//   };
-
-//   const connectSoket = () => {
-
-//   }
-//   React.useEffect(() => {
-
-//     socket.on(CONNECTED_EVENT, onConnect);
-//     // socket.on('getMessage', (data) => {
-//     //   setMessages((prevMessages) => [
-//     //     ...prevMessages,
-//     //     `${data.senderId}: ${data.text}`,
-//     //   ]);
-//     // });
-
-//     // return () => {
-//     //   socket.off('getMessage');
-//     // };
-//   }, []);
-
-//   const sendMessage = () => {
-//     if (id) {
-//       socket.emit('sendMessage', {
-//         senderId: id,
-//         receiverId,
-//         text: input,
-//       });
-//       setMessages((prevMessages) => [...prevMessages, `You: ${input}`]);
-//       setInput('');
-//     }
-//   };
-//   return (
-//     // <div className=" grid place-content-center h-screens">
-//     //   <Typography.Text>Chart</Typography.Text>
-
-//     //   <Button
-//     //     onClick={async () => {
-//     //       const data = await Service('/api/char-app')({
-//     //         data: {
-//     //           payload: {},
-//     //         },
-//     //       });
-//     //       console.log(data);
-//     //     }}
-//     //     icon={<UploadOutlined />}
-//     //   ></Button>
-
-//     //   <h1>Socket.IO Chat</h1>
-//     //   <div>
-//     //     {messages.map((msg, index) => (
-//     //       <Typography.Paragraph key={index}>{msg}</Typography.Paragraph>
-//     //     ))}
-//     //   </div>
-//     //   <Input
-//     //     type="text"
-//     //     value={input}
-//     //     onChange={(e) => setInput(e.target.value)}
-//     //     onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
-//     //   />
-//     //   <Button onClick={sendMessage}>Send</Button>
-//     // </div>
-//     <div>
-//       <div>
-//         <div>
-//           <h2>Private Chat</h2>
-//           <input
-//             type="text"
-//             placeholder="Receiver User ID"
-//             value={receiverId}
-//             onChange={(e) => setReceiverId(e.target.value)}
-//           />
-//           <div>
-//             {messages.map((msg, index) => (
-//               <Typography.Paragraph key={index}>{msg}</Typography.Paragraph>
-//             ))}
-//           </div>
-//           <input
-//             type="text"
-//             value={input}
-//             onChange={(e) => setInput(e.target.value)}
-//             onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
-//           />
-//           <Button onClick={sendMessage}>Send</Button>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default Chart;
-
-import { SendOutlined, UploadOutlined } from '@ant-design/icons';
-import { Button, Input, Typography } from 'antd';
-import React, { useState, useEffect } from 'react';
+import { SmileOutlined } from '@ant-design/icons';
+import MessageInput from './MessageInput';
+import MessageSendButton from './MessageSendButton';
+import { sendMessage } from '../../hooks/chart';
+import { Button } from 'antd';
+import React, { useState, useEffect, useCallback } from 'react';
 import socket from '../../../helpers/socket';
 import { ChatListItemInterface } from '../../types/charts';
+import { useDarkMode } from '../../thems/useDarkMode';
+import EmojiPiker from '../../emojiPicker/EmojiPiker';
+import DriveFileUpload from '../../../driveFileUpload';
+import { addFiles } from '../../types/addFiles';
 
 const CONNECTED_EVENT = 'connected';
 const DISCONNECT_EVENT = 'disconnect';
 const JOIN_CHAT_EVENT = 'joinChat';
 const NEW_CHAT_EVENT = 'newChat';
 const Chart = ({ id }: { id: string | undefined }) => {
+  const isDark = useDarkMode();
+
   const [message, setMessage] = useState<string>('');
+  const emojiToggleRef = React.useRef<{ toggle: () => void }>(null);
   const [chats, setChats] = useState<ChatListItemInterface[]>([]);
   const [isConnected, setIsConnected] = useState<boolean>(false);
   const [selfTyping, setSelfTyping] = useState<boolean>(false);
   const currentChat = React.useRef<any>();
-  const onConnect = (value: any) => {
+  const [attachments, setAttachments] = useState<addFiles[]>([]);
+  const onConnect = useCallback(() => {
     setIsConnected(true);
-  };
+  }, []);
 
-  console.log(chats, 'chat');
-
-  const sendChatMessage = () => {
-    socket.emit('SendMessage', {
-      text: message,
-    });
+  const sendChatMessage = useCallback(async () => {
+    const data = await sendMessage(
+      id,
+      message,
+      attachments.map((file) => file.url)
+    );
     setMessage('');
-  };
+    setAttachments([]);
+    console.log(data, 'response');
+  }, [message]);
+  const handleOnMessageChange = React.useCallback(
+    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      setMessage(e.target.value);
+      if (!isConnected) return;
 
-  const handleOnMessageChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    setMessage(e.target.value);
-    if (!isConnected) return;
+      if (!selfTyping) {
+        setSelfTyping(true);
+      }
+    },
+    [isConnected, selfTyping]
+  );
 
-    if (!selfTyping) {
-      setSelfTyping(true);
-    }
-  };
-
-  const onNewChat = (chat: ChatListItemInterface) => {
+  const onNewChat = useCallback((chat: ChatListItemInterface) => {
     setChats((prev) => [chat, ...prev]);
-  };
+  }, []);
 
-  const connectSoket = () => {
+  const connectSoket = useCallback(() => {
     socket.on(CONNECTED_EVENT, onConnect);
     socket.on(NEW_CHAT_EVENT, onNewChat);
-  };
+    return () => {
+      socket.off(CONNECTED_EVENT, onConnect);
+      socket.off(NEW_CHAT_EVENT, onNewChat);
+    };
+  }, [onConnect, onNewChat]);
 
   const getMessages = () => {
     socket.emit(JOIN_CHAT_EVENT, id);
@@ -175,27 +79,57 @@ const Chart = ({ id }: { id: string | undefined }) => {
   }, []);
 
   useEffect(() => {
-    connectSoket();
+    const cleanup = connectSoket();
+    return cleanup;
+  }, [connectSoket]);
+
+  const handleEmojiSelect = useCallback((event: React.MouseEvent) => {
+    setMessage((prevMessage) => prevMessage + (event as any).emoji);
   }, []);
+  const emojiPikerProps = React.useMemo(
+    () => ({
+      isDark,
+      handleSelect: handleEmojiSelect,
+      ref: emojiToggleRef,
+    }),
+    [isDark, handleEmojiSelect]
+  );
 
   return (
-    <div
-      className="fixed bottom-0 right-0 p-4 flex items-center"
-      style={{ width: '45rem' }}
-    >
-      <Input
-        value={message}
-        onChange={handleOnMessageChange}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter') {
-            sendChatMessage();
-          }
+    <React.Fragment>
+      <EmojiPiker {...emojiPikerProps} />
+      <div
+        className="fixed bottom-0 right-0 p-4 flex items-center"
+        style={{
+          width: '45rem',
+          backgroundColor: isDark ? '#202c33' : '#f0f2f5',
+          zIndex: 1000,
         }}
-        className="flex-grow mr-2"
-      />
-      <Button onClick={sendChatMessage} icon={<SendOutlined />} />
-    </div>
+      >
+        <DriveFileUpload chooseFiles={(file) => setAttachments(file)} />
+        <Button
+          type="text"
+          shape="circle"
+          className="mr-1"
+          icon={<SmileOutlined style={{ fontSize: '20px' }} />}
+          onClick={() => {
+            if (emojiToggleRef.current) {
+              emojiToggleRef.current.toggle();
+            }
+          }}
+        />
+
+        <MessageInput
+          {...{
+            handleOnMessageChange,
+            sendChatMessage,
+            message,
+          }}
+        />
+        <MessageSendButton {...{ message, sendChatMessage }} />
+      </div>
+    </React.Fragment>
   );
 };
 
-export default Chart;
+export default React.memo(Chart);

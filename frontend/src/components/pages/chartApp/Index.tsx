@@ -6,6 +6,7 @@ import { Button } from 'antd';
 import Chart from './Chart';
 import { SettingOutlined } from '@ant-design/icons';
 import { useNavigate, useParams } from 'react-router-dom';
+
 const Index: React.FC = () => {
   const navigate = useNavigate();
   const { id } = useParams();
