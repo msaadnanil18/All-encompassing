@@ -1,7 +1,8 @@
 import mongoose from 'mongoose';
 const { Schema } = mongoose;
+import { IMessage } from '../../interfaces/ChatApp/message';
 
-const charMessageSchema = new Schema(
+const charMessageSchema = new Schema<IMessage>(
   {
     sender: {
       type: mongoose.Types.ObjectId,
@@ -18,9 +19,9 @@ const charMessageSchema = new Schema(
       ],
       default: [],
     },
-    chat: { type: mongoose.Types.ObjectId, ref: 'chat' },
+    chat: { type: mongoose.Types.ObjectId, ref: 'Chat' },
   },
   { timestamps: true }
 );
 
-export const charMessage = mongoose.model('ChatMessage', charMessageSchema);
+export const Message = mongoose.model<IMessage>('Message', charMessageSchema);

@@ -1,20 +1,4 @@
-// import { Menu } from 'antd';
-// import React from 'react';
-
-// const NavBar: React.FC = () => {
-//   return (
-//     <React.Fragment>
-//       <Menu
-//         mode="horizontal"
-//         style={{ height: '50px', lineHeight: '50px', fontSize: '18px' }}
-//       ></Menu>
-//     </React.Fragment>
-//   );
-// };
-
-// export default NavBar;
-
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Menu,
   Avatar,
@@ -25,88 +9,92 @@ import {
   MenuProps,
   Drawer,
   Grid,
+  AutoCompleteProps,
 } from 'antd';
-const { useBreakpoint } = Grid;
+
 import { useNavigate } from 'react-router-dom';
-import {
-  UserOutlined,
-  UnorderedListOutlined,
-  LogoutOutlined,
-  VideoCameraAddOutlined,
-  YoutubeFilled,
-  LoginOutlined,
-  UserAddOutlined,
-} from '@ant-design/icons';
+import { WechatOutlined } from '@ant-design/icons';
+import SearchDrawer from './SearchDrawer';
+import { SearchService } from '../../services/Search';
+import { ServiceErrorManager } from '../../../helpers/service';
+import { User } from '../../types/partialUser';
 
 const NavBar = () => {
-  const screen = useBreakpoint();
-  const [open, setOpen] = React.useState(false);
-  const navigate = useNavigate();
-  const menuStyle = {
-    height: '50px',
-    lineHeight: '50px',
-    fontSize: '18px',
+  const [options, setOptions] = useState<AutoCompleteProps['options']>([]);
+  const [searchValue, setSearchValue] = useState<string>();
+
+  const [openDrawer, setOpenDrawer] = useState<boolean>(false);
+
+  const handleSearch = async () => {
+    const [err, data] = await ServiceErrorManager(
+      SearchService({
+        data: {
+          query: { name: searchValue },
+        },
+      }),
+      {}
+    );
+    if (err) return;
+
+    setOptions(
+      (data?.data || []).map((d: User) => ({
+        label: (d?.name as string) || 'Unknown',
+        value: (d?.name || '') as string,
+      }))
+    );
   };
 
-  const items: MenuProps['items'] = [
-    {
-      label: <div onClick={() => navigate('/login-user')}>Login User</div>,
-      key: '0',
-      icon: <LoginOutlined style={{ fontSize: 15 }} />,
-    },
-    {
-      label: (
-        <div onClick={() => navigate('/resgister-user')}>Resgister User</div>
-      ),
-      key: '1',
-      icon: <UserAddOutlined style={{ fontSize: 15 }} />,
-    },
-    {
-      label: <div onClick={() => setOpen(true)}>Resgister User</div>,
-      icon: <VideoCameraAddOutlined style={{ fontSize: 15 }} />,
-      key: '2',
-    },
-  ];
-
+  React.useEffect(() => {
+    handleSearch();
+  }, [searchValue]);
   return (
-    <>
-      <Menu mode="horizontal" style={menuStyle}>
-        <Menu.Item key="icon" disabled>
-          <UnorderedListOutlined style={{ padding: 14, fontSize: 27 }} />
-          <YoutubeFilled
-            style={{ padding: 14, fontSize: 27, color: 'red', margin: 0 }}
-            onClick={() => navigate('/')}
-          />
-        </Menu.Item>
+    <React.Fragment>
+      <SearchDrawer
+        DrawerProps={{
+          open: openDrawer,
+          onClose: () => {
+            setOpenDrawer(false);
+          },
+          placement: 'left',
+          width: 450,
+          style: { opacity: 1, margin: 0, padding: 0 },
+          title: 'New chat',
+        }}
+        AutoCompleteProps={{
+          size: 'large',
+          style: { width: '100%', margin: 0, padding: 0 },
+          onSearch: (value) => setSearchValue(value),
+          options: options,
+        }}
+      />
 
-        <Menu.Item key="name" disabled></Menu.Item>
-
-        <Menu.Item key="logout" disabled style={{ marginLeft: 'auto' }}>
-          {screen.sm ? (
-            <Button
-              className="mx-10"
-              onClick={() => setOpen(true)}
-              type="link"
-              icon={<VideoCameraAddOutlined style={{ fontSize: 23 }} />}
-            />
-          ) : null}
-
-          <Button type="link" icon={<LogoutOutlined />} danger>
-            Logout
+      <Menu
+        mode="horizontal"
+        style={{
+          margin: 0,
+          padding: 0,
+          width: '100%',
+          display: 'flex',
+          overflow: 'hidden',
+        }}
+      >
+        <Menu.Item key="chats" disabled>
+          <Button style={{ margin: 0, padding: 0 }} type="link" danger>
+            <Typography.Title level={5} style={{ margin: 0 }}>
+              Chats
+            </Typography.Title>
           </Button>
         </Menu.Item>
-
-        <Menu.Item key="avatar" disabled>
-          <Dropdown menu={{ items }} trigger={['click']}>
-            <Avatar
-              style={{ backgroundColor: '#8a8686' }}
-              size="large"
-              icon={<UserOutlined />}
-            />
-          </Dropdown>
+        <Menu.Item key="open-drawer">
+          <Button
+            style={{ margin: 0, padding: 0 }}
+            type="link"
+            icon={<WechatOutlined style={{ fontSize: '22px' }} />}
+            onClick={() => setOpenDrawer(true)}
+          />
         </Menu.Item>
       </Menu>
-    </>
+    </React.Fragment>
   );
 };
 

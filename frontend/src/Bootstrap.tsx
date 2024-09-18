@@ -25,7 +25,17 @@ const Bootstrap = () => {
   const config = useRecoilValue($THEME_C0NFIG);
 
   return (
-    <AntdProvider theme={config} isDark={isDark} isCompact={config?.isCompact}>
+    <AntdProvider
+      theme={{
+        ...config,
+        token: {
+          ...config.token,
+          colorBgBase: isDark ? '#212121' : '#f1ede6',
+        },
+      }}
+      isDark={isDark}
+      isCompact={config?.isCompact}
+    >
       <Container />
     </AntdProvider>
   );

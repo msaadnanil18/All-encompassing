@@ -5,6 +5,9 @@ export interface IUser extends Document {
   email: string;
   password: string;
   isVerified: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+  avatar?: 'string';
   themConfig: {
     token?: {
       [key: string]: any;

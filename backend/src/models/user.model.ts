@@ -22,6 +22,7 @@ const userSchema = new Schema<IUser>(
       type: String,
       required: true,
     },
+    avatar: { type: String },
     isVerified: { type: Boolean, default: false },
     refreshToken: {
       type: String,

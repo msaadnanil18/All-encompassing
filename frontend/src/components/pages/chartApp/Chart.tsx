@@ -2,7 +2,7 @@ import { SmileOutlined } from '@ant-design/icons';
 import MessageInput from './MessageInput';
 import MessageSendButton from './MessageSendButton';
 import { sendMessage } from '../../hooks/chart';
-import { Button } from 'antd';
+import { Button, Card, Col, Row } from 'antd';
 import React, { useState, useEffect, useCallback } from 'react';
 import socket from '../../../helpers/socket';
 import { ChatListItemInterface } from '../../types/charts';
@@ -30,6 +30,11 @@ const Chart = ({ id }: { id: string | undefined }) => {
   }, []);
 
   const sendChatMessage = useCallback(async () => {
+    socket.emit(NEW_CHAT_EVENT, {
+      id,
+      content: message,
+      attachments: attachments.map((file) => file.url),
+    });
     const data = await sendMessage(
       id,
       message,
@@ -96,39 +101,43 @@ const Chart = ({ id }: { id: string | undefined }) => {
   );
 
   return (
-    <React.Fragment>
-      <EmojiPiker {...emojiPikerProps} />
-      <div
-        className="fixed bottom-0 right-0 p-4 flex items-center"
-        style={{
-          width: '45rem',
-          backgroundColor: isDark ? '#202c33' : '#f0f2f5',
-          zIndex: 1000,
-        }}
-      >
-        <DriveFileUpload chooseFiles={(file) => setAttachments(file)} />
-        <Button
-          type="text"
-          shape="circle"
-          className="mr-1"
-          icon={<SmileOutlined style={{ fontSize: '20px' }} />}
-          onClick={() => {
-            if (emojiToggleRef.current) {
-              emojiToggleRef.current.toggle();
-            }
-          }}
-        />
-
-        <MessageInput
-          {...{
-            handleOnMessageChange,
-            sendChatMessage,
-            message,
-          }}
-        />
-        <MessageSendButton {...{ message, sendChatMessage }} />
+    <div style={{ position: 'relative', height: '100vh' }}>
+      <div style={{ height: '27rem' }}>
+        <EmojiPiker {...emojiPikerProps} />
       </div>
-    </React.Fragment>
+      <div style={{ position: 'fixed', bottom: 0, width: '67%' }}>
+        <Card
+          style={{
+            width: '100%',
+            backgroundColor: isDark ? '#171717' : '#f0f2f5',
+            marginBottom: 0,
+          }}
+        >
+          <div className="flex items-center">
+            <DriveFileUpload chooseFiles={(file) => setAttachments(file)} />
+            <Button
+              type="text"
+              shape="circle"
+              className="mr-1"
+              icon={<SmileOutlined style={{ fontSize: '20px' }} />}
+              onClick={() => {
+                if (emojiToggleRef.current) {
+                  emojiToggleRef.current.toggle();
+                }
+              }}
+            />
+            <MessageInput
+              {...{
+                handleOnMessageChange,
+                sendChatMessage,
+                message,
+              }}
+            />
+            <MessageSendButton {...{ message, sendChatMessage }} />
+          </div>
+        </Card>
+      </div>
+    </div>
   );
 };
 

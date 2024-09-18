@@ -1,31 +1,24 @@
 import React from 'react';
-import { useRecoilValue } from 'recoil';
-import { $ME } from '../../atoms/root';
-import { useAuth } from '../../hooks/useAuth';
-import { Button } from 'antd';
+import { Row, Col } from 'antd';
 import Chart from './Chart';
-import { SettingOutlined } from '@ant-design/icons';
-import { useNavigate, useParams } from 'react-router-dom';
+import NavBar from '../home/NavBar';
+import { useParams } from 'react-router-dom';
+import UserListTab from './UserListTab';
 
-const Index: React.FC = () => {
-  const navigate = useNavigate();
+const chartApp: React.FC = () => {
   const { id } = useParams();
-  const { me, logOut } = useAuth();
-  const token = localStorage.getItem('token');
-  // console.log(token, 'tokent');
 
   return (
-    <div>
-      <Button onClick={logOut}>Log out</Button>
-      <Button
-        onClick={() => navigate(`/setting/${id}`)}
-        icon={<SettingOutlined />}
-      >
-        Setting
-      </Button>
-      <Chart id={id} />
-    </div>
+    <Row gutter={[0, 0]}>
+      {/* <NavBar /> */}
+      <Col sm={8}>
+        <UserListTab />
+      </Col>
+      <Col sm={14}>
+        <Chart id={id} />
+      </Col>
+    </Row>
   );
 };
 
-export default Index;
+export default chartApp;

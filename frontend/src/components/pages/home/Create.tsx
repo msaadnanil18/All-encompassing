@@ -2,6 +2,7 @@ import React from 'react';
 import { Button, Card, Form, Input, Row, Col, notification } from 'antd';
 import { userRegisterService } from '../../services/auth';
 import { PlusCircleOutlined } from '@ant-design/icons';
+import { ServiceErrorManager } from '../../../helpers/service';
 import { useNavigate } from 'react-router-dom';
 const Create: React.FC = () => {
   const navigate = useNavigate();
@@ -14,24 +15,24 @@ const Create: React.FC = () => {
       formData.append('email', value.email);
       formData.append('password', value.password);
       formData.append('name', value.name);
-      const { data } = await userRegisterService({
-        data: {
-          payload: {
-            ...value,
-          },
-        },
-      });
-      notification.open({
-        message: data.message,
-      });
 
+      const [err, data] = await ServiceErrorManager(
+        userRegisterService({
+          data: {
+            payload: {
+              ...value,
+            },
+          },
+        }),
+        {
+          successMessage: 'You successfully created you account',
+          failureMessage: 'Error while creating account',
+        }
+      );
+      if (err) return;
       setLoading(false);
       navigate('/');
     } catch (error) {
-      notification.error({
-        message: 'Error',
-        description: 'something went wrong while register the user',
-      });
       console.log(error);
     } finally {
       setLoading(false);

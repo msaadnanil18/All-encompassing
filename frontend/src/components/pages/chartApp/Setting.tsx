@@ -9,7 +9,7 @@ import {
   Button,
 } from 'antd';
 import { ThemeConfig } from '../../atoms/root';
-import React from 'react';
+import React, { useId } from 'react';
 import { debounce } from 'lodash-es';
 import { useAuth } from '../../hooks/useAuth';
 import { updateThemeConfig } from '../../services/auth';

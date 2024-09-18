@@ -27,9 +27,9 @@ const EmojiPiker = forwardRef<{ toggle: () => void }, EmojiPikerProps>(
     }));
 
     return (
-      <div>
+      <React.Fragment>
         {isOpen && (
-          <div style={{ width: '53vw', padding: 0, float: 'right' }}>
+          <div style={{ width: '100%', padding: 0, float: 'right' }}>
             <EmojiPicker
               onEmojiClick={handleSelect as any}
               theme={isDark ? 'dark' : ('light' as any)}
@@ -40,7 +40,7 @@ const EmojiPiker = forwardRef<{ toggle: () => void }, EmojiPikerProps>(
             />
           </div>
         )}
-      </div>
+      </React.Fragment>
     );
   }
 );

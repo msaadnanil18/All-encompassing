@@ -1,5 +1,8 @@
 import { Server as IOServer, Socket } from 'socket.io';
-import { ChatEventEnum, AvailableChatEvents } from '../constants/constants';
+import {
+  ChatEventEnum,
+  AvailableChatEvents,
+} from '../constants/chatapp/constants';
 import cookie from 'cookie';
 import Jwt from 'jsonwebtoken';
 import { ApiError } from '../utils/ApiError';
@@ -9,8 +12,10 @@ import { ObjectId } from 'mongoose';
 export const initialize_socket_setup = (io: IOServer) => {
   return io.on('connection', async (socket) => {
     try {
+      console.log(socket.id, 'socketId');
+
       const cookies = cookie.parse(socket.handshake.headers?.cookie || '');
-      let token = cookies?.accessToken; // get the accessToken
+      let token = cookies?.accessToken;
 
       if (!token) {
         token = socket.handshake.auth?.token;
@@ -54,7 +59,9 @@ const mountJoinChatEvent = (socket: Socket) => {
 
     socket.join(chatId);
   });
-  socket.on('SendMessage', (chat) => {
+  socket.on(ChatEventEnum.NEW_CHAT_EVENT, async (chat) => {
+    console.log(chat, 'newCharEvent');
+
     socket.emit(ChatEventEnum.NEW_CHAT_EVENT, chat);
   });
 };

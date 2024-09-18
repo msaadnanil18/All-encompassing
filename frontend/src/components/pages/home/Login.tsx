@@ -9,7 +9,7 @@ const Login: React.FC = () => {
   const { me, logIn, loading } = useAuth();
 
   if (me?.user?._id) {
-    navigate(`/app--/${me?.user?._id}`);
+    navigate(`/dash-board/${me?.user?._id}`);
   }
 
   const formOnSubmit = async (value: Record<string, any>) => {

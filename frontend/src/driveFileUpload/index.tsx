@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import SelectedFiles from './SelectedFile';
 import FileUpload from './FileUpload';
 import { Button, Modal, Tabs } from 'antd';
-
+import dayjs from 'dayjs';
 import { CameraOutlined, PlusOutlined } from '@ant-design/icons';
 import { addFiles } from '../components/types/addFiles';
 import WebCamUpload from './WebCamUpload';
@@ -23,6 +23,7 @@ const DriveFileUpload = ({
   };
 
   const onCloseHandler = () => {
+    setActiveTab('upload');
     setVisible(false);
     setUploadFile([]);
   };
@@ -36,9 +37,7 @@ const DriveFileUpload = ({
         maskClosable={false}
         title="Send Files"
         onOk={() => {
-          chooseFiles(
-            activeTab === 'select-small-files' ? uploadFile : successFiles
-          );
+          chooseFiles(activeTab === 'upload' ? uploadFile : successFiles);
           onCloseHandler();
         }}
         okButtonProps={{
@@ -48,11 +47,12 @@ const DriveFileUpload = ({
       >
         <Tabs
           defaultActiveKey={activeTab}
+          activeKey={activeTab}
           onTabClick={setActiveTab}
           className="h-96"
           items={[
             {
-              key: 'select-small-files',
+              key: 'upload',
               label: `Send small files`,
               children: (
                 <FileUpload
@@ -64,11 +64,14 @@ const DriveFileUpload = ({
               key: 'camera',
               label: '',
               icon: <CameraOutlined style={{ fontSize: '18px' }} />,
-              children: activeTab === 'camera' && (
-                <WebCamUpload
-                  addFiles={(file) => setUploadFile((prev) => [...prev, file])}
-                />
-              ),
+              children:
+                visible && activeTab === 'camera' ? (
+                  <WebCamUpload
+                    addFiles={(file) =>
+                      setUploadFile((prev) => [...prev, file])
+                    }
+                  />
+                ) : null,
             },
           ]}
         />

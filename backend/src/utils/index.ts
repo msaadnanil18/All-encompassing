@@ -1,3 +1,5 @@
+import { log } from 'console';
+import { Request } from 'express';
 import jwt from 'jsonwebtoken';
 import nodemailer from 'nodemailer';
 
@@ -33,4 +35,8 @@ export const sendVerificationEmail = async (email: string, token: string) => {
   } catch (error) {
     console.log('mailOptions', error);
   }
+};
+
+export const emitEvent = (req: Request, event: any, users: any, data: any) => {
+  log('eminthg');
 };
