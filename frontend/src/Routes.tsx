@@ -8,7 +8,9 @@ const ResgisterUser = React.lazy(
   () => import('./components/pages/home/Create')
 );
 
-const NavBar = React.lazy(() => import('./components/pages/home/NavBar'));
+const NavBar = React.lazy(
+  () => import('./components/pages/chartApp/UserListHeader')
+);
 const VerifyEmail = React.lazy(() => import('./components/pages/VerifyEmail'));
 const LoginUser = React.lazy(() => import('./components/pages/home/Login'));
 const ChatApp = React.lazy(

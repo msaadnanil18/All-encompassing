@@ -11,5 +11,5 @@ export interface IMessage extends Document {
 }
 
 export interface DB {
-  message: IMessage;
+  Message: IMessage;
 }

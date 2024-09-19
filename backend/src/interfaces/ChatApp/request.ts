@@ -7,3 +7,7 @@ export interface IRequest extends Document {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export interface DB {
+  Request: IRequest;
+}

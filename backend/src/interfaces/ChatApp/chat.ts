@@ -10,5 +10,5 @@ export interface IChat extends Document {
 }
 
 export interface DB {
-  chat: IChat;
+  Chat: IChat;
 }

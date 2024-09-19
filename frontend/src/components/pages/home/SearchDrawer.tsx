@@ -8,9 +8,15 @@ const SearchDrawer = ({
   DrawerProps?: DrawerProps;
   AutoCompleteProps?: AutoCompleteProps;
 }) => {
+  const autoCompleteRef = React.useRef<HTMLInputElement>(null);
+  React.useEffect(() => {
+    setTimeout(() => {
+      autoCompleteRef.current?.focus();
+    }, 1);
+  }, [DrawerProps?.open]);
   return (
-    <Drawer {...DrawerProps}>
-      <AutoComplete {...AutoCompleteProps} />
+    <Drawer destroyOnClose {...DrawerProps}>
+      <AutoComplete {...AutoCompleteProps} ref={autoCompleteRef as any} />
     </Drawer>
   );
 };

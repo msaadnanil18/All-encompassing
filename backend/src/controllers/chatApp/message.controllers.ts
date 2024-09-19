@@ -4,6 +4,7 @@ import { Chat } from '../../models/chartApp/chat.model';
 import { ApiError } from '../../utils/ApiError';
 import { emitEvent } from '../../utils';
 import { ALERT, REFETCH_CHATS } from '../../constants/chatapp/constants';
+import create from '../crudControllers/create';
 
 const sendMessage = asyncHandler(async (req, res) => {
   // console.log(req.body, 'message');
@@ -43,4 +44,32 @@ const newChatGroup = asyncHandler(async (req, res) => {
     throw new ApiError(400);
   }
 });
-export { sendMessage, newChatGroup };
+
+const createChat = asyncHandler(async (req, res, next) => {
+  const { body, db } = req;
+  const { payload } = body;
+  const receiver = await db.User.findOne({ _id: payload.receiver });
+
+  const isChatAlreadyExite = await db.Chat.findOne({
+    groupChat: false,
+    members: {
+      $all: [receiver?._id, (payload as any)?.receiver],
+    },
+  });
+
+  if (isChatAlreadyExite) {
+    return res.json({ data: isChatAlreadyExite });
+  }
+
+  create(Chat, {
+    payloadTransformer: async ({ user, payload }) => {
+      const members = [(payload as any)?.receiver, user._id];
+      return {
+        members,
+        name: `${user.name}-${receiver?.name}`,
+      };
+    },
+  })(req, res, next);
+});
+
+export { sendMessage, newChatGroup, createChat };
