@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import { IChat } from '../../interfaces/ChatApp/chat';
-
+import mongoosePaginate from 'mongoose-paginate-v2';
 const { Schema } = mongoose;
 
 const charSchema = new Schema<IChat>(
@@ -26,5 +26,6 @@ const charSchema = new Schema<IChat>(
   },
   { timestamps: true }
 );
+charSchema.plugin(mongoosePaginate);
 
 export const Chat = mongoose.model<IChat>('Chat', charSchema);

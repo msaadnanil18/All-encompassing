@@ -10,21 +10,23 @@ export const RenderItem: React.FC<{ resource: User }> = ({ resource }) => (
   </div>
 );
 const UserListHeader: React.FC<{
+  searchTerm: string;
   isDark: boolean;
   searchOptions: AutoCompleteProps['options'];
-  handelOnCreateCharSelect: (r: string) => void;
+  handelOnCreateChatSelect: (r: string) => Promise<void>;
   closeSearchBar: () => void;
   isOpenSearchBar: boolean;
   openSearchBar: () => void;
   handelOnSearchChange: (r: string) => void;
 }> = ({
   isDark,
-  handelOnCreateCharSelect,
+  handelOnCreateChatSelect,
   isOpenSearchBar,
   closeSearchBar,
   openSearchBar,
   searchOptions,
   handelOnSearchChange,
+  searchTerm,
 }) => {
   return (
     <React.Fragment>
@@ -49,9 +51,10 @@ const UserListHeader: React.FC<{
             outline: 'none',
             border: 'nones',
           },
+          value: searchTerm,
           onSearch: handelOnSearchChange,
           options: searchOptions,
-          onSelect: handelOnCreateCharSelect,
+          onSelect: handelOnCreateChatSelect,
         }}
       />
 

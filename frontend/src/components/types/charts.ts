@@ -1,12 +1,12 @@
 import { User } from './partialUser';
 
 export interface ChatListItemInterface {
-  admin: string;
+  creator: string;
   createdAt: string;
   isGroupChat: true;
   lastMessage?: ChatMessageInterface;
   name: string;
-  participants: User[];
+  members: User[];
   updatedAt: string;
   _id: string;
 }

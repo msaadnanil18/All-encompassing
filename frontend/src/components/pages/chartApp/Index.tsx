@@ -6,26 +6,30 @@ import UserListTab from './UserListTab';
 import useChats from './hooks/useChats';
 
 const chartApp: React.FC = () => {
+  const { id } = useParams();
   const {
-    actions: { handelOnCreateCharSelect, handelOnSearchChange },
-    states: { searchOptions },
+    actions: { handelOnCreateChatSelect, handelOnSearchChange },
+    states: { searchOptions, searchTerm, chatList, chatListLoading },
     togglers: {
       selectUserToChat: { openSearchBar, closeSearchBar, isOpenSearchBar },
     },
-  } = useChats();
-  const { id } = useParams();
+  } = useChats({ userId: id });
 
   return (
     <Row gutter={[0, 0]}>
       <Col sm={8}>
         <UserListTab
           {...{
-            handelOnCreateCharSelect,
+            handelOnCreateChatSelect,
             openSearchBar,
             closeSearchBar,
             isOpenSearchBar,
             searchOptions,
             handelOnSearchChange,
+            searchTerm,
+            chatList,
+            chatListLoading,
+            userId: id,
           }}
         />
       </Col>

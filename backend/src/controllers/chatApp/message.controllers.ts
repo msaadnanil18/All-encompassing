@@ -53,7 +53,7 @@ const createChat = asyncHandler(async (req, res, next) => {
   const isChatAlreadyExite = await db.Chat.findOne({
     groupChat: false,
     members: {
-      $all: [receiver?._id, (payload as any)?.receiver],
+      $all: [req.user._id, (payload as any)?.receiver],
     },
   });
 
@@ -63,7 +63,7 @@ const createChat = asyncHandler(async (req, res, next) => {
 
   create(Chat, {
     payloadTransformer: async ({ user, payload }) => {
-      const members = [(payload as any)?.receiver, user._id];
+      const members = [user._id, (payload as any)?.receiver];
       return {
         members,
         name: `${user.name}-${receiver?.name}`,

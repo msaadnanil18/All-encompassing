@@ -116,32 +116,35 @@ import { Layout, List, Avatar, Grid, AutoCompleteProps } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import UserListHeader from './UserListHeader';
 import { useDarkMode } from '../../thems/useDarkMode';
+import { ChatListItemInterface } from '../../types/charts';
 const { useBreakpoint } = Grid;
 const { Sider } = Layout;
 
 const UserListTab: React.FC<{
-  handelOnCreateCharSelect: (r: string) => void;
+  handelOnCreateChatSelect: (r: string) => Promise<void>;
   isOpenSearchBar: boolean;
+  searchTerm: string;
   closeSearchBar: () => void;
   openSearchBar: () => void;
   searchOptions: AutoCompleteProps['options'];
   handelOnSearchChange: (r: string) => void;
+  chatList: ChatListItemInterface[];
+  chatListLoading: boolean;
+  userId: string | undefined;
 }> = ({
-  handelOnCreateCharSelect,
+  handelOnCreateChatSelect,
   isOpenSearchBar,
   closeSearchBar,
   openSearchBar,
   searchOptions,
   handelOnSearchChange,
+  searchTerm,
+  chatListLoading,
+  chatList,
+  userId,
 }) => {
   const screen = useBreakpoint();
   const isDark = useDarkMode();
-  const users: any[] = Array.from({ length: 100 }, (_, i) => ({
-    id: i + 1,
-    name: `John Doe ${i + 1}`,
-    avatar: `https://api.dicebear.com/7.x/miniavs/svg?seed=${i}`,
-    status: 'online',
-  }));
 
   return (
     <Layout>
@@ -161,35 +164,48 @@ const UserListTab: React.FC<{
         }}
       >
         <List
+          loading={chatListLoading}
           header={
             <UserListHeader
               {...{
                 isDark,
-                handelOnCreateCharSelect,
+                handelOnCreateChatSelect,
                 isOpenSearchBar,
                 closeSearchBar,
                 openSearchBar,
                 searchOptions,
                 handelOnSearchChange,
+                searchTerm,
               }}
             />
           }
           itemLayout="horizontal"
-          dataSource={users}
-          renderItem={(user) => (
-            <List.Item
-              onClick={() => console.log(user, 'users')}
-              style={{ cursor: 'pointer', padding: '10px 15px' }}
-            >
-              <List.Item.Meta
-                avatar={
-                  <Avatar size={50} src={user.avatar} icon={<UserOutlined />} />
-                }
-                title={user.name}
-                description={user.status}
-              />
-            </List.Item>
-          )}
+          dataSource={chatList}
+          renderItem={(chat, index) => {
+            const prevChats = chat.members.find((user) => user._id !== userId);
+            let _prevChats = { ...prevChats };
+            if (!prevChats?.avatar) {
+              _prevChats.avatar = `https://api.dicebear.com/7.x/miniavs/svg?seed=${index}`;
+            }
+            return (
+              <List.Item
+                onClick={() => console.log(chat, 'users')}
+                style={{ cursor: 'pointer', padding: '10px 15px' }}
+              >
+                <List.Item.Meta
+                  avatar={
+                    <Avatar
+                      size={50}
+                      src={_prevChats?.avatar}
+                      icon={<UserOutlined />}
+                    />
+                  }
+                  title={_prevChats?.name}
+                  description={_prevChats?.email}
+                />
+              </List.Item>
+            );
+          }}
         />
       </Sider>
     </Layout>
