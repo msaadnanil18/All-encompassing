@@ -22,3 +22,10 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+
+
+# dotenv environment variables file
+.env
+.env.test
+.env.production

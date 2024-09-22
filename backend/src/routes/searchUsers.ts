@@ -1,8 +1,9 @@
 import { Router } from 'express';
-import { searchUser } from '../controllers/searchUsers.controllers';
+import List from '../controllers/crudControllers/list';
+import { User } from '../models/user.model';
 
 const searchUsersRoutes = Router();
 
-searchUsersRoutes.route('/search').post(searchUser);
+searchUsersRoutes.route('/search').post(List(User, {}));
 
 export default searchUsersRoutes;

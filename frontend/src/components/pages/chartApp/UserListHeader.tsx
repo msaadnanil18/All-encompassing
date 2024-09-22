@@ -1,14 +1,27 @@
 import React, { useState } from 'react';
-import { Menu, Typography, Button, AutoCompleteProps } from 'antd';
-import { WechatOutlined } from '@ant-design/icons';
+import { Menu, Typography, Button, AutoCompleteProps, Avatar } from 'antd';
+import { UserOutlined, WechatOutlined } from '@ant-design/icons';
 import SearchDrawer from '../home/SearchDrawer';
 import { User } from '../../types/partialUser';
-export const RenderItem: React.FC<{ resource: User }> = ({ resource }) => (
-  <div key={resource._id}>
-    <p className="p-0 m-0">{resource.name}</p>
-    <p className="text-sm m-0 p-0">{resource.email}</p>
-  </div>
-);
+export const RenderItem: React.FC<{ resource: User; index: number }> = ({
+  resource,
+  index,
+}) => {
+  console.log(resource);
+  const _resource = { ...resource };
+  if (!_resource?.avatar) {
+    _resource.avatar = `https://api.dicebear.com/7.x/miniavs/svg?seed=${index}`;
+  }
+
+  return (
+    <div key={_resource._id}>
+      <div>
+        <Avatar src={_resource.avatar} size={40} icon={<UserOutlined />} />
+        <Typography.Text strong> {_resource.name}</Typography.Text>
+      </div>
+    </div>
+  );
+};
 const UserListHeader: React.FC<{
   searchTerm: string;
   isDark: boolean;

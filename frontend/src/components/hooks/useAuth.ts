@@ -13,7 +13,11 @@ export const useAuth = () => {
   });
   const [themConfig, setThemConfig] = React.useState<ThemeConfig>(() => {
     const storedUser = localStorage.getItem('themeConfig');
-    return storedUser ? JSON.parse(storedUser) : null;
+    if (storedUser === 'undefined') {
+      return null;
+    } else {
+      return storedUser ? JSON.parse(storedUser) : null;
+    }
   });
   const [me, setMe] = useRecoilState($ME);
   const [theme, setTheme] = useRecoilState($THEME_C0NFIG);

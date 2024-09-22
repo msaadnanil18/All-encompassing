@@ -35,16 +35,24 @@ const useChats = ({ userId }: { userId: string | undefined }) => {
     const [err, data] = await ServiceErrorManager(
       SearchService({
         data: {
-          query: { name: searchTerm },
+          options: {
+            select: '-themConfig -password -refreshToken',
+          },
+          query: {
+            _id: { $ne: userId },
+            isVerified: { $ne: false },
+            search: searchTerm,
+            searchFields: ['name'],
+          },
         },
       }),
       {}
     );
     if (err) return;
-    setSearchData(data?.data || []);
+    setSearchData(data?.docs || []);
     setSearchOptions(
-      (data?.data || []).map((d: User) => ({
-        label: <RenderItem resource={d} />,
+      (data?.docs || []).map((d: User, index: number) => ({
+        label: <RenderItem resource={d} index={index} />,
         value: (d?._id || '') as string,
       }))
     );
@@ -75,11 +83,12 @@ const useChats = ({ userId }: { userId: string | undefined }) => {
       );
 
       setSearchTerm('');
+      fetchChatList();
     },
     [closeSearchBar]
   );
 
-  const fetchChatList = async () => {
+  const fetchChatList = useCallback(async () => {
     setChatListLoading(true);
     const [err, data] = await ServiceErrorManager(
       ChtListService({
@@ -89,23 +98,29 @@ const useChats = ({ userId }: { userId: string | undefined }) => {
             populate: [
               {
                 path: 'members',
+
                 select: '-themConfig -refreshToken -password',
+              },
+              {
+                path: 'creator',
+                match: { name: 'pintu' },
               },
             ],
           },
           query: { members: userId },
         },
       }),
-      {}
+      { failureMessage: 'Error while featcing chat list' }
     );
-    if (err) return;
     setChatListLoading(false);
+    if (err) return;
+
     setChatList(data.docs);
-  };
+  }, []);
 
   useEffect(() => {
     fetchChatList().catch(console.log);
-  }, [searchOptions]);
+  }, []);
 
   const togglers = useMemo(
     () => ({

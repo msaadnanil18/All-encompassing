@@ -55,7 +55,7 @@ export const initialize_socket_setup = (io: IOServer) => {
 
 const mountJoinChatEvent = (socket: Socket) => {
   socket.on(ChatEventEnum.JOIN_CHAT_EVENT, (chatId) => {
-    console.log(`User joined the chat 🤝. chatId: `, chatId);
+    console.log(`User joined the. chatId: `, chatId);
 
     socket.join(chatId);
   });
