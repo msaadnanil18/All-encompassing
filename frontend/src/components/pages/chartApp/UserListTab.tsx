@@ -8,6 +8,9 @@ const { useBreakpoint } = Grid;
 const { Sider } = Layout;
 
 const UserListTab: React.FC<{
+  setUserSeletedForChat: React.Dispatch<
+    React.SetStateAction<ChatListItemInterface | null>
+  >;
   handelOnCreateChatSelect: (r: string) => Promise<void>;
   isOpenSearchBar: boolean;
   searchTerm: string;
@@ -25,6 +28,7 @@ const UserListTab: React.FC<{
   openSearchBar,
   searchOptions,
   handelOnSearchChange,
+  setUserSeletedForChat,
   searchTerm,
   chatListLoading,
   chatList,
@@ -76,7 +80,7 @@ const UserListTab: React.FC<{
             }
             return (
               <List.Item
-                onClick={() => console.log(chat, 'users')}
+                onClick={() => setUserSeletedForChat(chat)}
                 style={{ cursor: 'pointer', padding: '10px 15px' }}
               >
                 <List.Item.Meta

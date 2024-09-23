@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 const { Schema } = mongoose;
 import { IMessage } from '../../interfaces/ChatApp/message';
-
+import mongoosePaginate from 'mongoose-paginate-v2';
 const charMessageSchema = new Schema<IMessage>(
   {
     sender: {
@@ -24,4 +24,5 @@ const charMessageSchema = new Schema<IMessage>(
   { timestamps: true }
 );
 
+charMessageSchema.plugin(mongoosePaginate);
 export const Message = mongoose.model<IMessage>('Message', charMessageSchema);

@@ -4,9 +4,12 @@ import Chart from './Chart';
 import { useParams } from 'react-router-dom';
 import UserListTab from './UserListTab';
 import useChats from './hooks/useChats';
+import { ChatListItemInterface } from '../../types/charts';
 
 const chartApp: React.FC = () => {
   const { id } = useParams();
+  const [userSeletedForChat, setUserSeletedForChat] =
+    React.useState<ChatListItemInterface | null>(null);
   const {
     actions: { handelOnCreateChatSelect, handelOnSearchChange },
     states: { searchOptions, searchTerm, chatList, chatListLoading },
@@ -30,11 +33,12 @@ const chartApp: React.FC = () => {
             chatList,
             chatListLoading,
             userId: id,
+            setUserSeletedForChat,
           }}
         />
       </Col>
       <Col sm={14}>
-        <Chart id={id} />
+        <Chart {...{ userSeletedForChat, id }} />
       </Col>
     </Row>
   );

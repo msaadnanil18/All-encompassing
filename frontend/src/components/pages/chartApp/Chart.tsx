@@ -2,8 +2,14 @@ import { SmileOutlined } from '@ant-design/icons';
 import MessageInput from './MessageInput';
 import MessageSendButton from './MessageSendButton';
 import { sendMessage } from '../../hooks/chart';
-import { Button, Card, Col, Row } from 'antd';
-import React, { useState, useEffect, useCallback } from 'react';
+import { Button, Card } from 'antd';
+import React, {
+  useState,
+  useEffect,
+  useCallback,
+  useMemo,
+  useRef,
+} from 'react';
 import socket from '../../../helpers/socket';
 import { ChatListItemInterface } from '../../types/charts';
 import { useDarkMode } from '../../thems/useDarkMode';
@@ -15,36 +21,57 @@ const CONNECTED_EVENT = 'connected';
 const DISCONNECT_EVENT = 'disconnect';
 const JOIN_CHAT_EVENT = 'joinChat';
 const NEW_CHAT_EVENT = 'newChat';
-const Chart = ({ id }: { id: string | undefined }) => {
+
+const Chart = ({
+  id,
+  userSeletedForChat,
+}: {
+  id: string | undefined;
+  userSeletedForChat: ChatListItemInterface | null;
+}) => {
   const isDark = useDarkMode();
 
   const [message, setMessage] = useState<string>('');
-  const emojiToggleRef = React.useRef<{ toggle: () => void }>(null);
-  const [chats, setChats] = useState<ChatListItemInterface[]>([]);
+  const emojiToggleRef = useRef<{ toggle: () => void }>(null);
+  const [chats, setChats] = useState<any[]>([]);
   const [isConnected, setIsConnected] = useState<boolean>(false);
   const [selfTyping, setSelfTyping] = useState<boolean>(false);
-  const currentChat = React.useRef<any>();
+  const currentChat = useRef<any>();
   const [attachments, setAttachments] = useState<addFiles[]>([]);
+
   const onConnect = useCallback(() => {
     setIsConnected(true);
   }, []);
 
+  const onNewChat = useCallback((chat: any) => {
+    console.log(chat, 'chatss');
+
+    setChats((prev) => [chat, ...prev]);
+  }, []);
+
   const sendChatMessage = useCallback(async () => {
+    if (!message.trim()) return;
+
     socket.emit(NEW_CHAT_EVENT, {
-      id,
       content: message,
+      chat: userSeletedForChat,
       attachments: attachments.map((file) => file.url),
     });
-    const data = await sendMessage(
-      id,
-      message,
-      attachments.map((file) => file.url)
-    );
-    setMessage('');
-    setAttachments([]);
-    console.log(data, 'response');
-  }, [message]);
-  const handleOnMessageChange = React.useCallback(
+
+    try {
+      const data = await sendMessage(
+        id,
+        message,
+        attachments.map((file) => file.url)
+      );
+      setMessage('');
+      setAttachments([]);
+    } catch (error) {
+      console.error('Failed to send message:', error);
+    }
+  }, [message, attachments, userSeletedForChat, id]);
+
+  const handleOnMessageChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       setMessage(e.target.value);
       if (!isConnected) return;
@@ -56,42 +83,42 @@ const Chart = ({ id }: { id: string | undefined }) => {
     [isConnected, selfTyping]
   );
 
-  const onNewChat = useCallback((chat: ChatListItemInterface) => {
-    setChats((prev) => [chat, ...prev]);
-  }, []);
+  const connectSocket = useCallback(() => {
+    if (socket) {
+      socket.on(CONNECTED_EVENT, onConnect);
+      socket.on(NEW_CHAT_EVENT, onNewChat);
+    }
 
-  const connectSoket = useCallback(() => {
-    socket.on(CONNECTED_EVENT, onConnect);
-    socket.on(NEW_CHAT_EVENT, onNewChat);
     return () => {
-      socket.off(CONNECTED_EVENT, onConnect);
-      socket.off(NEW_CHAT_EVENT, onNewChat);
+      if (socket) {
+        socket.off(CONNECTED_EVENT, onConnect);
+        socket.off(NEW_CHAT_EVENT, onNewChat);
+      }
     };
   }, [onConnect, onNewChat]);
 
-  const getMessages = () => {
+  const getMessages = useCallback(() => {
     socket.emit(JOIN_CHAT_EVENT, id);
-  };
+  }, [id]);
 
   useEffect(() => {
     if (id) {
       currentChat.current = id;
-
-      socket?.emit(JOIN_CHAT_EVENT, id);
-
+      socket.emit(JOIN_CHAT_EVENT, id);
       getMessages();
     }
-  }, []);
+  }, [id, getMessages]);
 
   useEffect(() => {
-    const cleanup = connectSoket();
+    const cleanup = connectSocket();
     return cleanup;
-  }, [connectSoket]);
+  }, [connectSocket]);
 
   const handleEmojiSelect = useCallback((event: React.MouseEvent) => {
     setMessage((prevMessage) => prevMessage + (event as any).emoji);
   }, []);
-  const emojiPikerProps = React.useMemo(
+
+  const emojiPikerProps = useMemo(
     () => ({
       isDark,
       handleSelect: handleEmojiSelect,
@@ -127,13 +154,14 @@ const Chart = ({ id }: { id: string | undefined }) => {
               }}
             />
             <MessageInput
-              {...{
-                handleOnMessageChange,
-                sendChatMessage,
-                message,
-              }}
+              handleOnMessageChange={handleOnMessageChange}
+              sendChatMessage={sendChatMessage}
+              message={message}
             />
-            <MessageSendButton {...{ message, sendChatMessage }} />
+            <MessageSendButton
+              message={message}
+              sendChatMessage={sendChatMessage}
+            />
           </div>
         </Card>
       </div>
@@ -141,4 +169,4 @@ const Chart = ({ id }: { id: string | undefined }) => {
   );
 };
 
-export default React.memo(Chart);
+export default Chart;
