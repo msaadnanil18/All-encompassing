@@ -3,7 +3,7 @@ import { Provider as AntdProvider } from './components/thems/antd';
 import { useRecoilValue } from 'recoil';
 import { $THEME_C0NFIG } from './components/atoms/root';
 import { useDarkMode } from './components/thems/useDarkMode';
-import { theme, Button } from 'antd';
+import { theme } from 'antd';
 
 const Routes = lazy(() => import('./Routes'));
 
