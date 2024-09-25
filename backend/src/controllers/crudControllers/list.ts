@@ -57,7 +57,7 @@ const List =
     const req = await reqTransformer(_req);
     const user = req.user;
     const model = modelName as any;
-    const limit = Math.min(
+    const limit = Math.max(
       Number((req.body.options || {}).limit || 10),
       maxLimit
     );

@@ -12,6 +12,7 @@ import dayjs from 'dayjs';
 import { log } from 'console';
 import { getSokets } from '../utils';
 import { Message } from '../models/chartApp/message.models';
+
 export const userSocketIDS = new Map<string, Set<string>>();
 
 const mountJoinChatEvent = (socket: Socket) => {
@@ -24,7 +25,7 @@ const mountJoinChatEvent = (socket: Socket) => {
       const id = new mongoose.Types.ObjectId();
       const messageForRealTime = {
         _id: id,
-        sender: { _id: socket.user._id, name: socket.user.name },
+        sender: socket.user._id,
         content,
         attachments: attachments.map((attachment: string) => ({
           url: attachment,

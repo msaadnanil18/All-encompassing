@@ -10,11 +10,12 @@ const MessageSendButton = ({
 }) => {
   return (
     <React.Fragment>
-      {message.length > 0 && (
+      {message?.length > 0 && (
         <Button
           onClick={sendChatMessage}
-          type="text"
-          icon={<SendOutlined style={{ fontSize: '20px' }} />}
+          type="primary"
+          shape="circle"
+          icon={<SendOutlined />}
         />
       )}
     </React.Fragment>

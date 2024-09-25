@@ -8,11 +8,26 @@ import { ChatListItemInterface } from '../../types/charts';
 
 const chartApp: React.FC = () => {
   const { id } = useParams();
-  const [userSeletedForChat, setUserSeletedForChat] =
-    React.useState<ChatListItemInterface | null>(null);
+
   const {
-    actions: { handelOnCreateChatSelect, handelOnSearchChange },
-    states: { searchOptions, searchTerm, chatList, chatListLoading },
+    actions: {
+      handelOnCreateChatSelect,
+      handelOnSearchChange,
+      handleOnMessageChange,
+      emojiPikerProps,
+      emojiToggleRef,
+      sendChatMessage,
+      setAttachments,
+      setMessage,
+    },
+    states: {
+      searchOptions,
+      searchTerm,
+      chatList,
+      chatListLoading,
+      message,
+      chats,
+    },
     togglers: {
       selectUserToChat: { openSearchBar, closeSearchBar, isOpenSearchBar },
     },
@@ -33,12 +48,23 @@ const chartApp: React.FC = () => {
             chatList,
             chatListLoading,
             userId: id,
-            setUserSeletedForChat,
           }}
         />
       </Col>
       <Col sm={14}>
-        <Chart {...{ userSeletedForChat, id }} />
+        <Chart
+          {...{
+            handleOnMessageChange,
+            emojiPikerProps,
+            emojiToggleRef,
+            sendChatMessage,
+            setAttachments,
+            setMessage,
+            message,
+            chats,
+            userId: id,
+          }}
+        />
       </Col>
     </Row>
   );
