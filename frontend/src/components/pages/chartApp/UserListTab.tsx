@@ -6,11 +6,9 @@ import { useDarkMode } from '../../thems/useDarkMode';
 import { ChatListItemInterface } from '../../types/charts';
 const { useBreakpoint } = Grid;
 const { Sider } = Layout;
+import { useSearchParams } from 'react-router-dom';
 
 const UserListTab: React.FC<{
-  setUserSeletedForChat: React.Dispatch<
-    React.SetStateAction<ChatListItemInterface | null>
-  >;
   handelOnCreateChatSelect: (r: string) => Promise<void>;
   isOpenSearchBar: boolean;
   searchTerm: string;
@@ -28,14 +26,14 @@ const UserListTab: React.FC<{
   openSearchBar,
   searchOptions,
   handelOnSearchChange,
-  setUserSeletedForChat,
+
   searchTerm,
   chatListLoading,
   chatList,
   userId,
 }) => {
-  const screen = useBreakpoint();
   const isDark = useDarkMode();
+  const [_, setSearchParams] = useSearchParams();
 
   return (
     <Layout>
@@ -80,7 +78,12 @@ const UserListTab: React.FC<{
             }
             return (
               <List.Item
-                onClick={() => setUserSeletedForChat(chat)}
+                onClick={(e) => {
+                  setSearchParams({
+                    name: chat.name.split('-')[1],
+                    id: chat._id,
+                  });
+                }}
                 style={{ cursor: 'pointer', padding: '10px 15px' }}
               >
                 <List.Item.Meta
