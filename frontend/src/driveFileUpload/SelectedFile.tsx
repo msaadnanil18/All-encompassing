@@ -60,7 +60,7 @@ const SelectedFiles: FC<SelectedFilesProps> = ({ files, removeFile }) => {
                 <Button
                   size="small"
                   type="dashed"
-                  color="ghost"
+                  ghost
                   icon={<InfoCircleOutlined />}
                 />
               </Tooltip>

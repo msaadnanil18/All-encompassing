@@ -2,7 +2,6 @@ import React from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { QueryParamProvider } from 'use-query-params';
 import { ReactRouter6Adapter } from 'use-query-params/adapters/react-router-6';
-
 const ResgisterUser = React.lazy(
   () => import('./components/pages/home/Create')
 );
@@ -15,7 +14,8 @@ const LoginUser = React.lazy(() => import('./components/pages/home/Login'));
 const ChatApp = React.lazy(
   () => import('./components/pages/chartApp/ChatAppRoutes')
 );
-const Setting = React.lazy(() => import('./components/pages/chartApp/Setting'));
+const Setting = React.lazy(() => import('./components/pages/settings'));
+
 const TodoApp = React.lazy(
   () => import('./components/pages/todoApp/TodoAppRoutes')
 );
