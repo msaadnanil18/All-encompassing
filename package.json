@@ -1,5 +1,5 @@
 {
-  "name": "All-encompassing",
+  "name": "all-encompassing",
   "private": true,
   "workspaces": [
     "frontend",
