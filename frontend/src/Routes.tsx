@@ -2,7 +2,6 @@ import React from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { QueryParamProvider } from 'use-query-params';
 import { ReactRouter6Adapter } from 'use-query-params/adapters/react-router-6';
-import { useAuth } from './components/hooks/useAuth';
 
 const ResgisterUser = React.lazy(
   () => import('./components/pages/home/Create')
@@ -22,8 +21,8 @@ const TodoApp = React.lazy(
 );
 
 const DashBoard = React.lazy(() => import('./components/pages/DashBoard'));
+
 const AppRoutes = () => {
-  // useAuth();
   return (
     <BrowserRouter>
       <QueryParamProvider adapter={ReactRouter6Adapter}>
