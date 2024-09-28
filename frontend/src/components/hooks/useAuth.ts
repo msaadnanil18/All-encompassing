@@ -21,13 +21,13 @@ export const useAuth = () => {
         },
       });
 
-      setMe(data.data.user);
-      setTheme(data.data.user.themConfig);
-
       if (!data) return;
       notification.open({
         message: data?.message,
       });
+
+      setMe(data.data.user);
+      setTheme(data.data.user.themConfig);
     } catch (error) {
       console.log(error);
     } finally {
