@@ -8,20 +8,22 @@ import {
   Slider,
   Button,
 } from 'antd';
-import { ThemeConfig } from '../../atoms/root';
+import { $THEME_C0NFIG, ThemeConfig } from '../../atoms/root';
 import React, { useId } from 'react';
 import { debounce } from 'lodash-es';
-import { useAuth } from '../../hooks/useAuth';
+
 import { updateThemeConfig } from '../../services/auth';
 import { ServiceErrorManager } from '../../../helpers/service';
 import { useParams } from 'react-router-dom';
 import { ReloadOutlined } from '@ant-design/icons';
+import { useRecoilState } from 'recoil';
 const Setting = () => {
-  const { theme, setThemConfig } = useAuth();
+  const [theme, setTheme] = useRecoilState($THEME_C0NFIG);
+
   const { id: userId } = useParams();
   const [saving, setSaving] = React.useState(false);
   const update = (newTheme: ThemeConfig) => {
-    setThemConfig({
+    setTheme({
       ...(theme || {}),
       ...(newTheme || {}),
       token: {
@@ -29,17 +31,6 @@ const Setting = () => {
         ...(newTheme.token || {}),
       },
     });
-    localStorage.setItem(
-      'themeConfig',
-      JSON.stringify({
-        ...(theme || {}),
-        ...(newTheme || {}),
-        token: {
-          ...(theme.token || {}),
-          ...(newTheme.token || {}),
-        },
-      })
-    );
   };
 
   const onThemeChange = (mode: 'DARK' | 'LIGHT') => {
@@ -47,7 +38,7 @@ const Setting = () => {
   };
 
   const onReset = () => {
-    setThemConfig({
+    setTheme({
       ...theme,
       mode: 'LIGHT',
       isCompact: false,

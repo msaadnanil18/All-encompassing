@@ -8,7 +8,6 @@ const router = Router();
 
 router.use(authRouter);
 router.use(fileUploadRouter);
-router.use(verifyJWT);
 router.use(searchUsersRoutes);
 router.use('/chat-app', chartRouts);
 

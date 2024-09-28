@@ -45,8 +45,6 @@ export const emitEvent = (req: Request, event: any, users: any, data: any) => {
 export const getSokets = <users extends { _id: string }>(users: users[]) => {
   const sockets: string[] = [];
   (users || []).forEach((user) => {
-    console.log(user, '++++++++++users_______');
-
     const userSockets = userSocketIDS.get(user._id.toString());
     if (userSockets) {
       sockets.push(...Array.from(userSockets));

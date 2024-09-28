@@ -30,7 +30,7 @@ const Bootstrap = () => {
       theme={{
         ...config,
         token: {
-          ...config.token,
+          ...config?.token,
           colorBgBase: isDark ? '#212121' : '#f1ede6',
         },
       }}

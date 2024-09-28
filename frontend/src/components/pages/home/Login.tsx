@@ -8,8 +8,8 @@ const Login: React.FC = () => {
   const navigate = useNavigate();
   const { me, logIn, loading } = useAuth();
 
-  if (me?.user?._id) {
-    navigate(`/dash-board/${me?.user?._id}`);
+  if (me?._id) {
+    navigate(`/dash-board/${me?._id}`);
   }
 
   const formOnSubmit = async (value: Record<string, any>) => {

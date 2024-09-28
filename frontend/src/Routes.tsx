@@ -23,7 +23,7 @@ const TodoApp = React.lazy(
 
 const DashBoard = React.lazy(() => import('./components/pages/DashBoard'));
 const AppRoutes = () => {
-  useAuth();
+  // useAuth();
   return (
     <BrowserRouter>
       <QueryParamProvider adapter={ReactRouter6Adapter}>
