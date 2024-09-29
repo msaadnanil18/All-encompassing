@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { QueryParamProvider } from 'use-query-params';
 import { ReactRouter6Adapter } from 'use-query-params/adapters/react-router-6';
+
 const ResgisterUser = React.lazy(
   () => import('./components/pages/home/Create')
 );
@@ -21,7 +22,9 @@ const TodoApp = React.lazy(
 );
 
 const DashBoard = React.lazy(() => import('./components/pages/DashBoard'));
-
+const CommunityApp = React.lazy(
+  () => import('./components/pages/community/CommunityAppRoutes')
+);
 const AppRoutes = () => {
   return (
     <BrowserRouter>
@@ -34,6 +37,7 @@ const AppRoutes = () => {
           <Route path="/chat-app--/:id/*" Component={ChatApp} />
           <Route path="/setting--/:id" Component={Setting} />
           <Route path="/todo-app--/:id/*" Component={TodoApp} />
+          <Route path="/community-app--/:id/*" Component={CommunityApp} />
         </Routes>
       </QueryParamProvider>
     </BrowserRouter>

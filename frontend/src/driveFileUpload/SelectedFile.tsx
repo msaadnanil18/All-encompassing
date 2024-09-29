@@ -6,6 +6,7 @@ import {
   FileWordOutlined,
   FileZipOutlined,
   InfoCircleOutlined,
+  VideoCameraOutlined,
 } from '@ant-design/icons';
 import { Alert, Button, Tooltip } from 'antd';
 import React, { FC } from 'react';
@@ -17,14 +18,13 @@ export interface SelectedFilesProps {
 }
 
 export const getFileIcon = (mimeType: string) => {
-  if (mimeType.startsWith('image/')) return <FileImageOutlined />;
-  if (mimeType.startsWith('video/')) return <FileImageOutlined />;
-  if (mimeType === 'application/pdf') return <FilePdfOutlined />;
+  if (mimeType === 'image' || mimeType === 'jpg' || mimeType === 'jpeg')
+    return <FileImageOutlined />;
+  if (mimeType === 'mp4' || mimeType === 'video')
+    return <VideoCameraOutlined />;
+  if (mimeType === 'pdf') return <FilePdfOutlined />;
 
-  if (
-    mimeType === 'application/zip' ||
-    mimeType === 'application/x-rar-compressed'
-  )
+  if (mimeType === 'zip' || mimeType === 'x-rar-compressed')
     return <FileZipOutlined />;
   if (
     mimeType === 'application/vnd.ms-powerpoint' ||
@@ -35,10 +35,10 @@ export const getFileIcon = (mimeType: string) => {
     return <FilePptOutlined />;
 
   if (
-    mimeType === 'application/msword' ||
+    mimeType === 'msword' ||
     mimeType ===
-      'application/vnd.openxmlformats-officedocument.wordprocessingml.document' ||
-    mimeType === 'application/officedocument.wordprocessingml.document'
+      'vnd.openxmlformats-officedocument.wordprocessingml.document' ||
+    mimeType === 'officedocument.wordprocessingml.document'
   )
     return <FileWordOutlined />;
   return <FileOutlined />;
@@ -73,7 +73,7 @@ const SelectedFiles: FC<SelectedFilesProps> = ({ files, removeFile }) => {
               </div>
             </>
           }
-          icon={getFileIcon(selectedFile.resource_type || '')}
+          icon={getFileIcon(selectedFile.format || '')}
           type={selectedFile.error ? 'error' : 'success'}
         />
       ))}

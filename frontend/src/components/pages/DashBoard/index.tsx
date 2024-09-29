@@ -5,6 +5,7 @@ import {
   CheckCircleOutlined,
   SettingOutlined,
   LogoutOutlined,
+  UsergroupAddOutlined,
 } from '@ant-design/icons';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDarkMode } from '../../thems/useDarkMode';
@@ -22,14 +23,20 @@ const DashBoard = () => {
     {
       key: '1',
       icon: <MessageOutlined />,
-      label: <Typography.Text strong>Chat App</Typography.Text>,
+      label: <Typography.Text strong>Chat</Typography.Text>,
       onClick: () => navigate(`/chat-app--/${id}`),
     },
     {
       key: '2',
       icon: <CheckCircleOutlined />,
-      label: <Typography.Text strong>Todo App</Typography.Text>,
+      label: <Typography.Text strong>Project</Typography.Text>,
       onClick: () => navigate(`/todo-app--/${id}`),
+    },
+    {
+      key: '3',
+      icon: <UsergroupAddOutlined />,
+      label: <Typography.Text strong>Community</Typography.Text>,
+      onClick: () => navigate(`/community-app--/${id}`),
     },
     {
       key: '3',

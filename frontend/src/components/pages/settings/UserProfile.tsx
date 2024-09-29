@@ -6,7 +6,7 @@ import { ProfileEditService } from '../../services/auth';
 import { $ME } from '../../atoms/root';
 import { useRecoilValue } from 'recoil';
 const UserProfile = () => {
-  const [avatarUrl, setAvatarUrl] = React.useState<string>('');
+  const [avatarUrl, setAvatarUrl] = React.useState<string | null>(null);
   const me = useRecoilValue($ME);
 
   const updateProfile = async () => {

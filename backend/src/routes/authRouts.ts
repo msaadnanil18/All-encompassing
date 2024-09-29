@@ -24,5 +24,14 @@ authRouter.route('/init').post((req, res) => {
 });
 authRouter.route('/logout').post(logOutUser);
 authRouter.route('/update/theme-config').post(updateThemeConfig);
-authRouter.route('/profile/edit').post(Edit(User, {}));
+authRouter.route('/profile/edit').post(
+  Edit(User, {
+    filterQueryTransformer: async ({ user, filterQuery }) => {
+      return {
+        _id: user?._id,
+        ...filterQuery,
+      };
+    },
+  })
+);
 export default authRouter;
