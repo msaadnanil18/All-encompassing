@@ -1,4 +1,4 @@
-import { Button, Card } from 'antd';
+import { Button, Card, Typography } from 'antd';
 import React from 'react';
 import DriveFileUpload from '../../../driveFileUpload';
 import { ServiceErrorManager } from '../../../helpers/service';
@@ -19,7 +19,7 @@ const UserProfile = () => {
           query: { _id: me?._id },
         },
       }),
-      {}
+      { successMessage: 'Your avatar is updated' }
     );
   };
 
@@ -29,20 +29,19 @@ const UserProfile = () => {
       //className="w-full h-full"
     >
       <div className="w-80">
-        <h1>UserProfile</h1>
         <Card
           onClick={() =>
             document.querySelector<HTMLInputElement>('#file-upload')?.click()
           }
         >
           {avatarUrl ? (
-            <img src={avatarUrl} style={{ width: '100%', height: '100%' }} />
+            <img src={avatarUrl} style={{ width: '50%', height: '50%' }} />
           ) : (
-            'Avatar'
+            <Typography.Link>Click here to update your Avatar</Typography.Link>
           )}
         </Card>
+        {avatarUrl && <Button onClick={updateProfile}>Upload</Button>}
 
-        <Button onClick={updateProfile}>Upload</Button>
         <DriveFileUpload
           chooseFiles={(e) => setAvatarUrl(e?.[0]?.url)}
           buttonProps={{
