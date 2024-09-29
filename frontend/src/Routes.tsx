@@ -15,13 +15,16 @@ const LoginUser = React.lazy(() => import('./components/pages/home/Login'));
 const ChatApp = React.lazy(
   () => import('./components/pages/chartApp/ChatAppRoutes')
 );
-const Setting = React.lazy(() => import('./components/pages/chartApp/Setting'));
+const Setting = React.lazy(() => import('./components/pages/settings'));
+
 const TodoApp = React.lazy(
   () => import('./components/pages/todoApp/TodoAppRoutes')
 );
 
 const DashBoard = React.lazy(() => import('./components/pages/DashBoard'));
-
+const CommunityApp = React.lazy(
+  () => import('./components/pages/community/CommunityAppRoutes')
+);
 const AppRoutes = () => {
   return (
     <BrowserRouter>
@@ -34,6 +37,7 @@ const AppRoutes = () => {
           <Route path="/chat-app--/:id/*" Component={ChatApp} />
           <Route path="/setting--/:id" Component={Setting} />
           <Route path="/todo-app--/:id/*" Component={TodoApp} />
+          <Route path="/community-app--/:id/*" Component={CommunityApp} />
         </Routes>
       </QueryParamProvider>
     </BrowserRouter>

@@ -11,13 +11,12 @@ import {
 import { $THEME_C0NFIG, ThemeConfig } from '../../atoms/root';
 import React, { useId } from 'react';
 import { debounce } from 'lodash-es';
-
 import { updateThemeConfig } from '../../services/auth';
 import { ServiceErrorManager } from '../../../helpers/service';
 import { useParams } from 'react-router-dom';
 import { ReloadOutlined } from '@ant-design/icons';
 import { useRecoilState } from 'recoil';
-const Setting = () => {
+const DisplayAndTheme = () => {
   const [theme, setTheme] = useRecoilState($THEME_C0NFIG);
 
   const { id: userId } = useParams();
@@ -82,7 +81,10 @@ const Setting = () => {
   const borderRadius =
     theme?.token?.borderRadius || antdTheme?.defaultSeed?.borderRadius;
   return (
-    <Card className=" w-full h-full">
+    <Card
+      // className=" w-full h-full"
+      className="inline-block"
+    >
       <Form layout="vertical" onFinish={onSave} className="w-80">
         <Form.Item label="Display Size">
           <Radio.Group
@@ -161,4 +163,4 @@ const Setting = () => {
   );
 };
 
-export default Setting;
+export default DisplayAndTheme;
