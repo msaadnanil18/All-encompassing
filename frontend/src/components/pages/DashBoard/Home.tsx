@@ -1,37 +1,17 @@
-import { Button } from 'antd';
-import { useParams, useNavigate } from 'react-router-dom';
-import { LogoutOutlined, SettingOutlined } from '@ant-design/icons';
-import { useAuth } from '../../hooks/useAuth';
+import { Card, Typography } from 'antd';
+import { motion } from 'framer-motion';
 
 const Home = () => {
-  const { id } = useParams();
-  const navigate = useNavigate();
-  const { logOut } = useAuth();
   return (
-    <div>
-      <Button
-        type="primary"
-        onClick={() => {
-          navigate(`/chat-app--/${id}`);
-        }}
-      >
-        Chat app
-      </Button>
-      <Button
-        onClick={() => {
-          navigate(`/todo-app--/${id}`);
-        }}
-      >
-        Todo app
-      </Button>
-      <div style={{ float: 'right' }} className=" space-x-1">
-        <Button icon={<LogoutOutlined />} onClick={logOut} />
-        <Button
-          onClick={() => navigate(`/setting--/${id}`)}
-          icon={<SettingOutlined />}
-        />
-      </div>
-    </div>
+    <motion.div
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.4, delay: 0.2 }}
+    >
+      <Card>
+        <Typography.Title level={4}>Welcome to the Dashboard</Typography.Title>
+      </Card>
+    </motion.div>
   );
 };
 

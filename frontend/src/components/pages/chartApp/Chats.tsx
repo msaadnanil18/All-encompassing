@@ -11,6 +11,7 @@ import { useDarkMode } from '../../thems/useDarkMode';
 import EmojiPiker from '../../emojiPicker/EmojiPiker';
 import DriveFileUpload from '../../../driveFileUpload';
 import { addFiles } from '../../types/addFiles';
+import { motion } from 'framer-motion';
 import dayjs from 'dayjs';
 
 interface ChartProps {
@@ -27,7 +28,7 @@ interface ChartProps {
   userId: string | undefined;
 }
 
-const Chart = ({
+const Chats = ({
   handleOnMessageChange,
   emojiPikerProps,
   emojiToggleRef,
@@ -43,7 +44,7 @@ const Chart = ({
   return (
     <div className="relative h-screen flex flex-col">
       <div
-        className="flex-1 p-4  overflow-y-scroll"
+        className="flex-1 p-4  overflow-y-auto"
         style={{
           backgroundColor: isDark ? '#1f1f1f' : '#e5ddd5',
           width: '56rem',
@@ -52,23 +53,29 @@ const Chart = ({
         {(chats || []).map((msg, index: number) => {
           const isMyMessage = msg.sender === userId;
           return (
-            <div
-              key={index}
-              className={`p-3 rounded-lg shadow-md max-w-xs mb-3 ${
-                isMyMessage ? 'ml-auto bg-green-200' : 'mr-auto bg-white'
-              }`}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
             >
-              <p className="text-sm">{msg.content}</p>
-              <small
-                className={`block text-xs mt-1 ${
-                  isMyMessage
-                    ? 'text-right text-blue-500'
-                    : 'text-left text-gray-500'
+              <div
+                key={index}
+                className={`p-3 rounded-lg shadow-md max-w-xs mb-3 ${
+                  isMyMessage ? 'ml-auto bg-green-200' : 'mr-auto bg-white'
                 }`}
               >
-                {dayjs(msg.updatedAt).format('DD/MM/YYYY HH:mm')}
-              </small>
-            </div>
+                <p className="text-sm">{msg.content}</p>
+                <small
+                  className={`block text-xs mt-1 ${
+                    isMyMessage
+                      ? 'text-right text-blue-500'
+                      : 'text-left text-gray-500'
+                  }`}
+                >
+                  {dayjs(msg.updatedAt).format('DD/MM/YYYY HH:mm')}
+                </small>
+              </div>
+            </motion.div>
           );
         })}
       </div>
@@ -117,4 +124,4 @@ const Chart = ({
   );
 };
 
-export default Chart;
+export default Chats;
