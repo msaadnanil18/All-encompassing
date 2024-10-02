@@ -21,7 +21,7 @@ export const $THEME_C0NFIG = atom<ThemeConfig>({
   default: {},
 });
 
-export const $ME = atom<PartialUser | null>({
+export const $ME = atom<User | null>({
   key: 'auth:me',
   default: null,
 });

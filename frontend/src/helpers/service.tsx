@@ -36,7 +36,6 @@ export const Service =
 export const isServiceError = (e: AxiosError<ExceptionRes>) =>
   e.response?.data && e.response.data.error;
 export const handleError = (message: string) => (e: any) => {
-  console.log(e);
   const description =
     isServiceError(e) && e.response ? (
       <>

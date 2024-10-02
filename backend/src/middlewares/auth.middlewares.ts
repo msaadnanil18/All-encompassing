@@ -17,7 +17,7 @@ export const verifyJWT = asyncHandler(async (req, res, next) => {
       process.env.ACCESS_TOKEN_SECRET as string
     ) as { _id: ObjectId };
     const user = await req.db.User.findById(decodeToken?._id).select(
-      '-password -isVerified -refreshToken -themConfig'
+      '-password -isVerified -refreshToken'
     );
     if (!user) {
       throw new ApiError(401, 'Invalid access token');

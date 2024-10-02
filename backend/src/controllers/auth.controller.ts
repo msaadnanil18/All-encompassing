@@ -149,7 +149,7 @@ const loginUser = asyncHandler(async (req, res) => {
           new ApiResponse(
             200,
             { user: loggendInUser, accessToken, refreshToken },
-            'User logied In successfully'
+            `Welcome ${loggendInUser?.name} you are logied In successfully`
           )
         );
     } else {
@@ -158,7 +158,7 @@ const loginUser = asyncHandler(async (req, res) => {
         .json(new ApiResponse(400, {}, 'Invalid credentials'));
     }
   } catch (error) {
-    console.log(error, 'herere______');
+    console.log(error, '______error_____');
   }
 });
 
@@ -195,4 +195,27 @@ const updateThemeConfig = asyncHandler(async (req, res) => {
   }
 });
 
-export { registerUser, verifyEmail, loginUser, updateThemeConfig };
+const logOutUser = asyncHandler(async (req, res) => {
+  User.findByIdAndUpdate(
+    req.user._id,
+    {
+      $set: {
+        refreshToken: 1,
+      },
+    },
+    {
+      new: true,
+    }
+  );
+  const options = {
+    httpOnly: true,
+    secure: true,
+  };
+  return res
+    .status(200)
+    .clearCookie('accessToken', options)
+    .clearCookie('accessToken', options)
+    .json(new ApiResponse(200, {}, 'User logged out'));
+});
+
+export { registerUser, verifyEmail, loginUser, updateThemeConfig, logOutUser };

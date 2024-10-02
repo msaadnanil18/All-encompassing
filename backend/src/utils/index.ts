@@ -1,5 +1,8 @@
+import { log } from 'console';
+import { Request } from 'express';
 import jwt from 'jsonwebtoken';
 import nodemailer from 'nodemailer';
+import { userSocketIDS } from '../sokets/socket';
 
 export const generateVerificationToken = (userId: string): string => {
   const token = jwt.sign(
@@ -33,4 +36,19 @@ export const sendVerificationEmail = async (email: string, token: string) => {
   } catch (error) {
     console.log('mailOptions', error);
   }
+};
+
+export const emitEvent = (req: Request, event: any, users: any, data: any) => {
+  log('eminthg');
+};
+
+export const getSokets = <users extends { _id: string }>(users: users[]) => {
+  const sockets: string[] = [];
+  (users || []).forEach((user) => {
+    const userSockets = userSocketIDS.get(user._id.toString());
+    if (userSockets) {
+      sockets.push(...Array.from(userSockets));
+    }
+  });
+  return sockets;
 };

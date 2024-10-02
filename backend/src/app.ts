@@ -51,9 +51,9 @@ app.use(
     cookie: { secure: false },
   })
 );
+initialize_socket_setup(io);
 app.use(dbMiddleware);
 
 app.use('/api', router);
-initialize_socket_setup(io);
 
 export { server };

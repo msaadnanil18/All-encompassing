@@ -1,30 +1,72 @@
 import React from 'react';
-import { useRecoilValue } from 'recoil';
-import { $ME } from '../../atoms/root';
-import { useAuth } from '../../hooks/useAuth';
-import { Button } from 'antd';
-import Chart from './Chart';
-import { SettingOutlined } from '@ant-design/icons';
-import { useNavigate, useParams } from 'react-router-dom';
-const Index: React.FC = () => {
-  const navigate = useNavigate();
+import { Row, Col } from 'antd';
+import Chats from './Chats';
+import { useParams } from 'react-router-dom';
+import UserListTab from './UserListTab';
+import useChats from './hooks/useChats';
+
+const chartApp: React.FC = () => {
   const { id } = useParams();
-  const { me, logOut } = useAuth();
-  const token = localStorage.getItem('token');
-  // console.log(token, 'tokent');
+
+  const {
+    actions: {
+      handelOnCreateChatSelect,
+      handelOnSearchChange,
+      handleOnMessageChange,
+      emojiPikerProps,
+      emojiToggleRef,
+      sendChatMessage,
+      setAttachments,
+      setMessage,
+    },
+    states: {
+      searchOptions,
+      searchTerm,
+      chatList,
+      chatListLoading,
+      message,
+      chats,
+    },
+    togglers: {
+      selectUserToChat: { openSearchBar, closeSearchBar, isOpenSearchBar },
+    },
+  } = useChats({ userId: id });
 
   return (
-    <div>
-      <Button onClick={logOut}>Log out</Button>
-      <Button
-        onClick={() => navigate(`/setting/${id}`)}
-        icon={<SettingOutlined />}
-      >
-        Setting
-      </Button>
-      <Chart id={id} />
-    </div>
+    <Row gutter={[0, 0]}>
+      <Col sm={8}>
+        <UserListTab
+          {...{
+            handelOnCreateChatSelect,
+            openSearchBar,
+            closeSearchBar,
+            isOpenSearchBar,
+            searchOptions,
+            handelOnSearchChange,
+            searchTerm,
+            chatList,
+            chatListLoading,
+            userId: id,
+          }}
+        />
+      </Col>
+      <Col sm={14}>
+        <Chats
+          {...{
+            handleOnMessageChange,
+            emojiPikerProps,
+            emojiToggleRef,
+            sendChatMessage,
+            setAttachments,
+            setMessage,
+            message,
+            chats,
+            userId: id,
+          }}
+        />
+      </Col>
+    </Row>
   );
 };
 
-export default Index;
+export default chartApp;

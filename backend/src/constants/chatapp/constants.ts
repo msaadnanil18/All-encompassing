@@ -11,3 +11,6 @@ export const ChatEventEnum = Object.freeze({
 });
 
 export const AvailableChatEvents = Object.values(ChatEventEnum);
+
+export const ALERT = 'ALERT';
+export const REFETCH_CHATS = 'REFETCH_CHATS';

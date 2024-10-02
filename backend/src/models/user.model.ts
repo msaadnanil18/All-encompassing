@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import { IUser } from '../interfaces/auth';
 import bcrypt from 'bcrypt';
 import Jwt from 'jsonwebtoken';
+import mongoosePaginate from 'mongoose-paginate-v2';
 const { Schema } = mongoose;
 
 const userSchema = new Schema<IUser>(
@@ -22,6 +23,7 @@ const userSchema = new Schema<IUser>(
       type: String,
       required: true,
     },
+    avatar: { type: String },
     isVerified: { type: Boolean, default: false },
     refreshToken: {
       type: String,
@@ -86,5 +88,7 @@ userSchema.methods.generateRefreshToken = function (): string {
     }
   );
 };
+
+userSchema.plugin(mongoosePaginate);
 
 export const User = mongoose.model<IUser>('User', userSchema);

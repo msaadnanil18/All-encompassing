@@ -5,7 +5,7 @@ const LoadingSpinner: React.FC = () => {
   const {
     token: { colorBgLayout },
   } = theme.useToken();
-  console.log(colorBgLayout);
+
   return (
     <div style={{ backgroundColor: colorBgLayout, ...styles.spinnerContainer }}>
       <div style={styles.spinner} />
