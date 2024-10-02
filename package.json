@@ -9,7 +9,7 @@
     "install-all": "npm-run-all -p install-frontend install-backend",
     "install-frontend": "npm install --prefix frontend",
     "install-backend": "npm install --prefix backend",
-    "dev": "concurrently \"npm run dev --prefix frontend\" \"npm run dev --prefix backend\"",
+    "dev": "concurrently \"npm run dev --prefix=frontend\" \"npm run dev --prefix=backend\"",
     "prepare": "husky install",
     "lint": "eslint .",
     "precommit": "lint-staged"
@@ -20,6 +20,7 @@
   "devDependencies": {
     "@commitlint/cli": "^19.5.0",
     "@commitlint/config-conventional": "^19.5.0",
+    "concurrently": "^9.0.1",
     "husky": "^9.1.6",
     "lint-staged": "^15.2.10",
     "npm-run-all": "^4.1.5"
