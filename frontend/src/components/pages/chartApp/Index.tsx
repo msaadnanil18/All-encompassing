@@ -1,10 +1,9 @@
 import React from 'react';
 import { Row, Col } from 'antd';
-import Chart from './Chart';
+import Chats from './Chats';
 import { useParams } from 'react-router-dom';
 import UserListTab from './UserListTab';
 import useChats from './hooks/useChats';
-import { ChatListItemInterface } from '../../types/charts';
 
 const chartApp: React.FC = () => {
   const { id } = useParams();
@@ -52,7 +51,7 @@ const chartApp: React.FC = () => {
         />
       </Col>
       <Col sm={14}>
-        <Chart
+        <Chats
           {...{
             handleOnMessageChange,
             emojiPikerProps,

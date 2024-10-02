@@ -1,10 +1,10 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
-const app = React.lazy(() => import('./Index'));
+const App = React.lazy(() => import('./Index'));
 const ChatAppRoutes: React.FC = () => {
   return (
     <Routes>
-      <Route path="/" Component={app} />
+      <Route path="/" Component={App} />
     </Routes>
   );
 };
