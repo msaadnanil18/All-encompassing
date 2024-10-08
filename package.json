@@ -15,7 +15,12 @@
     "precommit": "lint-staged"
   },
   "lint-staged": {
-    "**/*": "prettier --write --ignore-unknown"
+    "*.js": "prettier --write --ignore-unknown",
+    "*.ts": "prettier --write --ignore-unknown",
+    "*.jsx": "prettier --write --ignore-unknown",
+    "*.tsx": "prettier --write --ignore-unknown",
+    "*.json": "prettier --write --ignore-unknown",
+    "*.md": "prettier --write --ignore-unknown"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.5.0",
