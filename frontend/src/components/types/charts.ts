@@ -13,7 +13,9 @@ export interface ChatListItemInterface {
 
 export interface ChatMessageInterface {
   _id?: string;
-  sender?: string | Pick<User, '_id' | 'avatar' | 'email' | 'username'>;
+  sender?:
+    | Pick<User, '_id' | 'avatar' | 'email' | 'username' | 'name'>
+    | string;
   content?: string;
   chat?: string;
   attachments?: {

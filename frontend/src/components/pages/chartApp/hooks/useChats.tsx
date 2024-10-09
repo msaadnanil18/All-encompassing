@@ -54,7 +54,7 @@ const useChats = ({ userId }: { userId: string | undefined }) => {
   const handelOnSearchChange = useCallback(
     debounce((value: string) => {
       setSearchTerm(value);
-    }, 10),
+    }, 1500),
     []
   );
 
@@ -178,7 +178,7 @@ const useChats = ({ userId }: { userId: string | undefined }) => {
   }, []);
 
   const onNewChat = useCallback((chat: any) => {
-    setChats((prev) => [chat.message, ...prev]);
+    setChats((prev) => [...prev, chat.message]);
   }, []);
 
   const sendChatMessage = useCallback(async () => {
@@ -191,6 +191,7 @@ const useChats = ({ userId }: { userId: string | undefined }) => {
     });
 
     setChats((prev) => [
+      ...prev,
       {
         sender: userId,
         content: message,
@@ -198,7 +199,6 @@ const useChats = ({ userId }: { userId: string | undefined }) => {
           url: file.url,
         })),
       },
-      ...prev,
     ]);
 
     try {
@@ -249,14 +249,6 @@ const useChats = ({ userId }: { userId: string | undefined }) => {
     const selectedEmoji = (event as any).emoji;
 
     setMessage((prevMessage) => prevMessage + selectedEmoji);
-
-    setChats((prev) => [
-      {
-        content: selectedEmoji,
-        attachments: attachments.map((file) => ({ url: file.url })),
-      },
-      ...prev,
-    ]);
   }, []);
 
   const emojiPikerProps = useMemo(
@@ -297,7 +289,6 @@ const useChats = ({ userId }: { userId: string | undefined }) => {
       emojiToggleRef,
       sendChatMessage,
       setAttachments,
-      setMessage,
     }),
     [
       handelOnSearchChange,
@@ -307,7 +298,6 @@ const useChats = ({ userId }: { userId: string | undefined }) => {
       emojiToggleRef,
       sendChatMessage,
       setAttachments,
-      setMessage,
     ]
   );
 
