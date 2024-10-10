@@ -43,7 +43,7 @@ export const useAuth = () => {
     await ServiceErrorManager(logoutService({}), {
       successMessage: `${me?.name} is logout successfully`,
     });
-    setTimeout(() => (window.location.href = '/'), 80);
+    setTimeout(() => window.location.reload(), 100);
   };
   return { logIn, logOut, me, loading, theme, setTheme };
 };

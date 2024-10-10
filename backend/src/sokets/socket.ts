@@ -9,9 +9,9 @@ import { ApiError } from '../utils/ApiError';
 import { User } from '../models/user.model';
 import mongoose, { ObjectId } from 'mongoose';
 import dayjs from 'dayjs';
-import { log } from 'console';
 import { getSokets } from '../utils';
 import { Message } from '../models/chartApp/message.models';
+import { Chat } from '../models/chartApp/chat.model';
 
 export const userSocketIDS = new Map<string, Set<string>>();
 
@@ -45,7 +45,12 @@ const mountJoinChatEvent = (socket: Socket) => {
 
       try {
         await Message.create(messageForDB);
-
+        await Chat.findByIdAndUpdate(
+          { _id },
+          {
+            $set: { updatedAt: dayjs().toISOString() },
+          }
+        );
         const usersInSocket = getSokets(members);
 
         console.log(usersInSocket, '______________$________');

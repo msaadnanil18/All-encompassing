@@ -45,6 +45,7 @@ const useChats = ({ userId }: { userId: string | undefined }) => {
   const [message, setMessage] = useState<string>('');
   const [chats, setChats] = useState<ChatMessageInterface[]>([]);
   const [attachments, setAttachments] = useState<addFiles[]>([]);
+  const [chatLoading, setChatLoading] = useState<boolean>(false);
   const {
     open: openSearchBar,
     close: closeSearchBar,
@@ -54,12 +55,13 @@ const useChats = ({ userId }: { userId: string | undefined }) => {
   const handelOnSearchChange = useCallback(
     debounce((value: string) => {
       setSearchTerm(value);
-    }, 10),
+    }, 1500),
     []
   );
 
   const fetchMessageList = async () => {
-    const [err, data] = await ServiceErrorManager(
+    setChatLoading(true);
+    ServiceErrorManager(
       MessageListService({
         data: {
           query: {
@@ -71,11 +73,10 @@ const useChats = ({ userId }: { userId: string | undefined }) => {
         },
       }),
       { failureMessage: 'Error while fetch user for chat' }
-    );
-
-    if (err || !data) return;
-
-    setChats(data?.docs);
+    )
+      .then(([_, data]) => setChats(data?.docs))
+      .catch((err) => console.log(err))
+      .finally(() => setChatLoading(false));
   };
 
   useEffect(() => {
@@ -146,16 +147,17 @@ const useChats = ({ userId }: { userId: string | undefined }) => {
         data: {
           payload: {},
           options: {
+            sort: { updatedAt: -1 },
             populate: [
               {
                 path: 'members',
 
                 select: '-themConfig -refreshToken -password',
               },
-              {
-                path: 'creator',
-                match: { name: 'pintu' },
-              },
+              // {
+              //   path: 'creator',
+              //   match: { name: 'pintu' },
+              // },
             ],
           },
           query: { members: userId },
@@ -178,7 +180,7 @@ const useChats = ({ userId }: { userId: string | undefined }) => {
   }, []);
 
   const onNewChat = useCallback((chat: any) => {
-    setChats((prev) => [chat.message, ...prev]);
+    setChats((prev) => [...prev, chat.message]);
   }, []);
 
   const sendChatMessage = useCallback(async () => {
@@ -191,6 +193,7 @@ const useChats = ({ userId }: { userId: string | undefined }) => {
     });
 
     setChats((prev) => [
+      ...prev,
       {
         sender: userId,
         content: message,
@@ -198,7 +201,6 @@ const useChats = ({ userId }: { userId: string | undefined }) => {
           url: file.url,
         })),
       },
-      ...prev,
     ]);
 
     try {
@@ -249,14 +251,6 @@ const useChats = ({ userId }: { userId: string | undefined }) => {
     const selectedEmoji = (event as any).emoji;
 
     setMessage((prevMessage) => prevMessage + selectedEmoji);
-
-    setChats((prev) => [
-      {
-        content: selectedEmoji,
-        attachments: attachments.map((file) => ({ url: file.url })),
-      },
-      ...prev,
-    ]);
   }, []);
 
   const emojiPikerProps = useMemo(
@@ -297,7 +291,6 @@ const useChats = ({ userId }: { userId: string | undefined }) => {
       emojiToggleRef,
       sendChatMessage,
       setAttachments,
-      setMessage,
     }),
     [
       handelOnSearchChange,
@@ -307,7 +300,6 @@ const useChats = ({ userId }: { userId: string | undefined }) => {
       emojiToggleRef,
       sendChatMessage,
       setAttachments,
-      setMessage,
     ]
   );
 
@@ -319,8 +311,17 @@ const useChats = ({ userId }: { userId: string | undefined }) => {
       chatListLoading,
       message,
       chats,
+      chatLoading,
     }),
-    [searchOptions, searchTerm, chatListLoading, chatList, message, chats]
+    [
+      searchOptions,
+      searchTerm,
+      chatListLoading,
+      chatList,
+      message,
+      chats,
+      chatLoading,
+    ]
   );
   return { togglers, actions, states };
 };
