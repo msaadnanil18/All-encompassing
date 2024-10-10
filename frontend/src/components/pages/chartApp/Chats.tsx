@@ -2,7 +2,7 @@ import { SmileOutlined } from '@ant-design/icons';
 import MessageInput from './MessageInput';
 import MessageSendButton from './MessageSendButton';
 import React, { Ref } from 'react';
-import { Button, Card, Input } from 'antd';
+import { Avatar, Button, Card, Empty, Input, Skeleton } from 'antd';
 import { ChatMessageInterface } from '../../types/charts';
 import { useDarkMode } from '../../thems/useDarkMode';
 import EmojiPiker from '../../emojiPicker/EmojiPiker';
@@ -11,6 +11,7 @@ import { addFiles } from '../../types/addFiles';
 import Messages from './Messages';
 
 interface ChartProps {
+  chatLoading: boolean;
   emojiPikerProps: any;
   emojiToggleRef: Ref<{ toggle: () => void }>;
   handleOnMessageChange: (
@@ -33,19 +34,44 @@ const Chats = ({
   sendChatMessage,
   chats,
   userId,
+  chatLoading,
 }: ChartProps) => {
   const isDark = useDarkMode();
 
   return (
     <div className="relative flex flex-col">
-      {(chats || []).map((chat) => (
-        <Messages {...{ chat, userId, isDark }} key={chat._id} />
-      ))}
+      {!chats.length ? (
+        <div className=" grid place-content-center mt-36">
+          <Empty description="No chats please select user" />
+        </div>
+      ) : chatLoading ? (
+        Array.from({ length: 20 }, (_, i) => i).map((_, i) => (
+          <Card
+            bordered={false}
+            size="small"
+            key={i}
+            style={{
+              alignSelf: 'flex-end',
+              width: 100,
+              height: 50,
+              backgroundColor: isDark ? '#141414' : '#f0f2f5',
+              color: 'black',
+              borderRadius: '5px',
+              padding: '0.5rem',
+              margin: '10px',
+            }}
+            loading={true}
+          />
+        ))
+      ) : (
+        (chats || []).map((chat) => (
+          <Messages {...{ chat, userId, isDark }} key={chat._id} />
+        ))
+      )}
 
       <div style={{ height: '20rem' }}>
         <EmojiPiker {...emojiPikerProps} />
       </div>
-
       <div className="fixed bottom-0" style={{ width: '67%' }}>
         <Card
           style={{

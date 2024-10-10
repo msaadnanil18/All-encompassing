@@ -3,7 +3,6 @@ import React, { useMemo } from 'react';
 import { SettingOutlined, UserOutlined } from '@ant-design/icons';
 import DisplayAndTheme from './DisplayAndTheme';
 import UserProfile from './UserProfile';
-import { useDarkMode } from '../../thems/useDarkMode';
 import { useSearchParams } from 'react-router-dom';
 const { useBreakpoint } = Grid;
 interface SettingsTabs extends TabPaneProps {
@@ -11,7 +10,6 @@ interface SettingsTabs extends TabPaneProps {
   label: React.ReactNode;
 }
 const Settings = () => {
-  const isDark = useDarkMode();
   const [searchParams, setSearchParams] = useSearchParams();
   const handelOnTabsChange = (newActiveKey: string) => {
     setSearchParams({ tab: newActiveKey });

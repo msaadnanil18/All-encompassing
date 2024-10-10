@@ -14,6 +14,7 @@ import { addFiles } from '../../types/addFiles';
 import Chats from './Chats';
 
 const UserListTab: React.FC<{
+  chatLoading: boolean;
   handelOnCreateChatSelect: (r: string) => Promise<void>;
   isOpenSearchBar: boolean;
   searchTerm: string;
@@ -52,6 +53,7 @@ const UserListTab: React.FC<{
   chatListLoading,
   chatList,
   userId,
+  chatLoading,
 }) => {
   const isDark = useDarkMode();
   const [_, setSearchParams] = useSearchParams();
@@ -103,9 +105,8 @@ const UserListTab: React.FC<{
             }
             return (
               <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.4, delay: 0.2 }}
+                initial={{ opacity: 0, x: '-100%' }}
+                whileInView={{ opacity: 1, x: 0 }}
               >
                 <List.Item
                   onClick={() => {
@@ -154,6 +155,7 @@ const UserListTab: React.FC<{
                 message,
                 chats,
                 userId,
+                chatLoading,
               }}
             />
           </div>

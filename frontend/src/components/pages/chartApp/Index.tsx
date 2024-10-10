@@ -1,6 +1,4 @@
 import React from 'react';
-import { Row, Col } from 'antd';
-import Chats from './Chats';
 import { useParams } from 'react-router-dom';
 import UserListTab from './UserListTab';
 import useChats from './hooks/useChats';
@@ -25,6 +23,7 @@ const chartApp: React.FC = () => {
       chatListLoading,
       message,
       chats,
+      chatLoading,
     },
     togglers: {
       selectUserToChat: { openSearchBar, closeSearchBar, isOpenSearchBar },
@@ -51,6 +50,7 @@ const chartApp: React.FC = () => {
         setAttachments,
         message,
         chats,
+        chatLoading,
       }}
     />
   );
