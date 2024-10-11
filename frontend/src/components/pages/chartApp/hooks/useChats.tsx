@@ -55,7 +55,7 @@ const useChats = ({ userId }: { userId: string | undefined }) => {
   const handelOnSearchChange = useCallback(
     debounce((value: string) => {
       setSearchTerm(value);
-    }, 1500),
+    }, 15),
     []
   );
 

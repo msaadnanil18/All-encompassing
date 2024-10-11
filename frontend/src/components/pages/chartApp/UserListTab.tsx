@@ -3,58 +3,39 @@ import { Layout, List, Avatar, Grid, AutoCompleteProps } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import UserListHeader from './UserListHeader';
 import { useDarkMode } from '../../thems/useDarkMode';
-import {
-  ChatListItemInterface,
-  ChatMessageInterface,
-} from '../../types/charts';
 const { Content, Sider } = Layout;
 import { useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { addFiles } from '../../types/addFiles';
 import Chats from './Chats';
+import useChats from './hooks/useChats';
 
 const UserListTab: React.FC<{
-  chatLoading: boolean;
-  handelOnCreateChatSelect: (r: string) => Promise<void>;
-  isOpenSearchBar: boolean;
-  searchTerm: string;
-  closeSearchBar: () => void;
-  openSearchBar: () => void;
-  searchOptions: AutoCompleteProps['options'];
-  handelOnSearchChange: (r: string) => void;
-  chatList: ChatListItemInterface[];
-  chatListLoading: boolean;
   userId: string | undefined;
-  emojiPikerProps: any;
-  emojiToggleRef: Ref<{ toggle: () => void }>;
-  handleOnMessageChange: (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => void;
-  message: string;
+}> = ({ userId }) => {
+  const {
+    actions: {
+      handelOnCreateChatSelect,
+      handelOnSearchChange,
+      handleOnMessageChange,
+      emojiPikerProps,
+      emojiToggleRef,
+      sendChatMessage,
+      setAttachments,
+    },
+    states: {
+      searchOptions,
+      searchTerm,
+      chatList,
+      chatListLoading,
+      message,
+      chats,
+      chatLoading,
+    },
+    togglers: {
+      selectUserToChat: { openSearchBar, closeSearchBar, isOpenSearchBar },
+    },
+  } = useChats({ userId });
 
-  setAttachments: React.Dispatch<React.SetStateAction<addFiles[]>>;
-  sendChatMessage: () => void;
-  chats: ChatMessageInterface[];
-}> = ({
-  handelOnCreateChatSelect,
-  isOpenSearchBar,
-  closeSearchBar,
-  openSearchBar,
-  searchOptions,
-  handelOnSearchChange,
-  handleOnMessageChange,
-  emojiPikerProps,
-  emojiToggleRef,
-  message,
-  setAttachments,
-  sendChatMessage,
-  chats,
-  searchTerm,
-  chatListLoading,
-  chatList,
-  userId,
-  chatLoading,
-}) => {
   const isDark = useDarkMode();
   const [_, setSearchParams] = useSearchParams();
 

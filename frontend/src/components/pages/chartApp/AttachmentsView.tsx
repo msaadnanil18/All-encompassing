@@ -1,8 +1,11 @@
 import { Modal } from 'antd';
-import React from 'react';
+import React, { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { $THEME_C0NFIG } from '../../atoms/root';
 import { SendOutlined } from '@ant-design/icons';
+import './chats.css';
+import { addFiles } from '../../types/addFiles';
+import RenderAttachments from '../../../driveFileUpload/ReanderAttachments.';
 
 const AttachmentsView: React.FC<{
   isModalOpen: boolean;
@@ -10,67 +13,65 @@ const AttachmentsView: React.FC<{
   onChange: React.ChangeEventHandler;
   value: string;
   send: () => void;
+  attachments: addFiles[];
 }> = (prop) => {
-  const { isModalOpen, setIsModalOpen, value, onChange, send } = prop;
+  const { isModalOpen, setIsModalOpen, value, onChange, send, attachments } =
+    prop;
   const theme = useRecoilValue($THEME_C0NFIG);
 
-  React.useEffect(() => {
-    const inputField = document.querySelector(
-      '.input-field'
-    ) as HTMLInputElement | null;
-    const inputLabel = document.querySelector(
-      '.input-label'
-    ) as HTMLLabelElement | null;
-    const inputHighlight = document.querySelector(
-      '.input-highlight'
-    ) as HTMLSpanElement | null;
-
-    if (
-      inputField &&
-      inputLabel &&
-      inputHighlight &&
-      theme.token?.colorPrimary
-    ) {
-      inputField?.addEventListener('focus', () => {
-        inputLabel!.style.color = (theme.token?.colorPrimary).toString();
-        inputHighlight!.style.backgroundColor =
-          (theme.token?.colorPrimary).toString();
-      });
-      inputField?.addEventListener('blur', () => {
-        inputLabel!.style.color = '#ccc';
-        inputHighlight!.style.backgroundColor = '#ccc';
-      });
-    }
-  }, [theme]);
+  const [isFocused, setIsFocused] = useState(false);
 
   return (
     <Modal
       centered
       open={isModalOpen}
       cancelButtonProps={{ style: { visibility: 'hidden' } }}
-      onOk={() => send()}
-      okButtonProps={{ icon: <SendOutlined /> }}
+      onOk={() => {
+        send();
+        setIsModalOpen(false);
+      }}
+      okButtonProps={{
+        icon: <SendOutlined />,
+        ...(value.trim().length > 0 ? {} : { style: { visibility: 'hidden' } }),
+      }}
       okText="Send"
       onCancel={() => setIsModalOpen(false)}
     >
+      {(attachments || []).map((file, index) => (
+        <div>
+          <RenderAttachments
+            width={'200px'}
+            height={'150px'}
+            key={index}
+            url={file.url}
+          />
+        </div>
+      ))}
       <div className="input-container">
         <input
           value={value}
           onChange={onChange}
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setIsFocused(false)}
           className="input-field"
           type="text"
         />
-        <label htmlFor="input-field" className="input-label">
+        <label
+          htmlFor="input-field"
+          className="input-label"
+          style={{
+            color: isFocused ? theme.token?.colorPrimary : '#ccc',
+          }}
+        >
           Captions
         </label>
-        <span className="input-highlight"></span>
+        <span
+          className="input-highlight"
+          style={{
+            backgroundColor: isFocused ? theme.token?.colorPrimary : '#ccc',
+          }}
+        ></span>
       </div>
-
-      {/* <input
-      placeholder="Caption"
-      className="block w-full p-2.5 text-base border-b-2 border-gray-300 outline-none bg-transparent focus:ring-0 focus:border-blue-500"
-      type="text"
-    /> */}
     </Modal>
   );
 };

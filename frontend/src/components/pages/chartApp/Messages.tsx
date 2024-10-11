@@ -4,6 +4,7 @@ import dayjs from 'dayjs';
 import { ChatMessageInterface } from '../../types/charts';
 import { Card, Typography } from 'antd';
 import relativeTime from 'dayjs/plugin/relativeTime';
+import RenderAttachments from '../../../driveFileUpload/ReanderAttachments.';
 dayjs.extend(relativeTime);
 
 const Messages = ({
@@ -42,13 +43,19 @@ const Messages = ({
             {(chat.sender as { name: string })?.name}
           </Typography.Text>
         )}
+        {chat.attachments?.map((file) => (
+          <RenderAttachments
+            key={file._id}
+            url={file.url}
+            width={'200px'}
+            height={'150px'}
+          />
+        ))}
         {chat.content && <Typography>{chat.content}</Typography>}
 
         <Typography.Text type="secondary">
           {dayjs(chat.createdAt).fromNow()}
         </Typography.Text>
-
-        <Typography.Text></Typography.Text>
       </Card>
     </motion.div>
   );

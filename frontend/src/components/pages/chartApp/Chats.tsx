@@ -2,7 +2,7 @@ import { SmileOutlined } from '@ant-design/icons';
 import MessageInput from './MessageInput';
 import MessageSendButton from './MessageSendButton';
 import React, { Ref } from 'react';
-import { Avatar, Button, Card, Empty, Input, Modal, Skeleton } from 'antd';
+import { Button, Card, Empty } from 'antd';
 import { ChatMessageInterface } from '../../types/charts';
 import { useDarkMode } from '../../thems/useDarkMode';
 import EmojiPiker from '../../emojiPicker/EmojiPiker';
@@ -10,7 +10,6 @@ import DriveFileUpload from '../../../driveFileUpload';
 import { addFiles } from '../../types/addFiles';
 import Messages from './Messages';
 import AttachmentsView from './AttachmentsView';
-import './chats.css';
 
 interface ChartProps {
   chatLoading: boolean;
@@ -57,6 +56,7 @@ const Chats = ({
           value: message,
           onChange: handleOnMessageChange,
           send: sendChatMessage,
+          attachments: _attachments,
         }}
       />
       {!chats.length ? (
@@ -106,10 +106,9 @@ const Chats = ({
               shape="circle"
               icon={<SmileOutlined style={{ fontSize: '20px' }} />}
               onClick={() => {
-                setIsModalOpen(true);
-                // if ((emojiToggleRef as any).current) {
-                //   (emojiToggleRef as any).current.toggle();
-                // }
+                if ((emojiToggleRef as any).current) {
+                  (emojiToggleRef as any).current.toggle();
+                }
               }}
             />
 
@@ -118,10 +117,9 @@ const Chats = ({
               send={sendChatMessage}
               value={message}
             />
-            <MessageSendButton
-              message={message}
-              sendChatMessage={sendChatMessage}
-            />
+            {message?.trim()?.length > 0 && (
+              <MessageSendButton sendChatMessage={sendChatMessage} />
+            )}
           </div>
         </Card>
       </div>
