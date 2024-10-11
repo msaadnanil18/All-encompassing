@@ -17,7 +17,6 @@ const Messages = ({
 }) => {
   const isMyMessage = chat.sender === userId;
 
-  console.log(chat.attachments, 'attech ');
   return (
     <motion.div
       initial={{ opacity: 0, x: '-100%' }}
@@ -48,6 +47,7 @@ const Messages = ({
         <Typography.Text type="secondary">
           {dayjs(chat.createdAt).fromNow()}
         </Typography.Text>
+
         <Typography.Text></Typography.Text>
       </Card>
     </motion.div>

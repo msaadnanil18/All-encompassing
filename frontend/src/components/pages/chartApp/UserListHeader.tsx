@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Menu, Typography, Button, AutoCompleteProps, Avatar } from 'antd';
 import { UserOutlined, WechatOutlined } from '@ant-design/icons';
 import SearchDrawer from '../home/SearchDrawer';

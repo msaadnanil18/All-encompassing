@@ -2,23 +2,23 @@ import React from 'react';
 import { Input } from 'antd';
 
 const MessageInput = ({
-  message,
-  handleOnMessageChange,
-  sendChatMessage,
+  value,
+  onChange,
+  send,
 }: {
-  message: string;
-  handleOnMessageChange: (
+  value: string;
+  onChange: (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => void;
-  sendChatMessage: () => void;
+  send: () => void;
 }) => {
   return (
     <Input
-      value={message}
-      onChange={handleOnMessageChange}
+      value={value}
+      onChange={onChange}
       onKeyDown={(e) => {
         if (e.key === 'Enter') {
-          sendChatMessage();
+          send();
         }
       }}
       className="flex-grow mr-2"

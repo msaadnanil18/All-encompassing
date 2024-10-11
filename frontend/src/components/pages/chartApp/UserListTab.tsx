@@ -7,7 +7,7 @@ import {
   ChatListItemInterface,
   ChatMessageInterface,
 } from '../../types/charts';
-const { Header, Content, Footer, Sider } = Layout;
+const { Content, Sider } = Layout;
 import { useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { addFiles } from '../../types/addFiles';

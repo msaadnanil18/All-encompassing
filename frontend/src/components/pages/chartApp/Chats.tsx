@@ -9,6 +9,8 @@ import EmojiPiker from '../../emojiPicker/EmojiPiker';
 import DriveFileUpload from '../../../driveFileUpload';
 import { addFiles } from '../../types/addFiles';
 import Messages from './Messages';
+import AttachmentsView from './AttachmentsView';
+import './chats.css';
 
 interface ChartProps {
   chatLoading: boolean;
@@ -48,20 +50,15 @@ const Chats = ({
 
   return (
     <div className="relative flex flex-col">
-      <Modal
-        centered
-        open={isModalOpen}
-        onCancel={() => setIsModalOpen(false)}
-        footer={null}
-      >
-        <Input
-          style={{
-            outline: 'none',
-            border: 'none',
-            backgroundColor: 'transparent',
-          }}
-        />
-      </Modal>
+      <AttachmentsView
+        {...{
+          isModalOpen,
+          setIsModalOpen,
+          value: message,
+          onChange: handleOnMessageChange,
+          send: sendChatMessage,
+        }}
+      />
       {!chats.length ? (
         <div className=" grid place-content-center mt-36">
           <Empty description="No chats please select user" />
@@ -117,9 +114,9 @@ const Chats = ({
             />
 
             <MessageInput
-              handleOnMessageChange={handleOnMessageChange}
-              sendChatMessage={sendChatMessage}
-              message={message}
+              onChange={handleOnMessageChange}
+              send={sendChatMessage}
+              value={message}
             />
             <MessageSendButton
               message={message}
