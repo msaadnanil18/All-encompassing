@@ -4,6 +4,7 @@ import dayjs from 'dayjs';
 import { ChatMessageInterface } from '../../types/charts';
 import { Card, Typography } from 'antd';
 import relativeTime from 'dayjs/plugin/relativeTime';
+import RenderAttachments from '../../../driveFileUpload/ReanderAttachments.';
 dayjs.extend(relativeTime);
 
 const Messages = ({
@@ -16,6 +17,7 @@ const Messages = ({
   isDark: boolean;
 }) => {
   const isMyMessage = chat.sender === userId;
+
   return (
     <motion.div
       initial={{ opacity: 0, x: '-100%' }}
@@ -41,6 +43,14 @@ const Messages = ({
             {(chat.sender as { name: string })?.name}
           </Typography.Text>
         )}
+        {chat.attachments?.map((file) => (
+          <RenderAttachments
+            key={file._id}
+            url={file.url}
+            width={'200px'}
+            height={'150px'}
+          />
+        ))}
         {chat.content && <Typography>{chat.content}</Typography>}
 
         <Typography.Text type="secondary">
@@ -51,4 +61,4 @@ const Messages = ({
   );
 };
 
-export default Messages;
+export default React.memo(Messages);

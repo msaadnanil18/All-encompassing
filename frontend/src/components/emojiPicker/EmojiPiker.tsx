@@ -3,14 +3,12 @@ import React, {
   forwardRef,
   useCallback,
   useState,
+  MouseEvent,
 } from 'react';
-import EmojiPicker from 'emoji-picker-react';
+import EmojiPicker, { EmojiClickData, Theme } from 'emoji-picker-react';
 
 interface EmojiPikerProps {
-  handleSelect: (
-    event: React.MouseEvent,
-    emojiObject: { emoji: string }
-  ) => void;
+  handleSelect: (event: MouseEvent, emojiObject: EmojiClickData) => void;
   isDark: boolean;
 }
 
@@ -27,12 +25,12 @@ const EmojiPiker = forwardRef<{ toggle: () => void }, EmojiPikerProps>(
     }));
 
     return (
-      <React.Fragment>
+      <>
         {isOpen && (
           <div style={{ width: '100%', padding: 0, float: 'right' }}>
             <EmojiPicker
               onEmojiClick={handleSelect as any}
-              theme={isDark ? 'dark' : ('light' as any)}
+              theme={isDark ? Theme.DARK : Theme.LIGHT}
               width="100%"
               style={{ padding: 0 }}
               searchDisabled
@@ -40,9 +38,9 @@ const EmojiPiker = forwardRef<{ toggle: () => void }, EmojiPikerProps>(
             />
           </div>
         )}
-      </React.Fragment>
+      </>
     );
   }
 );
 
-export default EmojiPiker;
+export default React.memo(EmojiPiker);

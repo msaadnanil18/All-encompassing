@@ -2,13 +2,14 @@ import { SmileOutlined } from '@ant-design/icons';
 import MessageInput from './MessageInput';
 import MessageSendButton from './MessageSendButton';
 import React, { Ref } from 'react';
-import { Avatar, Button, Card, Empty, Input, Skeleton } from 'antd';
+import { Button, Card, Empty } from 'antd';
 import { ChatMessageInterface } from '../../types/charts';
 import { useDarkMode } from '../../thems/useDarkMode';
 import EmojiPiker from '../../emojiPicker/EmojiPiker';
 import DriveFileUpload from '../../../driveFileUpload';
 import { addFiles } from '../../types/addFiles';
 import Messages from './Messages';
+import AttachmentsView from './AttachmentsView';
 
 interface ChartProps {
   chatLoading: boolean;
@@ -37,9 +38,27 @@ const Chats = ({
   chatLoading,
 }: ChartProps) => {
   const isDark = useDarkMode();
+  const [isModalOpen, setIsModalOpen] = React.useState<boolean>(false);
+  const [_attachments, set_Attachments] = React.useState<addFiles[]>([]);
+
+  const handelOnAttachments = <t extends addFiles>(file: t[]) => {
+    set_Attachments(file);
+    setAttachments(file);
+    setIsModalOpen(true);
+  };
 
   return (
     <div className="relative flex flex-col">
+      <AttachmentsView
+        {...{
+          isModalOpen,
+          setIsModalOpen,
+          value: message,
+          onChange: handleOnMessageChange,
+          send: sendChatMessage,
+          attachments: _attachments,
+        }}
+      />
       {!chats.length ? (
         <div className=" grid place-content-center mt-36">
           <Empty description="No chats please select user" />
@@ -69,7 +88,7 @@ const Chats = ({
         ))
       )}
 
-      <div style={{ height: '20rem' }}>
+      <div style={{ marginBottom: '10rem' }}>
         <EmojiPiker {...emojiPikerProps} />
       </div>
       <div className="fixed bottom-0" style={{ width: '67%' }}>
@@ -80,7 +99,7 @@ const Chats = ({
           }}
         >
           <div className="flex items-center space-x-3">
-            <DriveFileUpload chooseFiles={(file) => setAttachments(file)} />
+            <DriveFileUpload chooseFiles={handelOnAttachments} />
 
             <Button
               type="text"
@@ -94,14 +113,13 @@ const Chats = ({
             />
 
             <MessageInput
-              handleOnMessageChange={handleOnMessageChange}
-              sendChatMessage={sendChatMessage}
-              message={message}
+              onChange={handleOnMessageChange}
+              send={sendChatMessage}
+              value={message}
             />
-            <MessageSendButton
-              message={message}
-              sendChatMessage={sendChatMessage}
-            />
+            {message?.trim()?.length > 0 && (
+              <MessageSendButton sendChatMessage={sendChatMessage} />
+            )}
           </div>
         </Card>
       </div>
@@ -109,4 +127,4 @@ const Chats = ({
   );
 };
 
-export default Chats;
+export default React.memo(Chats);
