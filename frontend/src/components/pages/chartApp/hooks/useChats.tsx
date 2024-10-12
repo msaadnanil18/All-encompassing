@@ -5,6 +5,7 @@ import { ServiceErrorManager } from '../../../../helpers/service';
 import { SearchService } from '../../../services/Search';
 import { User } from '../../../types/partialUser';
 import { RenderItem } from '../UserListHeader';
+import { useInfiniteScrollTop } from '6pp';
 import {
   CreateChatsService,
   ChatListService,
@@ -34,6 +35,8 @@ const useChats = ({ userId }: { userId: string | undefined }) => {
 
   const isDark = useDarkMode();
   const currentChat = useRef<any>();
+  const containerRef = useRef<React.MutableRefObject<HTMLElement | null>>(null);
+  const [chatsDocs, setChatsDocs] = useState<any>();
   const emojiToggleRef = useRef<{ toggle: () => void }>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedUser, setSelectedUser] = useState<string | null>(null);
@@ -46,6 +49,7 @@ const useChats = ({ userId }: { userId: string | undefined }) => {
   const [chats, setChats] = useState<ChatMessageInterface[]>([]);
   const [attachments, setAttachments] = useState<addFiles[]>([]);
   const [chatLoading, setChatLoading] = useState<boolean>(false);
+  const [page, setPage] = useState<number>(1);
   const {
     open: openSearchBar,
     close: closeSearchBar,
@@ -59,6 +63,8 @@ const useChats = ({ userId }: { userId: string | undefined }) => {
     []
   );
 
+  //@ts-ignore
+  useInfiniteScrollTop(containerRef, chatsDocs?.totalPages, page, setPage);
   const fetchMessageList = async () => {
     setChatLoading(true);
     ServiceErrorManager(
@@ -68,19 +74,30 @@ const useChats = ({ userId }: { userId: string | undefined }) => {
             chat: searchParams.get('id'),
           },
           options: {
+            // sort: { createdAt: -1 },
             limit: 1000,
+            // page: page,
           },
         },
       }),
       { failureMessage: 'Error while fetch user for chat' }
     )
-      .then(([_, data]) => setChats(data?.docs))
+      .then(([_, data]) => {
+        setChats(data?.docs);
+        // if (data.totalPages > 1) {
+        //   setChats((prevChats) => [...data.docs, ...(prevChats || [])]);
+        // } else {
+        //   setChats(data?.docs);
+        // }
+
+        setChatsDocs(data);
+      })
       .catch((err) => console.log(err))
       .finally(() => setChatLoading(false));
   };
 
   useEffect(() => {
-    fetchMessageList().catch(console.log);
+    fetchMessageList().catch(console.error);
   }, [searchParams.get('id')]);
 
   const fetchSearchResults = useCallback(async () => {
@@ -312,6 +329,7 @@ const useChats = ({ userId }: { userId: string | undefined }) => {
       message,
       chats,
       chatLoading,
+      containerRef,
     }),
     [
       searchOptions,
@@ -321,6 +339,7 @@ const useChats = ({ userId }: { userId: string | undefined }) => {
       message,
       chats,
       chatLoading,
+      containerRef,
     ]
   );
   return { togglers, actions, states };

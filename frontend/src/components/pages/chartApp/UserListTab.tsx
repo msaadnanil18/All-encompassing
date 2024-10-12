@@ -30,6 +30,7 @@ const UserListTab: React.FC<{
       message,
       chats,
       chatLoading,
+      containerRef,
     },
     togglers: {
       selectUserToChat: { openSearchBar, closeSearchBar, isOpenSearchBar },
@@ -57,6 +58,17 @@ const UserListTab: React.FC<{
     boxSizing: 'border-box',
   };
 
+  const scrollToBottom = () => {
+    if (containerRef.current) {
+      (containerRef.current as any).scrollTop = (
+        containerRef.current as any
+      ).scrollHeight;
+    }
+  };
+
+  React.useEffect(() => {
+    scrollToBottom();
+  }, [chats]);
   return (
     <Layout style={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
       <Sider theme='light' width={455} style={siderStyle}>
@@ -124,7 +136,11 @@ const UserListTab: React.FC<{
           overflow: 'hidden',
         }}
       >
-        <Content style={contentStyle}>
+        <Content
+          //@ts-ignore
+          ref={containerRef}
+          style={contentStyle}
+        >
           <div style={{ textAlign: 'center' }}>
             <Chats
               {...{
