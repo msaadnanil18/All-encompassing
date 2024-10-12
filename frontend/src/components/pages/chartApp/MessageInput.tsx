@@ -21,7 +21,7 @@ const MessageInput = ({
           send();
         }
       }}
-      className="flex-grow mr-2"
+      className='flex-grow mr-2'
       style={{ padding: '8px', borderRadius: '9px' }}
     />
   );

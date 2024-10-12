@@ -34,7 +34,7 @@ const AttachmentsView: React.FC<{
         icon: <SendOutlined />,
         ...(value.trim().length > 0 ? {} : { style: { visibility: 'hidden' } }),
       }}
-      okText="Send"
+      okText='Send'
       onCancel={() => setIsModalOpen(false)}
     >
       {(attachments || []).map((file, index) => (
@@ -47,18 +47,18 @@ const AttachmentsView: React.FC<{
           />
         </div>
       ))}
-      <div className="input-container">
+      <div className='input-container'>
         <input
           value={value}
           onChange={onChange}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
-          className="input-field"
-          type="text"
+          className='input-field'
+          type='text'
         />
         <label
-          htmlFor="input-field"
-          className="input-label"
+          htmlFor='input-field'
+          className='input-label'
           style={{
             color: isFocused ? theme.token?.colorPrimary : '#ccc',
           }}
@@ -66,7 +66,7 @@ const AttachmentsView: React.FC<{
           Captions
         </label>
         <span
-          className="input-highlight"
+          className='input-highlight'
           style={{
             backgroundColor: isFocused ? theme.token?.colorPrimary : '#ccc',
           }}

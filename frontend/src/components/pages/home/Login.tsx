@@ -21,19 +21,19 @@ const Login: React.FC = () => {
   return (
     <Row>
       <Col span={8}></Col>
-      <Col sm={8} xs={24} className=" mt-40">
+      <Col sm={8} xs={24} className=' mt-40'>
         <motion.div
           initial={{ x: '-100%' }}
           animate={{ x: 0 }}
           transition={{ duration: 0.6 }}
         >
-          <Card className=" w-full h-full">
-            <Form layout="vertical" onFinish={formOnSubmit}>
+          <Card className=' w-full h-full'>
+            <Form layout='vertical' onFinish={formOnSubmit}>
               <Row gutter={[16, 0]}>
                 <Col xs={24} sm={24}>
                   <Form.Item
-                    name="username"
-                    label="Username"
+                    name='username'
+                    label='Username'
                     rules={[
                       { required: true, message: 'Please enter username' },
                     ]}
@@ -43,8 +43,8 @@ const Login: React.FC = () => {
                 </Col>
                 <Col xs={24} sm={24}>
                   <Form.Item
-                    name="password"
-                    label="Password"
+                    name='password'
+                    label='Password'
                     rules={[
                       { required: true, message: 'Please enter password' },
                     ]}
@@ -55,8 +55,8 @@ const Login: React.FC = () => {
                 <Col>
                   <Button
                     icon={<LoginOutlined />}
-                    type="primary"
-                    htmlType="submit"
+                    type='primary'
+                    htmlType='submit'
                     loading={loading}
                   >
                     Log-in
@@ -65,7 +65,7 @@ const Login: React.FC = () => {
                 <Col sm={17}>
                   <Button
                     style={{ float: 'right' }}
-                    type="link"
+                    type='link'
                     icon={<UserAddOutlined />}
                     onClick={() => {
                       navigate('/resgister-user');

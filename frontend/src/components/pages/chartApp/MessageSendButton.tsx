@@ -9,8 +9,8 @@ const MessageSendButton = ({
   return (
     <Button
       onClick={sendChatMessage}
-      type="primary"
-      shape="circle"
+      type='primary'
+      shape='circle'
       icon={<SendOutlined />}
     />
   );

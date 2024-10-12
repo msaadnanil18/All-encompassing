@@ -4,7 +4,7 @@ const App = React.lazy(() => import('./Index'));
 const ChatAppRoutes: React.FC = () => {
   return (
     <Routes>
-      <Route path="/" Component={App} />
+      <Route path='/' Component={App} />
     </Routes>
   );
 };

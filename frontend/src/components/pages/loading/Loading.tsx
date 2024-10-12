@@ -5,9 +5,9 @@ const Loading: React.FC = () => {
   return (
     <div
       style={{ backgroundColor: '#212121' }}
-      className="grid place-content-center h-screen"
+      className='grid place-content-center h-screen'
     >
-      <div className="loader" />
+      <div className='loader' />
     </div>
   );
 };

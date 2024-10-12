@@ -59,7 +59,7 @@ const UserListTab: React.FC<{
 
   return (
     <Layout style={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
-      <Sider theme="light" width={455} style={siderStyle}>
+      <Sider theme='light' width={455} style={siderStyle}>
         <List
           loading={chatListLoading}
           header={
@@ -76,7 +76,7 @@ const UserListTab: React.FC<{
               }}
             />
           }
-          itemLayout="horizontal"
+          itemLayout='horizontal'
           dataSource={chatList}
           renderItem={(chat, index) => {
             const prevChats = chat.members.find((user) => user._id !== userId);

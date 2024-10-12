@@ -29,7 +29,7 @@ const Messages = ({
       <Card
         bordered={false}
         bodyStyle={{ padding: 0 }}
-        size="small"
+        size='small'
         style={{
           backgroundColor: isDark ? '#141414' : '#f0f2f5',
           borderRadius: '5px',
@@ -53,7 +53,7 @@ const Messages = ({
         ))}
         {chat.content && <Typography>{chat.content}</Typography>}
 
-        <Typography.Text type="secondary">
+        <Typography.Text type='secondary'>
           {dayjs(chat.createdAt).fromNow()}
         </Typography.Text>
       </Card>

@@ -71,7 +71,7 @@ const UserListHeader: React.FC<{
       />
 
       <Menu
-        mode="horizontal"
+        mode='horizontal'
         style={{
           margin: 0,
           ...(isDark ? { backgroundColor: ' #171717' } : {}),
@@ -82,17 +82,17 @@ const UserListHeader: React.FC<{
           overflow: 'hidden',
         }}
       >
-        <Menu.Item key="chats" disabled>
-          <Button style={{ margin: 0, padding: 0 }} type="link" danger>
+        <Menu.Item key='chats' disabled>
+          <Button style={{ margin: 0, padding: 0 }} type='link' danger>
             <Typography.Title level={5} style={{ margin: 0 }}>
               Chats
             </Typography.Title>
           </Button>
         </Menu.Item>
-        <Menu.Item key="open-drawer">
+        <Menu.Item key='open-drawer'>
           <Button
             style={{ margin: 0, padding: 0 }}
-            type="link"
+            type='link'
             icon={<WechatOutlined style={{ fontSize: '22px' }} />}
             onClick={openSearchBar}
           />

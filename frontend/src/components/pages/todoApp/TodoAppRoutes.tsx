@@ -6,8 +6,8 @@ const TodoApp = React.lazy(() => import('.'));
 const TodoAppRoutes = () => {
   return (
     <Routes>
-      <Route path="/" Component={TodoApp} />
-      <Route path="/next-page" Component={NextPage} />
+      <Route path='/' Component={TodoApp} />
+      <Route path='/next-page' Component={NextPage} />
     </Routes>
   );
 };

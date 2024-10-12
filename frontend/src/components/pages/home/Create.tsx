@@ -42,17 +42,17 @@ const Create: React.FC = () => {
   return (
     <Row>
       <Col span={8}></Col>
-      <Col sm={8} className="mt-20">
+      <Col sm={8} className='mt-20'>
         <motion.div
           initial={{ x: '-100%' }}
           animate={{ x: 0 }}
           transition={{ duration: 0.6 }}
         >
-          <Card className="w-full h-full">
-            <Form onFinish={handleOnSubmit} layout="vertical">
+          <Card className='w-full h-full'>
+            <Form onFinish={handleOnSubmit} layout='vertical'>
               <Form.Item
-                name="name"
-                label="Name"
+                name='name'
+                label='Name'
                 rules={[
                   {
                     required: true,
@@ -63,8 +63,8 @@ const Create: React.FC = () => {
                 <Input />
               </Form.Item>
               <Form.Item
-                name="username"
-                label="Username"
+                name='username'
+                label='Username'
                 rules={[
                   {
                     required: true,
@@ -75,8 +75,8 @@ const Create: React.FC = () => {
                 <Input />
               </Form.Item>
               <Form.Item
-                name="email"
-                label="Email"
+                name='email'
+                label='Email'
                 rules={[
                   {
                     type: 'email',
@@ -88,8 +88,8 @@ const Create: React.FC = () => {
                 <Input />
               </Form.Item>
               <Form.Item
-                name="password"
-                label="Password"
+                name='password'
+                label='Password'
                 rules={[
                   {
                     required: true,
@@ -101,9 +101,9 @@ const Create: React.FC = () => {
               <Form.Item style={{ margin: 0 }}>
                 <Button
                   icon={<PlusCircleOutlined />}
-                  type="primary"
-                  htmlType="submit"
-                  className="mt-4"
+                  type='primary'
+                  htmlType='submit'
+                  className='mt-4'
                   loading={loading}
                 >
                   Register account

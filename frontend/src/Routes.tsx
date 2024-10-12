@@ -34,22 +34,22 @@ const AppRoutes = () => {
     <BrowserRouter>
       <QueryParamProvider adapter={ReactRouter6Adapter}>
         <Routes>
-          <Route path="/resgister-user" Component={ResgisterUser} />
-          <Route path="/verify-email" Component={VerifyEmail} />
-          <Route path="/" Component={LoginUser} />
+          <Route path='/resgister-user' Component={ResgisterUser} />
+          <Route path='/verify-email' Component={VerifyEmail} />
+          <Route path='/' Component={LoginUser} />
           <Route
-            path="/dash-board/:id"
+            path='/dash-board/:id'
             element={
-              <ProtectRoute user={user} redirect="/">
+              <ProtectRoute user={user} redirect='/'>
                 <DashBoard />
               </ProtectRoute>
             }
           />
-          <Route path="/chat-app--/:id/*" Component={ChatApp} />
-          <Route path="/setting--/:id" Component={Setting} />
-          <Route path="/todo-app--/:id/*" Component={TodoApp} />
-          <Route path="/community-app--/:id/*" Component={CommunityApp} />
-          <Route path="*" element={<NotFound404 />} />
+          <Route path='/chat-app--/:id/*' Component={ChatApp} />
+          <Route path='/setting--/:id' Component={Setting} />
+          <Route path='/todo-app--/:id/*' Component={TodoApp} />
+          <Route path='/community-app--/:id/*' Component={CommunityApp} />
+          <Route path='*' element={<NotFound404 />} />
         </Routes>
       </QueryParamProvider>
     </BrowserRouter>

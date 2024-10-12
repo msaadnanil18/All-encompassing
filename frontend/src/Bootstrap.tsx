@@ -13,7 +13,7 @@ const Container = () => {
   } = theme.useToken();
   return (
     <div
-      className="w-screen h-screen"
+      className='w-screen h-screen'
       style={{ backgroundColor: colorBgLayout }}
     >
       <Routes />

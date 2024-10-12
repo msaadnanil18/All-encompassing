@@ -48,7 +48,7 @@ const Chats = ({
   };
 
   return (
-    <div className="relative flex flex-col">
+    <div className='relative flex flex-col'>
       <AttachmentsView
         {...{
           isModalOpen,
@@ -60,14 +60,14 @@ const Chats = ({
         }}
       />
       {!chats.length ? (
-        <div className=" grid place-content-center mt-36">
-          <Empty description="No chats please select user" />
+        <div className=' grid place-content-center mt-36'>
+          <Empty description='No chats please select user' />
         </div>
       ) : chatLoading ? (
         Array.from({ length: 20 }, (_, i) => i).map((_, i) => (
           <Card
             bordered={false}
-            size="small"
+            size='small'
             key={i}
             style={{
               alignSelf: 'flex-end',
@@ -91,19 +91,19 @@ const Chats = ({
       <div style={{ marginBottom: '10rem' }}>
         <EmojiPiker {...emojiPikerProps} />
       </div>
-      <div className="fixed bottom-0" style={{ width: '67%' }}>
+      <div className='fixed bottom-0' style={{ width: '67%' }}>
         <Card
           style={{
             backgroundColor: isDark ? '#171717' : '#f0f2f5',
             width: '100%',
           }}
         >
-          <div className="flex items-center space-x-3">
+          <div className='flex items-center space-x-3'>
             <DriveFileUpload chooseFiles={handelOnAttachments} />
 
             <Button
-              type="text"
-              shape="circle"
+              type='text'
+              shape='circle'
               icon={<SmileOutlined style={{ fontSize: '20px' }} />}
               onClick={() => {
                 if ((emojiToggleRef as any).current) {

@@ -9,10 +9,10 @@ interface Props {
 const Error404: FC<Props> = ({ children }) => {
   const location = useLocation();
   return (
-    <div className="all-center h-screen">
+    <div className='all-center h-screen'>
       <Result
-        status="404"
-        title="Oops, we cant find the page"
+        status='404'
+        title='Oops, we cant find the page'
         subTitle={location.pathname}
         extra={children}
       />
