@@ -59,7 +59,7 @@ const Chats = ({
           attachments: _attachments,
         }}
       />
-      {!chats.length ? (
+      {!(chats || []).length ? (
         <div className=' grid place-content-center mt-36'>
           <Empty description='No chats please select user' />
         </div>
