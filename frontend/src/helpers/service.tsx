@@ -23,7 +23,7 @@ export const Service =
     return axios<Res>({
       url,
       method: options?.method || 'POST',
-      baseURL: 'http://localhost:3001' || import.meta.env.VITE_SERVER_URI || '',
+      baseURL: import.meta.env.VITE_SERVER_URI || 'http://localhost:3001' || '',
       withCredentials: true,
       ...(config || {}),
       headers: {
@@ -44,7 +44,7 @@ export const handleError = (message: string) => (e: any) => {
             {e.message ? (
               <Text>{exception.message}</Text>
             ) : (
-              <Text type="secondary">{exception.code}</Text>
+              <Text type='secondary'>{exception.code}</Text>
             )}
           </div>
         ))}

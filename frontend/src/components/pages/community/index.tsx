@@ -1,10 +1,7 @@
 import React from 'react';
+import CommentsShows from './CommentsShows';
 
 const community = () => {
-  return (
-    <div>
-      <h1>Welcome community</h1>
-    </div>
-  );
+  return <CommentsShows />;
 };
 export default community;
