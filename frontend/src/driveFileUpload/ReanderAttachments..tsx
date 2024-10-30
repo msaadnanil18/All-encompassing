@@ -22,20 +22,19 @@ const RederPdf: React.FC<IProps> = ({
   height,
 }) => {
   return (
-    <embed
-      type={type}
+    <iframe
       src={url}
       width={width ? width : '100%'}
       height={height ? height : '100%'}
       style={style}
       className={className}
-    />
+    ></iframe>
   );
 };
 
 const RenderVideo: React.FC<IProps> = ({ url, width }) => {
   return (
-    <video src={url} preload="none" width={width ? width : '100%'} controls />
+    <video src={url} preload='none' width={width ? width : '100%'} controls />
   );
 };
 
@@ -43,7 +42,7 @@ const RenderImage: React.FC<IProps> = ({ url, width, height }) => {
   return (
     <img
       src={url}
-      alt="Attachment"
+      alt='Attachment'
       width={width ? width : '100%'}
       height={height ? height : '100%'}
       style={{
@@ -73,19 +72,19 @@ const Renders: React.FC<IProps> = (prop) => {
     case 'mp3':
     case 'wav':
     case 'ogg':
-      return <audio src={url} preload="none" controls />;
+      return <audio src={url} preload='none' controls />;
 
     case 'pdf':
       return (
-        <a href={url} target="_blank" rel="noopener noreferrer">
-          <RederPdf type="application/pdf" {...prop} /> PDF File
+        <a href={url} target='_blank' rel='noopener noreferrer'>
+          <RederPdf type='application/pdf' {...prop} /> PDF File
         </a>
       );
 
     case 'doc':
     case 'docx':
       return (
-        <a href={url} target="_blank" rel="noopener noreferrer">
+        <a href={url} target='_blank' rel='noopener noreferrer'>
           <FileOutlined /> Word Document
         </a>
       );
@@ -93,14 +92,14 @@ const Renders: React.FC<IProps> = (prop) => {
     case 'xls':
     case 'xlsx':
       return (
-        <a href={url} target="_blank" rel="noopener noreferrer">
+        <a href={url} target='_blank' rel='noopener noreferrer'>
           <FileOutlined /> Excel File
         </a>
       );
 
     default:
       return (
-        <a href={url} target="_blank" rel="noopener noreferrer">
+        <a href={url} target='_blank' rel='noopener noreferrer'>
           <FileOutlined /> Unknown File
         </a>
       );
@@ -112,7 +111,7 @@ const RenderAttachments: React.FC<IProps> = (prop) => {
   if (prop.inLine) {
     return (
       <div>
-        <Button onClick={open} type="link">
+        <Button onClick={open} type='link'>
           Attachments
         </Button>
         <Drawer width={1000} footer={null} open={isOpen} onClose={close}>

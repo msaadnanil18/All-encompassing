@@ -7,13 +7,11 @@ import { initService } from './components/services/auth';
 import { User } from './components/types/partialUser';
 
 const Bootstrap = React.lazy(() => import('./Bootstrap'));
-const Loading = React.lazy(
+const CustumLoading = React.lazy(
   () => import('./components/pages/home/LoadingSpinner')
 );
 
-const CustumLoading = React.lazy(
-  () => import('./components/pages/loading/Loading')
-);
+import Loading from './components/pages/loading/Loading';
 
 const App = () => {
   const [init, setInit] = React.useState<User>();
@@ -33,14 +31,14 @@ const App = () => {
     initializeApp().catch(console.log);
   }, []);
 
-  if (loading) return <Loading />;
+  if (loading) return <CustumLoading />;
   return (
-    <React.Suspense fallback={<CustumLoading />}>
+    <React.Suspense fallback={<Loading />}>
       <HelmetProvider>
         <RecoilRoot
           initializeState={({ set }) => {
             set($ME, init || null);
-            set($THEME_C0NFIG, init?.themConfig as any);
+            set($THEME_C0NFIG, (init?.themConfig as any) || null);
           }}
         >
           <Bootstrap />
