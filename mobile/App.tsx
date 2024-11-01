@@ -13,7 +13,7 @@ import { XCircle } from '@tamagui/lucide-icons';
 import Toast, { BaseToast, BaseToastProps } from 'react-native-toast-message';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AuthGuard from '@AllEcompassing/components/AuthGuard';
-import Pages from '@AllEcompassing/components/pages';
+import Screens from '@AllEcompassing/components/screen';
 const Main = () => {
   const theme = useTheme();
   const { isDark } = useThemeMode();
@@ -89,7 +89,7 @@ const Main = () => {
       >
         <View style={{ flex: 1 }}>
           <AuthGuard>
-            <Pages />
+            <Screens />
             <Toast position='top' visibilityTime={5000} config={toastConfig} />
           </AuthGuard>
         </View>
