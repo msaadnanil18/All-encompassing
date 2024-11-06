@@ -1,8 +1,8 @@
-import React, { FC } from 'react';
+import React, { FC, ReactNode } from 'react';
 import { YStack } from 'tamagui';
 
 export interface ScreenProps {
-  children: React.ReactNode;
+  children: ReactNode;
 }
 
 const Screen: FC<ScreenProps> = ({ children }) => {

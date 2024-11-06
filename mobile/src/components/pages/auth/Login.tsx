@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import React, { useState, useEffect } from 'react';
+import React, { FC, useEffect } from 'react';
 import {
   View,
   Text,
@@ -14,9 +14,14 @@ import {
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { useAuth } from './useAuth';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { RootStackParamList } from '@AllEcompassing/types/screens';
 
-const Login = () => {
-  const { login, loading, me } = useAuth();
+const Login: FC<NativeStackScreenProps<RootStackParamList, 'Welcome'>> = (
+  props,
+) => {
+  const { navigation } = props;
+  const { login, loading, me } = useAuth(props);
 
   const validationSchema = Yup.object().shape({
     username: Yup.string().required('Please enter your username'),
@@ -26,6 +31,12 @@ const Login = () => {
     username: '',
     password: '',
   };
+
+  useEffect(() => {
+    if (me) {
+      navigation.navigate('AfterLoginScreen', { userId: me._id });
+    }
+  }, [me]);
 
   const onSubmit = async (value: Record<string, any>) => {
     await login(value);
@@ -48,7 +59,7 @@ const Login = () => {
           <Stack
             space='$4'
             padding='$5'
-            backgroundColor='$background'
+            // backgroundColor='$background'
             alignItems='center'
             width='100%'
           >
@@ -82,17 +93,17 @@ const Login = () => {
                   borderRadius='$4'
                   paddingHorizontal='$3'
                 />
-                <Button
-                  onPress={() => handleSubmit()}
-                  backgroundColor='$backgroundFocus'
-                  width='100%'
-                  padding='$1'
-                  disabled={loading}
-                >
+                <Button onPress={() => handleSubmit()} disabled={loading}>
                   <Text color='$white'>Login</Text>
                 </Button>
               </Stack>
             )}
+            <View style={styles.signUpContainer}>
+              <Text>Don't have an account ?</Text>
+              <Button width='$10' chromeless>
+                Sing Up
+              </Button>
+            </View>
           </Stack>
         )}
       </Formik>
@@ -102,4 +113,15 @@ const Login = () => {
 
 export default Login;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    paddingHorizontal: 20,
+  },
+  signUpContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingBottom: 20,
+  },
+});

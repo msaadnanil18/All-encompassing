@@ -58,8 +58,8 @@ const Branding = () => {
         {/* <Image
           source={
             isDark
-              ? require('@zarf/assets/images/zarf-banner-dark.png')
-              : require('@zarf/assets/images/zarf-banner.png')
+              ? require('')
+              : require('')
           }
           width={150}
           height={150}
@@ -69,7 +69,9 @@ const Branding = () => {
     </FullStack>
   );
 };
-const Auth: FC<NativeStackScreenProps<RootStackParamList, 'Welcome'>> = () => {
+const Auth: FC<NativeStackScreenProps<RootStackParamList, 'Welcome'>> = (
+  props,
+) => {
   return (
     <Screen>
       <YStack
@@ -82,7 +84,7 @@ const Auth: FC<NativeStackScreenProps<RootStackParamList, 'Welcome'>> = () => {
             backgroundColor='$background'
           />
         </FullStack>
-        <Login />
+        <Login {...props} />
         <Branding />
       </YStack>
     </Screen>

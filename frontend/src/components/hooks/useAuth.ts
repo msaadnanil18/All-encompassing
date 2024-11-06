@@ -28,6 +28,7 @@ export const useAuth = () => {
 
       setMe(data.data.user);
       setTheme(data.data.user.themConfig);
+      localStorage.setItem('token', data.data.accessToken);
     } catch (error) {
       console.log(error);
     } finally {
@@ -36,7 +37,7 @@ export const useAuth = () => {
   };
 
   const logOut = async () => {
-    // localStorage.removeItem('token');
+    localStorage.removeItem('token');
     // localStorage.removeItem('user');
     // localStorage.removeItem('storedThemeConfig');
     setMe(null);

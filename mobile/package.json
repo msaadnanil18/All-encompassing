@@ -7,7 +7,8 @@
     "ios": "react-native run-ios",
     "lint": "eslint .",
     "start": "react-native start",
-    "test": "jest"
+    "test": "jest",
+    "generate-themes": "tamagui generate-themes src/components/TamaguiConfig/theme-builder.ts ./theme-output.ts"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^2.0.0",
@@ -18,15 +19,18 @@
     "@react-navigation/native-stack": "^6.11.0",
     "@tamagui/animations-moti": "^1.116.9",
     "@tamagui/card": "^1.116.9",
+    "@tamagui/cli": "^1.116.12",
     "@tamagui/config": "^1.116.9",
     "@tamagui/lucide-icons": "^1.116.9",
     "@tamagui/portal": "^1.116.9",
     "@tamagui/themes": "^1.116.9",
     "@types/react-native-auth0": "^2.17.9",
     "axios": "^1.7.7",
+    "dayjs": "^1.11.13",
     "dotenv": "^16.4.5",
     "formik": "^2.4.6",
     "jwt-decode": "^4.0.0",
+    "lodash": "^4.17.21",
     "moti": "^0.29.0",
     "react": "18.3.1",
     "react-fast-compare": "^3.2.2",

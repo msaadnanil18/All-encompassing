@@ -1,12 +1,12 @@
 import 'react-native-reanimated';
 import 'react-native-gesture-handler';
 import '@AllEcompassing/types/config';
-import React, { useEffect } from 'react';
-import { useTheme, Text, View } from 'tamagui';
+import React, { useEffect, useState, useCallback } from 'react';
+import { useTheme, Text, View, Spinner } from 'tamagui';
 import { StatusBar } from 'react-native';
 import { RecoilRoot } from 'recoil';
 import { PortalProvider } from '@tamagui/portal';
-import TamaguiConfig from '@AllEcompassing/components/TamaguiConfig';
+import TamaguiConfig from '@AllEcompassing/components/TamaguiConfig/TamaguiConfig';
 import { useThemeMode } from '@AllEcompassing/components/hooks/useTheme';
 import SystemNavigationBar from 'react-native-system-navigation-bar';
 import { XCircle } from '@tamagui/lucide-icons';
@@ -14,6 +14,11 @@ import Toast, { BaseToast, BaseToastProps } from 'react-native-toast-message';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AuthGuard from '@AllEcompassing/components/AuthGuard';
 import Screens from '@AllEcompassing/components/screen';
+import { User } from '@AllEcompassing/types/partialUser';
+import { InitService } from '@AllEcompassing/components/Services/auth';
+import { $ME, $THEME_C0NFIG } from '@AllEcompassing/components/atoms/roots';
+import { ServiceErrorManager } from '@AllEcompassing/helpers/service';
+
 const Main = () => {
   const theme = useTheme();
   const { isDark } = useThemeMode();
@@ -99,8 +104,35 @@ const Main = () => {
 };
 
 const App = () => {
+  const [init, setInit] = useState<User | null>(null);
+  const [loading, setLoding] = React.useState<boolean>(false);
+
+  const initializeApp = useCallback(async function () {
+    setLoding(true);
+    await ServiceErrorManager(InitService(), {})
+      .then(([_, data]) => setInit(data?.data))
+      .finally(() => {
+        setLoding(false);
+      });
+  }, []);
+
+  useEffect(() => {
+    initializeApp().catch(console.log);
+  }, []);
+
+  if (loading)
+    return (
+      <View>
+        <Spinner />
+      </View>
+    );
   return (
-    <RecoilRoot>
+    <RecoilRoot
+      initializeState={({ set }) => {
+        set($ME, init || null);
+        set($THEME_C0NFIG, (init?.themConfig as any) || null);
+      }}
+    >
       <TamaguiConfig>
         <PortalProvider>
           <Main />

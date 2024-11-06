@@ -2,10 +2,17 @@ import { $ME, $THEME_C0NFIG } from '@AllEcompassing/components/atoms/roots';
 import React, { useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { ServiceErrorManager } from '@AllEcompassing/helpers/service';
-import { LoginService } from '@AllEcompassing/components/Services/auth';
+import {
+  LoginService,
+  logoutService,
+} from '@AllEcompassing/components/Services/auth';
 import Toast from 'react-native-toast-message';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-export const useAuth = () => {
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { RootStackParamList } from '@AllEcompassing/types/screens';
+export const useAuth = ({
+  navigation,
+}: NativeStackScreenProps<RootStackParamList>) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [me, setMe] = useRecoilState($ME);
   const [theme, setTheme] = useRecoilState($THEME_C0NFIG);
@@ -28,7 +35,6 @@ export const useAuth = () => {
       });
       setMe(data.data.user);
       setTheme(data.data.user.themConfig);
-      console.log(data.data.accessToken, 'tokesss');
 
       await AsyncStorage.setItem('token', data.data.accessToken);
     } catch (error) {
@@ -38,5 +44,14 @@ export const useAuth = () => {
     }
   };
 
-  return { login, loading, me, theme, setTheme };
+  const logOut = async function () {
+    setMe(null);
+    AsyncStorage.removeItem('token');
+    await ServiceErrorManager(logoutService(), {
+      successMessage: `${me?.name} is logout successfully`,
+    });
+    setTimeout(() => navigation.navigate('Welcome'), 100);
+  };
+
+  return { login, loading, me, theme, setTheme, logOut };
 };
