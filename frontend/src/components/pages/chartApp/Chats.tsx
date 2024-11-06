@@ -88,41 +88,46 @@ const Chats = ({
         ))
       )}
 
-      <div style={{ marginBottom: '10rem' }}>
-        <EmojiPiker {...emojiPikerProps} />
-      </div>
-      <div className='fixed bottom-0' style={{ width: '67%' }}>
-        <Card
-          style={{
-            backgroundColor: isDark ? '#171717' : '#f0f2f5',
-            width: '100%',
-          }}
-        >
-          <div className='flex items-center space-x-3'>
-            <DriveFileUpload chooseFiles={handelOnAttachments} />
-
-            <Button
-              type='text'
-              shape='circle'
-              icon={<SmileOutlined style={{ fontSize: '20px' }} />}
-              onClick={() => {
-                if ((emojiToggleRef as any).current) {
-                  (emojiToggleRef as any).current.toggle();
-                }
-              }}
-            />
-
-            <MessageInput
-              onChange={handleOnMessageChange}
-              send={sendChatMessage}
-              value={message}
-            />
-            {message?.trim()?.length > 0 && (
-              <MessageSendButton sendChatMessage={sendChatMessage} />
-            )}
+      {(chats || []).length > 0 && (
+        <>
+          {' '}
+          <div style={{ marginBottom: '10rem' }}>
+            <EmojiPiker {...emojiPikerProps} />
           </div>
-        </Card>
-      </div>
+          <div className='fixed bottom-0' style={{ width: '67%' }}>
+            <Card
+              style={{
+                backgroundColor: isDark ? '#171717' : '#f0f2f5',
+                width: '100%',
+              }}
+            >
+              <div className='flex items-center space-x-3'>
+                <DriveFileUpload chooseFiles={handelOnAttachments} />
+
+                <Button
+                  type='text'
+                  shape='circle'
+                  icon={<SmileOutlined style={{ fontSize: '20px' }} />}
+                  onClick={() => {
+                    if ((emojiToggleRef as any).current) {
+                      (emojiToggleRef as any).current.toggle();
+                    }
+                  }}
+                />
+
+                <MessageInput
+                  onChange={handleOnMessageChange}
+                  send={sendChatMessage}
+                  value={message}
+                />
+                {message?.trim()?.length > 0 && (
+                  <MessageSendButton sendChatMessage={sendChatMessage} />
+                )}
+              </div>
+            </Card>
+          </div>
+        </>
+      )}
     </div>
   );
 };

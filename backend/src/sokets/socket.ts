@@ -88,7 +88,7 @@ export const initialize_socket_setup = (io: IOServer) => {
   return io.on('connection', async (socket) => {
     try {
       const cookies = cookie.parse(socket.handshake.headers?.cookie || '');
-      let token = cookies?.accessToken;
+      let token = cookies?.accessToken || socket.handshake.auth.token;
 
       if (!token) {
         token = socket.handshake.auth?.token;

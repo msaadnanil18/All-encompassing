@@ -17,14 +17,20 @@ const server = http.createServer(app);
 
 const io = new IOServer(server, {
   cors: {
-    origin: process.env.CROS_ORIGIN,
+    origin: [
+      process.env.CROS_ORIGIN as any,
+      'https://a4bf-27-100-13-114.ngrok-free.app',
+    ],
     credentials: true,
   },
 });
 app.set('io', io);
 app.use(
   cors({
-    origin: process.env.CROS_ORIGIN,
+    origin: [
+      process.env.CROS_ORIGIN as any,
+      'https://a4bf-27-100-13-114.ngrok-free.app',
+    ],
     credentials: true,
   })
 );

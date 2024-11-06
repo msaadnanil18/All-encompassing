@@ -65,7 +65,7 @@ const useChats = ({ userId }: { userId: string | undefined }) => {
 
   //@ts-ignore
   useInfiniteScrollTop(containerRef, chatsDocs?.totalPages, page, setPage);
-  const fetchMessageList = async () => {
+  const fetchMessageList = () => {
     setChatLoading(true);
     ServiceErrorManager(
       MessageListService({
@@ -97,7 +97,7 @@ const useChats = ({ userId }: { userId: string | undefined }) => {
   };
 
   useEffect(() => {
-    fetchMessageList().catch(console.error);
+    fetchMessageList();
   }, [searchParams.get('id')]);
 
   const fetchSearchResults = useCallback(async () => {
@@ -197,11 +197,13 @@ const useChats = ({ userId }: { userId: string | undefined }) => {
   }, []);
 
   const onNewChat = useCallback((chat: any) => {
+    console.log(chat, '______chatss____');
+
     setChats((prev) => [...prev, chat.message]);
   }, []);
 
   const sendChatMessage = useCallback(async () => {
-    if (!message.trim()) return;
+    if (message.trim() === '') return;
 
     socket.emit(NEW_CHAT_EVENT, {
       content: message,
