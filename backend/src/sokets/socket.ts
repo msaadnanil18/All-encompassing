@@ -12,7 +12,6 @@ import dayjs from 'dayjs';
 import { getSokets } from '../utils';
 import { Message } from '../models/chartApp/message.models';
 import { Chat } from '../models/chartApp/chat.model';
-import { log } from 'console';
 
 export const userSocketIDS = new Map<string, Set<string>>();
 
@@ -30,7 +29,6 @@ const mountJoinChatEvent = (socket: Socket) => {
       attachments,
     }) => {
       try {
-        log(messageId, 'messageId');
         const id = messageEditId || new mongoose.Types.ObjectId(messageId);
         const currentTime = dayjs().toISOString();
 
@@ -83,7 +81,6 @@ const mountJoinChatEvent = (socket: Socket) => {
   socket.on(
     ChatEventEnum.DELETE_MESSAGE_EVENT,
     async ({ deleteMessageId, chat: { _id, members } }) => {
-      log(_id, deleteMessageId);
       try {
         await Promise.all([
           Message.deleteOne({ _id: deleteMessageId }),

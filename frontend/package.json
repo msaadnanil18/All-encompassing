@@ -18,7 +18,6 @@
     "6pp": "^1.2.16",
     "antd": "^5.20.2",
     "axios": "^1.7.3",
-    "bson": "^6.10.0",
     "chart.js": "^4.4.4",
     "chartjs": "^0.3.24",
     "dayjs": "^1.11.13",
@@ -41,8 +40,7 @@
     "react-webcam": "^7.2.0",
     "recoil": "^0.7.7",
     "socket.io-client": "^4.7.5",
-    "use-query-params": "^2.2.1",
-    "uuid": "^11.0.3"
+    "use-query-params": "^2.2.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.8.0",

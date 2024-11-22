@@ -23,7 +23,7 @@ import socket from '../../../../helpers/socket';
 import { sendMessage } from '../../../hooks/chart';
 import { useSearchParams } from 'react-router-dom';
 import dayjs from 'dayjs';
-import { generateMessageId } from '../../todoApp';
+import { generateMessageId } from '../../../utills';
 
 const CONNECTED_EVENT = 'connected';
 const DISCONNECT_EVENT = 'disconnect';

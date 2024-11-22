@@ -1,12 +1,5 @@
 import { Button } from 'antd';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ObjectId } from 'bson';
-
-import mongoose from 'mongoose';
-
-export const generateMessageId = (): string => {
-  return new mongoose.Types.ObjectId().toHexString();
-};
 
 const generateObjectId = (): string => {
   const timestamp = Math.floor(Date.now() / 1000).toString(16);
