@@ -6,8 +6,8 @@ export const ChatEventEnum = Object.freeze({
   JOIN_CHAT_EVENT: 'joinChat',
 
   NEW_CHAT_EVENT: 'newChat',
-
   SOCKET_ERROR_EVENT: 'socketError',
+  DELETE_MESSAGE_EVENT: 'deleteMessage',
 });
 
 export const AvailableChatEvents = Object.values(ChatEventEnum);

@@ -18,6 +18,7 @@
     "6pp": "^1.2.16",
     "antd": "^5.20.2",
     "axios": "^1.7.3",
+    "bson": "^6.10.0",
     "chart.js": "^4.4.4",
     "chartjs": "^0.3.24",
     "dayjs": "^1.11.13",
@@ -28,6 +29,7 @@
     "framer-motion": "^11.9.0",
     "imagekit": "^5.2.0",
     "lodash-es": "^4.17.21",
+    "mongoose": "^8.8.2",
     "prettier": "^3.3.3",
     "query-string": "^9.1.0",
     "react": "^18.3.1",
@@ -39,7 +41,8 @@
     "react-webcam": "^7.2.0",
     "recoil": "^0.7.7",
     "socket.io-client": "^4.7.5",
-    "use-query-params": "^2.2.1"
+    "use-query-params": "^2.2.1",
+    "uuid": "^11.0.3"
   },
   "devDependencies": {
     "@eslint/js": "^9.8.0",

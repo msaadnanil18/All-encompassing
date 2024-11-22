@@ -11,7 +11,8 @@ const Messages: FC<{
   userId: string | undefined;
   isDark: boolean;
   onEdit: (r: ChatMessageInterface) => void;
-}> = ({ chat, userId, isDark, onEdit }) => {
+  onDelete: (r: ChatMessageInterface) => void;
+}> = ({ chat, userId, isDark, onEdit, onDelete }) => {
   const [hover, setHover] = useState(false);
   const isMyMessage = chat.sender === userId;
 
@@ -32,7 +33,7 @@ const Messages: FC<{
       <div style={{ padding: '0.3rem 0.8rem' }}>
         {isMyMessage && (
           <div className=' flex justify-between'>
-            <MenuTogglers chat={chat} hover={hover} onEdit={onEdit} />
+            <MenuTogglers {...{ onDelete, chat, hover, onEdit }} />
           </div>
         )}
 
@@ -88,8 +89,9 @@ export default React.memo(Messages);
 const MenuTogglers: FC<{
   hover: boolean;
   chat: ChatMessageInterface;
+  onDelete: (r: ChatMessageInterface) => void;
   onEdit: (r: ChatMessageInterface) => void;
-}> = ({ hover, chat, onEdit }) => {
+}> = ({ hover, chat, onEdit, onDelete }) => {
   const driveFileCtxMenu: MenuProps['items'] = [
     {
       key: 'edit',
@@ -104,15 +106,9 @@ const MenuTogglers: FC<{
       key: 'DELETE',
       label: 'Delete ',
       icon: <DeleteOutlined color='red' />,
-      onClick: () => {},
-      // onClick: async () => {
-      //   await sdk.edit({
-      //     schema: 'resources',
-      //     query: { _id: item._id },
-      //     payload: { isDeleted: true },
-      //   });
-      //   tableSdkRef.current?.reload();
-      // },
+      onClick: () => {
+        onDelete(chat);
+      },
     },
   ];
   return (
@@ -135,11 +131,7 @@ const MenuTogglers: FC<{
           transition: 'opacity 0.3s ease',
         }}
       >
-        <Typography.Text
-          className=' cursor-pointer '
-          // type='secondary'
-          // style={{ margin: 0, padding: 0 }}
-        >
+        <Typography.Text className='cursor-pointer '>
           <DownOutlined />
         </Typography.Text>
       </span>

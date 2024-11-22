@@ -2,7 +2,7 @@ import { SmileOutlined } from '@ant-design/icons';
 import MessageInput from './MessageInput';
 import MessageSendButton from './MessageSendButton';
 import React, { Ref, Dispatch, SetStateAction } from 'react';
-import { Button, Card, Empty } from 'antd';
+import { Button, Card, Empty, Form, FormInstance } from 'antd';
 import { ChatMessageInterface } from '../../types/charts';
 import { useDarkMode } from '../../thems/useDarkMode';
 import EmojiPiker from '../../emojiPicker/EmojiPiker';
@@ -10,6 +10,7 @@ import DriveFileUpload from '../../../driveFileUpload';
 import { addFiles } from '../../types/addFiles';
 import Messages from './Messages';
 import AttachmentsView from './AttachmentsView';
+import { useSearchParams } from 'react-router-dom';
 
 interface ChartProps {
   chatLoading: boolean;
@@ -19,30 +20,32 @@ interface ChartProps {
   handleOnMessageChange: (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => void;
-  message: string;
-
+  form: FormInstance;
   setAttachments: React.Dispatch<React.SetStateAction<addFiles[]>>;
   sendChatMessage: () => void;
   chats: ChatMessageInterface[];
   userId: string | undefined;
+  handelOnDeleteMessage: (r: ChatMessageInterface) => Promise<void>;
 }
 
 const Chats = ({
   handleOnMessageChange,
   emojiPikerProps,
   emojiToggleRef,
-  message,
+  form,
   setAttachments,
   sendChatMessage,
   chats,
   userId,
   chatLoading,
   setMessageEditId,
+  handelOnDeleteMessage,
 }: ChartProps) => {
   const isDark = useDarkMode();
   const [isModalOpen, setIsModalOpen] = React.useState<boolean>(false);
   const [_attachments, set_Attachments] = React.useState<addFiles[]>([]);
 
+  let [searchParams] = useSearchParams();
   const handelOnAttachments = <t extends addFiles>(file: t[]) => {
     set_Attachments(file);
     setAttachments(file);
@@ -52,18 +55,24 @@ const Chats = ({
   const onEdit = (editData: ChatMessageInterface) => {
     const data = { target: { value: editData.content } };
     setMessageEditId(editData._id || '');
-
+    form.setFieldValue('message', editData.content);
     handleOnMessageChange(
       data as React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
     );
   };
+
+  const onDelete = (r: ChatMessageInterface) => {
+    handelOnDeleteMessage(r);
+  };
+
   return (
     <div className='relative flex flex-col'>
       <AttachmentsView
         {...{
+          form,
           isModalOpen,
           setIsModalOpen,
-          value: message,
+          value: 'message',
           onChange: handleOnMessageChange,
           send: sendChatMessage,
           attachments: _attachments,
@@ -94,13 +103,15 @@ const Chats = ({
         ))
       ) : (
         (chats || []).map((chat) => (
-          <Messages {...{ chat, userId, isDark, onEdit }} key={chat._id} />
+          <Messages
+            {...{ chat, userId, isDark, onEdit, onDelete }}
+            key={chat._id}
+          />
         ))
       )}
 
-      {(chats || []).length > 0 && (
+      {searchParams.get('id') && (
         <>
-          {' '}
           <div style={{ marginBottom: '10rem' }}>
             <EmojiPiker {...emojiPikerProps} />
           </div>
@@ -125,14 +136,12 @@ const Chats = ({
                   }}
                 />
 
-                <MessageInput
-                  onChange={handleOnMessageChange}
-                  send={sendChatMessage}
-                  value={message}
-                />
-                {message?.trim()?.length > 0 && (
+                <MessageInput {...{ form }} />
+                <MessageSendButton sendChatMessage={sendChatMessage} />
+
+                {/* {form.getFieldValue('message')?.length > 0 && (
                   <MessageSendButton sendChatMessage={sendChatMessage} />
-                )}
+                )} */}
               </div>
             </Card>
           </div>

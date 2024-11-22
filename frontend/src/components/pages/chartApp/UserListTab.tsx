@@ -22,13 +22,15 @@ const UserListTab: React.FC<{
       sendChatMessage,
       setAttachments,
       setMessageEditId,
+      handelOnDeleteMessage,
+      form,
     },
     states: {
       searchOptions,
       searchTerm,
       chatList,
       chatListLoading,
-      message,
+
       chats,
       chatLoading,
       containerRef,
@@ -150,11 +152,12 @@ const UserListTab: React.FC<{
                 emojiToggleRef,
                 sendChatMessage,
                 setAttachments,
-                message,
+                form,
                 chats,
                 userId,
                 chatLoading,
                 setMessageEditId,
+                handelOnDeleteMessage,
               }}
             />
           </div>

@@ -1,4 +1,4 @@
-import { Modal } from 'antd';
+import { FormInstance, Modal } from 'antd';
 import React, { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { $THEME_C0NFIG } from '../../atoms/root';
@@ -13,10 +13,18 @@ const AttachmentsView: React.FC<{
   onChange: React.ChangeEventHandler;
   value: string;
   send: () => void;
+  form: FormInstance;
   attachments: addFiles[];
 }> = (prop) => {
-  const { isModalOpen, setIsModalOpen, value, onChange, send, attachments } =
-    prop;
+  const {
+    isModalOpen,
+    setIsModalOpen,
+    value,
+    onChange,
+    send,
+    attachments,
+    form,
+  } = prop;
   const theme = useRecoilValue($THEME_C0NFIG);
 
   const [isFocused, setIsFocused] = useState(false);
@@ -49,8 +57,8 @@ const AttachmentsView: React.FC<{
       ))}
       <div className='input-container'>
         <input
-          value={value}
-          onChange={onChange}
+          // value={value}
+          onChange={(e) => form.setFieldValue('message', e.target.value)}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
           className='input-field'

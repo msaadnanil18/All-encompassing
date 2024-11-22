@@ -6,8 +6,14 @@ import axios, { AxiosProgressEvent } from 'axios';
 import { UploadChangeParam } from 'antd/es/upload';
 import { UploadFile } from 'antd/lib';
 import { addFiles } from '../components/types/addFiles';
-
-const FileUpload = ({ addFiles }: { addFiles: (file: addFiles) => void }) => {
+type FileType = 'image' | 'video' | 'document' | 'all';
+const FileUpload = ({
+  addFiles,
+  fileTypes = 'image',
+}: {
+  addFiles: (file: addFiles) => void;
+  fileTypes?: FileType;
+}) => {
   const [progress, setProgress] = useState<{
     [key: string]: { percentCompleted: number; file: UploadFile };
   }>({});
@@ -77,6 +83,13 @@ const FileUpload = ({ addFiles }: { addFiles: (file: addFiles) => void }) => {
     }
   };
 
+  const fileTypeMapping: Record<FileType, string> = {
+    image: 'image/*',
+    video: 'video/*',
+    document: '.pdf,.doc,.docx,.xls,.xlsx',
+    all: '*/*',
+  };
+
   return (
     <div>
       <Upload
@@ -86,6 +99,7 @@ const FileUpload = ({ addFiles }: { addFiles: (file: addFiles) => void }) => {
         onChange={handleFileInput}
         showUploadList={false}
         multiple
+        accept={fileTypeMapping[fileTypes]}
       >
         <Button icon={<UploadOutlined />}>Select File</Button>
       </Upload>

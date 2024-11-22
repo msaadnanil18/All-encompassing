@@ -1,30 +1,24 @@
-import React from 'react';
-import { Input } from 'antd';
+import React, { FC, Dispatch, SetStateAction } from 'react';
+import { Form, FormInstance, Input } from 'antd';
 
-const MessageInput = ({
-  value,
-  onChange,
-  send,
-}: {
-  value: string;
-  onChange: (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => void;
-  send: () => void;
-}) => {
+const MessageInput: FC<{
+  form: FormInstance;
+}> = ({ form }) => {
   return (
-    <Input
-      value={value}
-      onChange={onChange}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter') {
-          send();
-        }
-      }}
-      className='flex-grow mr-2'
-      style={{ padding: '8px', borderRadius: '9px' }}
-    />
+    <Form form={form} style={{ width: '100%' }}>
+      <Form.Item name='message' noStyle>
+        <Input
+          // onKeyDown={(e) => {
+          //   if (e.key === 'Enter') {
+          //     send();
+          //   }
+          // }}
+          className='flex-grow mr-2'
+          style={{ padding: '8px', borderRadius: '9px' }}
+        />
+      </Form.Item>
+    </Form>
   );
 };
 
-export default MessageInput;
+export default React.memo(MessageInput);
