@@ -1,7 +1,7 @@
 import { SmileOutlined } from '@ant-design/icons';
 import MessageInput from './MessageInput';
 import MessageSendButton from './MessageSendButton';
-import React, { Ref } from 'react';
+import React, { Ref, Dispatch, SetStateAction } from 'react';
 import { Button, Card, Empty } from 'antd';
 import { ChatMessageInterface } from '../../types/charts';
 import { useDarkMode } from '../../thems/useDarkMode';
@@ -14,6 +14,7 @@ import AttachmentsView from './AttachmentsView';
 interface ChartProps {
   chatLoading: boolean;
   emojiPikerProps: any;
+  setMessageEditId: Dispatch<SetStateAction<string | null>>;
   emojiToggleRef: Ref<{ toggle: () => void }>;
   handleOnMessageChange: (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -36,6 +37,7 @@ const Chats = ({
   chats,
   userId,
   chatLoading,
+  setMessageEditId,
 }: ChartProps) => {
   const isDark = useDarkMode();
   const [isModalOpen, setIsModalOpen] = React.useState<boolean>(false);
@@ -47,6 +49,14 @@ const Chats = ({
     setIsModalOpen(true);
   };
 
+  const onEdit = (editData: ChatMessageInterface) => {
+    const data = { target: { value: editData.content } };
+    setMessageEditId(editData._id || '');
+
+    handleOnMessageChange(
+      data as React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    );
+  };
   return (
     <div className='relative flex flex-col'>
       <AttachmentsView
@@ -84,7 +94,7 @@ const Chats = ({
         ))
       ) : (
         (chats || []).map((chat) => (
-          <Messages {...{ chat, userId, isDark }} key={chat._id} />
+          <Messages {...{ chat, userId, isDark, onEdit }} key={chat._id} />
         ))
       )}
 

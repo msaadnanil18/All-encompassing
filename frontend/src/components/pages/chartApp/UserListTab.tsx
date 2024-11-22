@@ -21,6 +21,7 @@ const UserListTab: React.FC<{
       emojiToggleRef,
       sendChatMessage,
       setAttachments,
+      setMessageEditId,
     },
     states: {
       searchOptions,
@@ -153,6 +154,7 @@ const UserListTab: React.FC<{
                 chats,
                 userId,
                 chatLoading,
+                setMessageEditId,
               }}
             />
           </div>

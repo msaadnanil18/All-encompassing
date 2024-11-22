@@ -80,8 +80,8 @@ const FileUpload = ({ addFiles }: { addFiles: (file: addFiles) => void }) => {
   return (
     <div>
       <Upload
-        className="hidden"
-        id="upload-input"
+        className='hidden'
+        id='upload-input'
         beforeUpload={() => false}
         onChange={handleFileInput}
         showUploadList={false}
@@ -90,13 +90,13 @@ const FileUpload = ({ addFiles }: { addFiles: (file: addFiles) => void }) => {
         <Button icon={<UploadOutlined />}>Select File</Button>
       </Upload>
       <div
-        className="rounded-md border-dashed border-2 border-gray-300 cursor-pointer p-8"
+        className='rounded-md border-dashed border-2 border-gray-300 cursor-pointer p-8'
         onClick={openNativeFileSelector}
       >
         {Object.values(progress).some(
           (uploadProgress) => uploadProgress.percentCompleted > 0
         ) && (
-          <div className="my-2">
+          <div className='my-2'>
             {Object.entries(progress).map(([fileName, progress]) => (
               <div key={fileName}>
                 <Typography.Text>
@@ -109,11 +109,11 @@ const FileUpload = ({ addFiles }: { addFiles: (file: addFiles) => void }) => {
         )}
 
         {Object.values(progress).length === 0 && (
-          <div className="text-center p-8">
+          <div className='text-center p-8'>
             <Typography.Link>
-              <InboxOutlined size={42} className="text-5xl" />
+              <InboxOutlined size={42} className='text-5xl' />
             </Typography.Link>
-            <Typography.Title level={4} className="m-0 p-0 mt-4">
+            <Typography.Title level={4} className='m-0 p-0 mt-4'>
               Click or drag file to this area to upload
             </Typography.Title>
           </div>

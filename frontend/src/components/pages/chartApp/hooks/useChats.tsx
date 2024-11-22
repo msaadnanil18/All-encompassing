@@ -22,6 +22,7 @@ import { useDarkMode } from '../../../thems/useDarkMode';
 import socket from '../../../../helpers/socket';
 import { sendMessage } from '../../../hooks/chart';
 import { useSearchParams } from 'react-router-dom';
+import dayjs from 'dayjs';
 const CONNECTED_EVENT = 'connected';
 const DISCONNECT_EVENT = 'disconnect';
 const JOIN_CHAT_EVENT = 'joinChat';
@@ -50,6 +51,7 @@ const useChats = ({ userId }: { userId: string | undefined }) => {
   const [attachments, setAttachments] = useState<addFiles[]>([]);
   const [chatLoading, setChatLoading] = useState<boolean>(false);
   const [page, setPage] = useState<number>(1);
+  const [messageEditId, setMessageEditId] = useState<string | null>(null);
   const {
     open: openSearchBar,
     close: closeSearchBar,
@@ -197,43 +199,58 @@ const useChats = ({ userId }: { userId: string | undefined }) => {
   }, []);
 
   const onNewChat = useCallback((chat: any) => {
-    console.log(chat, '______chatss____');
+    // setChats((prev) => [...prev, chat.message]);
 
-    setChats((prev) => [...prev, chat.message]);
+    setChats((prev) =>
+      prev.some((existingChat) => existingChat._id === chat.message._id)
+        ? prev.map((existingChat) =>
+            existingChat._id === chat.message._id ? chat.message : existingChat
+          )
+        : [...prev, chat.message]
+    );
   }, []);
 
   const sendChatMessage = useCallback(async () => {
     if (message.trim() === '') return;
+    console.log(messageEditId, 'newChat');
 
     socket.emit(NEW_CHAT_EVENT, {
+      ...(messageEditId ? { messageEditId } : {}),
       content: message,
       chat: chatList.find((chats) => chats._id === searchParams.get('id')),
       attachments: attachments.map((file) => file.url),
     });
 
-    setChats((prev) => [
-      ...prev,
-      {
-        sender: userId,
-        content: message,
-        attachments: attachments.map((file) => ({
-          url: file.url,
-        })),
-      },
-    ]);
+    const newChat = {
+      _id: messageEditId || dayjs().toISOString(),
+      sender: userId,
+      content: message,
+      attachments: attachments.map((file) => ({
+        url: file.url,
+      })),
+    };
 
+    setChats((prev) =>
+      prev.some((existingChat) => existingChat._id === messageEditId)
+        ? prev.map((existingChat) =>
+            existingChat._id === messageEditId ? newChat : existingChat
+          )
+        : [...prev, newChat]
+    );
+
+    setMessageEditId(null);
     try {
       const data = await sendMessage(
         userId,
         message,
-        attachments.map((file) => file.url)
+        attachments.map((file) => file.url || '')
       );
       setMessage('');
       setAttachments([]);
     } catch (error) {
       console.error('Failed to send message:', error);
     }
-  }, [message, attachments, searchParams.get('id'), userId]);
+  }, [message, attachments, searchParams.get('id'), userId, messageEditId]);
 
   const connectSocket = useCallback(() => {
     if (socket) {
@@ -291,7 +308,7 @@ const useChats = ({ userId }: { userId: string | undefined }) => {
         setSelfTyping(true);
       }
     },
-    [isConnected, selfTyping]
+    [isConnected, selfTyping, messageEditId]
   );
 
   const togglers = useMemo(
@@ -310,6 +327,7 @@ const useChats = ({ userId }: { userId: string | undefined }) => {
       emojiToggleRef,
       sendChatMessage,
       setAttachments,
+      setMessageEditId,
     }),
     [
       handelOnSearchChange,
@@ -319,6 +337,7 @@ const useChats = ({ userId }: { userId: string | undefined }) => {
       emojiToggleRef,
       sendChatMessage,
       setAttachments,
+      setMessageEditId,
     ]
   );
 

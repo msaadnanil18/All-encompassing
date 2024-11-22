@@ -12,6 +12,7 @@ import dayjs from 'dayjs';
 import { getSokets } from '../utils';
 import { Message } from '../models/chartApp/message.models';
 import { Chat } from '../models/chartApp/chat.model';
+import { log } from 'console';
 
 export const userSocketIDS = new Map<string, Set<string>>();
 
@@ -21,40 +22,40 @@ const mountJoinChatEvent = (socket: Socket) => {
   });
   socket.on(
     ChatEventEnum.NEW_CHAT_EVENT,
-    async ({ content, chat: { _id, members }, attachments }) => {
-      const id = new mongoose.Types.ObjectId();
-      const messageForRealTime = {
-        _id: id,
-        sender: socket.user._id,
-        content,
-        attachments: attachments.map((attachment: string) => ({
-          url: attachment,
-        })),
-        chat: _id,
-        createdAt: dayjs().toISOString(),
-      };
-      const messageForDB = {
-        _id: id,
-        sender: socket.user._id,
-        content,
-        attachments: attachments.map((attachment: string) => ({
-          url: attachment,
-        })),
-        chat: _id,
-      };
-
+    async ({ messageEditId, content, chat: { _id, members }, attachments }) => {
       try {
-        await Message.create(messageForDB);
-        await Chat.findByIdAndUpdate(
-          { _id },
-          {
-            $set: { updatedAt: dayjs().toISOString() },
-          }
-        );
+        log(messageEditId, 'messageEditId:', content);
+        const id = messageEditId || new mongoose.Types.ObjectId();
+        const currentTime = dayjs().toISOString();
+
+        const attachmentsFormatted = attachments.map((attachment: string) => ({
+          url: attachment,
+        }));
+
+        const messageForRealTime = {
+          _id: id,
+          sender: socket.user._id,
+          content,
+          attachments: attachmentsFormatted,
+          chat: _id,
+          createdAt: currentTime,
+        };
+
+        if (messageEditId) {
+          await Promise.all([
+            Message.updateOne({ _id: messageEditId }, { content }),
+            Chat.findByIdAndUpdate(_id, { $set: { updatedAt: currentTime } }),
+          ]);
+        } else {
+          const messageForDB = { ...messageForRealTime };
+
+          await Promise.all([
+            Message.create(messageForDB),
+            Chat.findByIdAndUpdate(_id, { $set: { updatedAt: currentTime } }),
+          ]);
+        }
+
         const usersInSocket = getSokets(members);
-
-        console.log(usersInSocket, '______________$________');
-
         usersInSocket.forEach((socketId) => {
           if (socketId) {
             socket.to(socketId).emit(ChatEventEnum.NEW_CHAT_EVENT, {
