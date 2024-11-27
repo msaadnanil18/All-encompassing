@@ -19,7 +19,7 @@ const io = new IOServer(server, {
   cors: {
     origin: [
       process.env.CROS_ORIGIN as any,
-      'https://a4bf-27-100-13-114.ngrok-free.app',
+      'https://1a8b-27-100-13-114.ngrok-free.app',
     ],
     credentials: true,
   },
@@ -29,7 +29,7 @@ app.use(
   cors({
     origin: [
       process.env.CROS_ORIGIN as any,
-      'https://a4bf-27-100-13-114.ngrok-free.app',
+      'https://1a8b-27-100-13-114.ngrok-free.app',
     ],
     credentials: true,
   })

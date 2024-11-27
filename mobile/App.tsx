@@ -18,6 +18,9 @@ import { User } from '@AllEcompassing/types/partialUser';
 import { InitService } from '@AllEcompassing/components/Services/auth';
 import { $ME, $THEME_C0NFIG } from '@AllEcompassing/components/atoms/roots';
 import { ServiceErrorManager } from '@AllEcompassing/helpers/service';
+import relativeTime from 'dayjs/plugin/relativeTime';
+import dayjs from 'dayjs';
+dayjs.extend(relativeTime);
 
 const Main = () => {
   const theme = useTheme();

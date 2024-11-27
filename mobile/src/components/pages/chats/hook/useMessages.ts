@@ -4,6 +4,7 @@ import { MessageListService } from '../service';
 import { useSocket } from '@AllEcompassing/helpers/socket';
 import { ChatMessageInterface } from '../types';
 import useChats from './useChats';
+import { generateMessageId } from '@AllEcompassing/utils';
 
 const CONNECTED_EVENT = 'connected';
 const DISCONNECT_EVENT = 'disconnect';
@@ -19,15 +20,18 @@ const useMessage = ({
 }) => {
   const socket = useSocket();
 
-  const [chatsDocs, setChatsDocs] = useState<any>();
   const [message, setMessage] = useState('');
   const [chats, setChats] = useState<ChatMessageInterface[]>([]);
   const [chatLoading, setChatLoading] = useState<boolean>(false);
   const {
     states: { chatList },
   } = useChats({ userId: userId as string });
+  const [page, setPage] = useState(1);
+
+  const [hasMore, setHasMore] = useState(true);
   const [isSocketConnected, setIsSocketConnected] = useState<boolean>(false);
-  const fetchMessageList = () => {
+  const fetchMessageList = async () => {
+    if (chatLoading || !hasMore) return;
     setChatLoading(true);
     ServiceErrorManager(
       MessageListService({
@@ -37,36 +41,42 @@ const useMessage = ({
           },
           options: {
             sort: { createdAt: -1 },
-            limit: 1000,
-            // page: page,
+            limit: 20,
+            page: page,
           },
         },
       }),
       { failureMessage: 'Error while fetch user for chat' },
     )
       .then(([_, data]) => {
-        setChats(data?.docs);
-        // if (data.totalPages > 1) {
-        //   setChats((prevChats) => [...data.docs, ...(prevChats || [])]);
-        // } else {
-        //   setChats(data?.docs);
-        // }
+        if (data?.docs?.length) {
+          setChats((prev) => [...prev, ...data.docs]);
+        }
 
-        setChatsDocs(data);
+        if (!data.nextPage) {
+          setHasMore(false);
+        }
       })
       .catch((err) => console.log(err))
       .finally(() => setChatLoading(false));
   };
 
+  const loadMessages = useCallback(async () => {
+    if (chatLoading || !hasMore) return;
+    await fetchMessageList();
+  }, [chatLoading, hasMore, fetchMessageList]);
+
   useEffect(() => {
-    fetchMessageList();
-  }, [chatId]);
+    loadMessages();
+  }, [chatId, page]);
 
   const handelOnSendMessage = useCallback(() => {
     if (message.trim() === '') return;
+    const _id = generateMessageId();
 
     if (socket) {
       socket?.emit(NEW_CHAT_EVENT, {
+        messageId: _id,
         content: message,
         chat: chatList.find((chats) => chats._id === chatId),
         attachments: [],
@@ -75,7 +85,7 @@ const useMessage = ({
 
     setChats((prev) => [
       {
-        _id: Math.random().toFixed(10).replace('0.', '').toString(),
+        _id: _id,
         sender: userId,
         content: message,
         attachments: [],
@@ -115,16 +125,18 @@ const useMessage = ({
       chats,
       chatLoading,
       message,
+      hasMore,
     }),
-    [chats, chatLoading, message],
+    [chats, chatLoading, message, hasMore],
   );
 
   const actons = useMemo(
     () => ({
       setMessage,
       handelOnSendMessage,
+      setPage,
     }),
-    [setMessage, handelOnSendMessage],
+    [setMessage, handelOnSendMessage, setPage],
   );
   return { states, actons };
 };

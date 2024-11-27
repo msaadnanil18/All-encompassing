@@ -28,4 +28,4 @@ dist-ssr
 # dotenv environment variables file
 .env
 .env.test
-.env.production
+.env.productionmy-secret-file.txt

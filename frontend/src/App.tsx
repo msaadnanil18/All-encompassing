@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
 import { RecoilRoot } from 'recoil';
+import dayjs from 'dayjs';
 import { HelmetProvider } from 'react-helmet-async';
 import { $ME, $THEME_C0NFIG, ThemeConfig } from './components/atoms/root';
 import { ServiceErrorManager } from './helpers/service';
 import { initService } from './components/services/auth';
 import { User } from './components/types/partialUser';
+import relativeTime from 'dayjs/plugin/relativeTime';
+dayjs.extend(relativeTime);
 
 const Bootstrap = React.lazy(() => import('./Bootstrap'));
 const CustumLoading = React.lazy(

@@ -1,4 +1,4 @@
-import { AutoCompleteProps, Select } from 'antd';
+import { AutoCompleteProps, Form, Select } from 'antd';
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useTogglers } from '../../../hooks/togglers';
 import { ServiceErrorManager } from '../../../../helpers/service';
@@ -20,19 +20,21 @@ import { debounce } from 'lodash-es';
 import { addFiles } from '../../../types/addFiles';
 import { useDarkMode } from '../../../thems/useDarkMode';
 import socket from '../../../../helpers/socket';
-import { sendMessage } from '../../../hooks/chart';
 import { useSearchParams } from 'react-router-dom';
+import { generateMessageId } from '../../../utills';
+
 const CONNECTED_EVENT = 'connected';
 const DISCONNECT_EVENT = 'disconnect';
 const JOIN_CHAT_EVENT = 'joinChat';
 const NEW_CHAT_EVENT = 'newChat';
+const DELETE_MESSAGE_EVENT = 'deleteMessage';
 
 const useChats = ({ userId }: { userId: string | undefined }) => {
   const [searchOptions, setSearchOptions] = useState<
     AutoCompleteProps['options']
   >([]);
   let [searchParams] = useSearchParams();
-
+  const [form] = Form.useForm();
   const isDark = useDarkMode();
   const currentChat = useRef<any>();
   const containerRef = useRef<React.MutableRefObject<HTMLElement | null>>(null);
@@ -45,11 +47,13 @@ const useChats = ({ userId }: { userId: string | undefined }) => {
   const [chatListLoading, setChatListLoading] = useState<boolean>(false);
   const [isConnected, setIsConnected] = useState<boolean>(false);
   const [selfTyping, setSelfTyping] = useState<boolean>(false);
-  const [message, setMessage] = useState<string>('');
+  // const [message, setMessage] = useState<string>('');
   const [chats, setChats] = useState<ChatMessageInterface[]>([]);
   const [attachments, setAttachments] = useState<addFiles[]>([]);
   const [chatLoading, setChatLoading] = useState<boolean>(false);
   const [page, setPage] = useState<number>(1);
+  const [messageEditId, setMessageEditId] = useState<string | null>(null);
+  const [messageDeleteId, setMessageDeleteId] = useState<string | null>(null);
   const {
     open: openSearchBar,
     close: closeSearchBar,
@@ -197,54 +201,79 @@ const useChats = ({ userId }: { userId: string | undefined }) => {
   }, []);
 
   const onNewChat = useCallback((chat: any) => {
-    console.log(chat, '______chatss____');
-
-    setChats((prev) => [...prev, chat.message]);
+    setChats((prev) =>
+      prev.some((existingChat) => existingChat._id === chat.message._id)
+        ? prev.map((existingChat) =>
+            existingChat._id === chat.message._id ? chat.message : existingChat
+          )
+        : [...prev, chat.message]
+    );
   }, []);
 
   const sendChatMessage = useCallback(async () => {
-    if (message.trim() === '') return;
-
-    socket.emit(NEW_CHAT_EVENT, {
-      content: message,
-      chat: chatList.find((chats) => chats._id === searchParams.get('id')),
-      attachments: attachments.map((file) => file.url),
-    });
-
-    setChats((prev) => [
-      ...prev,
-      {
-        sender: userId,
-        content: message,
-        attachments: attachments.map((file) => ({
-          url: file.url,
-        })),
-      },
-    ]);
-
     try {
-      const data = await sendMessage(
-        userId,
-        message,
-        attachments.map((file) => file.url)
-      );
-      setMessage('');
-      setAttachments([]);
+      const _id = generateMessageId();
+      await form.validateFields();
+      const _message = form.getFieldValue('message') || '';
+      const attachmentUrls = attachments.map((file) => file.url);
+
+      if (_message?.trim() !== '' || attachmentUrls.length > 0) {
+        const chat = chatList.find(
+          (chats) => chats._id === searchParams.get('id')
+        );
+        socket.emit(NEW_CHAT_EVENT, {
+          messageId: _id,
+          ...(messageEditId ? { messageEditId } : {}),
+          content: _message,
+          chat,
+          attachments: attachmentUrls,
+        });
+
+        const newChat = {
+          _id: messageEditId || _id,
+          sender: userId,
+          content: _message,
+          attachments: attachmentUrls.map((url) => ({ url })),
+        };
+
+        setChats((prev) =>
+          prev.some((chat) => chat._id === messageEditId)
+            ? prev.map((chat) => (chat._id === messageEditId ? newChat : chat))
+            : [...prev, newChat]
+        );
+
+        form.resetFields();
+        setAttachments([]);
+        setMessageEditId(null);
+      }
     } catch (error) {
       console.error('Failed to send message:', error);
     }
-  }, [message, attachments, searchParams.get('id'), userId]);
+  }, [
+    attachments,
+    searchParams.get('id'),
+    userId,
+    messageEditId,
+    chatList,
+    form,
+    socket,
+    setChats,
+  ]);
 
   const connectSocket = useCallback(() => {
     if (socket) {
       socket.on(CONNECTED_EVENT, onConnect);
       socket.on(NEW_CHAT_EVENT, onNewChat);
+      socket.on(DELETE_MESSAGE_EVENT, ({ deleteMessageId }) =>
+        setChats((prev) => prev.filter((chat) => chat._id !== deleteMessageId))
+      );
     }
 
     return () => {
       if (socket) {
         socket.off(CONNECTED_EVENT, onConnect);
         socket.off(NEW_CHAT_EVENT, onNewChat);
+        socket.off(DELETE_MESSAGE_EVENT, (e) => console.log(e, 'edeelllee'));
       }
     };
   }, [onConnect, onNewChat]);
@@ -268,8 +297,9 @@ const useChats = ({ userId }: { userId: string | undefined }) => {
 
   const handleEmojiSelect = useCallback((event: React.MouseEvent) => {
     const selectedEmoji = (event as any).emoji;
-
-    setMessage((prevMessage) => prevMessage + selectedEmoji);
+    const _message = form.getFieldValue('message');
+    form.setFieldValue('message', _message + selectedEmoji);
+    // setMessage((prevMessage) => prevMessage + selectedEmoji);
   }, []);
 
   const emojiPikerProps = useMemo(
@@ -281,9 +311,28 @@ const useChats = ({ userId }: { userId: string | undefined }) => {
     [isDark, handleEmojiSelect]
   );
 
+  const handelOnDeleteMessage = useCallback(
+    async function (r: ChatMessageInterface | null) {
+      setChats((prev) => prev.filter((chat) => chat._id !== r?._id));
+
+      socket.emit(DELETE_MESSAGE_EVENT, {
+        deleteMessageId: r?._id,
+        chat: chatList.find((chats) => chats._id === searchParams.get('id')),
+      });
+    },
+    [searchParams.get('id'), chatList]
+  );
+
+  const togglers = useMemo(
+    () => ({
+      selectUserToChat: { openSearchBar, closeSearchBar, isOpenSearchBar },
+    }),
+    [openSearchBar, closeSearchBar, isOpenSearchBar]
+  );
+
   const handleOnMessageChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      setMessage(e.target.value);
+      // setMessage(e.target.value);
 
       if (!isConnected) return;
 
@@ -292,13 +341,6 @@ const useChats = ({ userId }: { userId: string | undefined }) => {
       }
     },
     [isConnected, selfTyping]
-  );
-
-  const togglers = useMemo(
-    () => ({
-      selectUserToChat: { openSearchBar, closeSearchBar, isOpenSearchBar },
-    }),
-    [openSearchBar, closeSearchBar, isOpenSearchBar]
   );
 
   const actions = useMemo(
@@ -310,6 +352,10 @@ const useChats = ({ userId }: { userId: string | undefined }) => {
       emojiToggleRef,
       sendChatMessage,
       setAttachments,
+      setMessageEditId,
+      handelOnDeleteMessage,
+
+      form,
     }),
     [
       handelOnSearchChange,
@@ -319,6 +365,9 @@ const useChats = ({ userId }: { userId: string | undefined }) => {
       emojiToggleRef,
       sendChatMessage,
       setAttachments,
+      setMessageEditId,
+      handelOnDeleteMessage,
+      form,
     ]
   );
 
@@ -328,7 +377,6 @@ const useChats = ({ userId }: { userId: string | undefined }) => {
       searchTerm,
       chatList,
       chatListLoading,
-      message,
       chats,
       chatLoading,
       containerRef,
@@ -338,7 +386,6 @@ const useChats = ({ userId }: { userId: string | undefined }) => {
       searchTerm,
       chatListLoading,
       chatList,
-      message,
       chats,
       chatLoading,
       containerRef,

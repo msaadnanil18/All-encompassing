@@ -12,6 +12,8 @@ const Login: React.FC = () => {
   React.useEffect(() => {
     if (me) {
       navigate(`/dash-board/${me?._id}`);
+    } else {
+      navigate('/');
     }
   }, [me]);
 

@@ -20,7 +20,7 @@ const UserListCard = ({
         src={_prevChats?.avatar}
       />
       <YStack flex={1} space='$1'>
-        <Text fontSize='$5' fontWeight='bold'>
+        <Text fontSize='$4' fontWeight='bold'>
           {_prevChats.name}
         </Text>
         <Text color='$gray10' numberOfLines={1} ellipsizeMode='tail'>

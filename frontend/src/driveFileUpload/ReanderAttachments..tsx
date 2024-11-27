@@ -1,6 +1,6 @@
 import React from 'react';
 import { FileOutlined, FileImageFilled } from '@ant-design/icons';
-import { Button, Drawer } from 'antd';
+import { Button, Drawer, Typography } from 'antd';
 import { useTogglers } from '../components/hooks/togglers';
 
 interface IProps {
@@ -99,9 +99,27 @@ const Renders: React.FC<IProps> = (prop) => {
 
     default:
       return (
-        <a href={url} target='_blank' rel='noopener noreferrer'>
-          <FileOutlined /> Unknown File
-        </a>
+        <div>
+          <embed src={url} />
+
+          <div style={{ marginTop: '10px', textAlign: 'center' }}>
+            <Button
+              size='small'
+              type='link'
+              onClick={() => {
+                const anchor = document.createElement('a');
+                anchor.href = url as any;
+                anchor.download = ''; //
+                anchor.target = '_blank';
+                document.body.appendChild(anchor);
+                anchor.click();
+                document.body.removeChild(anchor);
+              }}
+            >
+              Download File
+            </Button>
+          </div>
+        </div>
       );
   }
 };

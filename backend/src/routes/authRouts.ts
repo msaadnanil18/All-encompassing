@@ -16,20 +16,7 @@ import List from '../controllers/crudControllers/list';
 import Get from '../controllers/crudControllers/get';
 const authRouter = Router();
 
-authRouter.route('/saveMainComponentFunction').post(
-  create(Component, {
-    payloadTransformer: async ({ user, payload }) => {
-      const renderFunctionCode = JSON.parse((payload as any).renderFunction);
-      const parsedFunction = (() => {
-        return eval(`(${renderFunctionCode})`);
-      })();
-      return {
-        ...payload,
-        // renderFunction: parsedFunction,
-      };
-    },
-  })
-);
+authRouter.route('/saveMainComponentFunction').post(List(Component, {}));
 authRouter.route('/componentList').post(Get(Component, {}));
 authRouter.route('/register').post(registerUser);
 authRouter.route('/verify-emai').post(verifyEmail);

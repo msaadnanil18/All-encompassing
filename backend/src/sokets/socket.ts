@@ -21,40 +21,45 @@ const mountJoinChatEvent = (socket: Socket) => {
   });
   socket.on(
     ChatEventEnum.NEW_CHAT_EVENT,
-    async ({ content, chat: { _id, members }, attachments }) => {
-      const id = new mongoose.Types.ObjectId();
-      const messageForRealTime = {
-        _id: id,
-        sender: socket.user._id,
-        content,
-        attachments: attachments.map((attachment: string) => ({
-          url: attachment,
-        })),
-        chat: _id,
-        createdAt: dayjs().toISOString(),
-      };
-      const messageForDB = {
-        _id: id,
-        sender: socket.user._id,
-        content,
-        attachments: attachments.map((attachment: string) => ({
-          url: attachment,
-        })),
-        chat: _id,
-      };
-
+    async ({
+      messageEditId,
+      messageId,
+      content,
+      chat: { _id, members },
+      attachments,
+    }) => {
       try {
-        await Message.create(messageForDB);
-        await Chat.findByIdAndUpdate(
-          { _id },
-          {
-            $set: { updatedAt: dayjs().toISOString() },
-          }
-        );
+        const id = messageEditId || new mongoose.Types.ObjectId(messageId);
+        const currentTime = dayjs().toISOString();
+
+        const attachmentsFormatted = attachments.map((attachment: string) => ({
+          url: attachment,
+        }));
+
+        const messageForRealTime = {
+          _id: id,
+          sender: socket.user._id,
+          content,
+          attachments: attachmentsFormatted,
+          chat: _id,
+          createdAt: currentTime,
+        };
+
+        if (messageEditId) {
+          await Promise.all([
+            Message.updateOne({ _id: messageEditId }, { content }),
+            Chat.findByIdAndUpdate(_id, { $set: { updatedAt: currentTime } }),
+          ]);
+        } else {
+          const messageForDB = { ...messageForRealTime };
+
+          await Promise.all([
+            Message.create(messageForDB),
+            Chat.findByIdAndUpdate(_id, { $set: { updatedAt: currentTime } }),
+          ]);
+        }
+
         const usersInSocket = getSokets(members);
-
-        console.log(usersInSocket, '______________$________');
-
         usersInSocket.forEach((socketId) => {
           if (socketId) {
             socket.to(socketId).emit(ChatEventEnum.NEW_CHAT_EVENT, {
@@ -67,6 +72,35 @@ const mountJoinChatEvent = (socket: Socket) => {
         console.error('Error saving message: ', error);
         socket.emit(
           ChatEventEnum.SOCKET_ERROR_EVENT,
+          'Failed to save message to database.'
+        );
+      }
+    }
+  );
+
+  socket.on(
+    ChatEventEnum.DELETE_MESSAGE_EVENT,
+    async ({ deleteMessageId, chat: { _id, members } }) => {
+      try {
+        await Promise.all([
+          Message.deleteOne({ _id: deleteMessageId }),
+          Chat.findByIdAndUpdate(_id, {
+            $set: { updatedAt: dayjs().toISOString() },
+          }),
+        ]);
+
+        const usersInSocket = getSokets(members);
+        usersInSocket.forEach((socketId) => {
+          if (socketId) {
+            socket
+              .to(socketId)
+              .emit(ChatEventEnum.DELETE_MESSAGE_EVENT, { deleteMessageId });
+          }
+        });
+      } catch (error) {
+        console.error('Error saving message: ', error);
+        socket.emit(
+          ChatEventEnum.DELETE_MESSAGE_EVENT,
           'Failed to save message to database.'
         );
       }

@@ -10,8 +10,9 @@ const componentSchema = new Schema(
     },
     renderFunction: {
       type: Schema.Types.Mixed,
-      required: true,
     },
+    message: String,
+    timestamp: Date,
   },
   { timestamps: true }
 );
