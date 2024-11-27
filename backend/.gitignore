@@ -74,6 +74,7 @@ web_modules/
 .env.test
 .env.production
 adnan-mahmood-firebase-adminsdk-btnxm-52dbdfcbb3.json
+/src/adnan-mahmood-firebase-adminsdk-btnxm-52dbdfcbb3.json
 
 # parcel-bundler cache (https://parceljs.org/)
 .cache

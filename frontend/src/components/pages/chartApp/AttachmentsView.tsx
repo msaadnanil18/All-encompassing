@@ -46,7 +46,7 @@ const AttachmentsView: React.FC<{
       onCancel={() => setIsModalOpen(false)}
     >
       {(attachments || []).map((file, index) => (
-        <div>
+        <div key={index}>
           <RenderAttachments
             width={'200px'}
             height={'150px'}

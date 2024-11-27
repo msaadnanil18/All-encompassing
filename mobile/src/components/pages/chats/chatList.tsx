@@ -1,19 +1,16 @@
 import React, { useRef } from 'react';
 import { View, Text, Stack, YStack, Separator, Button, Spinner } from 'tamagui';
-
 import { TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '@AllEcompassing/types/screens';
-import relativeTime from 'dayjs/plugin/relativeTime';
 import useChats from './hook/useChats';
-import dayjs from 'dayjs';
 import { Search } from '@tamagui/lucide-icons';
 import NewUserListDrawer from './NewUserListDrawer';
 import UserListCard from './UserListCard';
 import { ChatListItemInterface } from './types';
 import { User } from '@AllEcompassing/types/partialUser';
-dayjs.extend(relativeTime);
+
 type ChatListNavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 const ChatList = () => {
@@ -90,7 +87,12 @@ const ChatList = () => {
           icon={<Search size='$1.5' />}
         />
       </View>
-      <ScrollView>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        scrollEventThrottle={16}
+        scrollIndicatorInsets={{ right: 10 }}
+        style={styles.ScrollViewContainer}
+      >
         {(chatList || []).map((chat, index) => {
           const prevChat = chat.members.find((user) => user._id !== userId);
           let _prevChats = { ...prevChat };
@@ -108,7 +110,12 @@ const ChatList = () => {
                   _prevChats={_prevChats}
                   updatedAt={chat.updatedAt}
                 />
-                <Separator shadowColor='$blue10Light' marginVertical='$3' />
+                <Separator
+                  alignSelf='stretch'
+                  vertical
+                  shadowColor='$blue10Light'
+                  marginVertical='$3'
+                />
               </Stack>
             </TouchableOpacity>
           );
@@ -125,5 +132,8 @@ const styles = StyleSheet.create({
   headerContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+  },
+  ScrollViewContainer: {
+    marginBottom: 30,
   },
 });

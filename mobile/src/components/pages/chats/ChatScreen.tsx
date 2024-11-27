@@ -6,42 +6,29 @@ import {
   StyleSheet,
   FlatList,
 } from 'react-native';
-import {
-  Avatar,
-  XStack,
-  YStack,
-  Stack,
-  Separator,
-  Input as TextInput,
-  Spinner,
-} from 'tamagui';
+import { Avatar, XStack, YStack, Input as TextInput, Spinner } from 'tamagui';
 import { Send, Paperclip } from '@tamagui/lucide-icons';
 import useMessage from './hook/useMessages';
 import { ChatMessageInterface } from './types';
 import { useRecoilValue } from 'recoil';
 import { $ME } from '@AllEcompassing/components/atoms/roots';
+import FileSendButton from './FileSendButton';
 
 const ChatScreen = ({ chatId }: { chatId: string }) => {
   const me = useRecoilValue($ME);
   const {
-    states: { chats, chatLoading, message },
-    actons: { setMessage, handelOnSendMessage },
+    states: { chats, chatLoading, message, hasMore },
+    actons: { setMessage, handelOnSendMessage, setPage },
   } = useMessage({ chatId, userId: me?._id });
 
-  //   const renderMessageCard = ({ item }: { item: any }) => (
-  //     <XStack space='$4' alignItems='flex-start' padding='$4'>
-  //       <Avatar circular size='$4'>
-  //         <Avatar.Image src={item.profileImage}></Avatar.Image>
-  //       </Avatar>
-  //       <YStack space='$1' flex={1}>
-  //         <Text style={styles.senderText}>{item.sender}</Text>
-  //         <View style={styles.messageBubble}>
-  //           <Text style={styles.messageText}>{item.text}</Text>
-  //         </View>
-  //         <Text style={styles.timestamp}>{item.time}</Text>
-  //       </YStack>
-  //     </XStack>
-  //   );
+  const renderFooter = () => {
+    if (!chatLoading) return null;
+    return (
+      <YStack alignItems='center' padding='$10'>
+        <Spinner size='large' />
+      </YStack>
+    );
+  };
 
   const renderMessageCard = ({ item }: { item: ChatMessageInterface }) => {
     const isMyMessage = item.sender === me?._id;
@@ -71,38 +58,35 @@ const ChatScreen = ({ chatId }: { chatId: string }) => {
     <YStack flex={1} padding='$4'>
       <FlatList
         data={chats}
-        // ItemSeparatorComponent={() => <Separator />}
         keyExtractor={(item) => item._id || ''}
-        renderItem={(item) => {
-          return chatLoading ? (
-            <YStack alignItems='center' padding='$10'>
-              <Spinner size='large' />
-            </YStack>
-          ) : (
-            renderMessageCard(item)
-          );
-        }}
+        contentContainerStyle={{ paddingBottom: 60 }}
+        renderItem={renderMessageCard}
         inverted
-        // contentContainerStyle={{ paddingBottom: 60 }}
+        ListFooterComponent={renderFooter}
+        onEndReached={() => {
+          if (hasMore && !chatLoading) {
+            setPage((prevPage) => prevPage + 1);
+          }
+        }}
+        onEndReachedThreshold={0.5}
       />
-
-      {/* <Separator /> */}
 
       <XStack
         alignItems='center'
         padding='$3'
-        // backgroundColor='#f5f5f5'
         borderTopWidth={1}
         borderColor='#ddd'
       >
-        <TouchableOpacity style={styles.iconButton}>
+        <FileSendButton />
+        {/* <TouchableOpacity style={styles.iconButton}>
           <Paperclip size={18} marginLeft='$-5' color='#555' />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
         <TextInput
           borderRadius='$10'
-          fontSize={16}
+          fontSize={14}
           flex={1}
           color='#333'
+          size='$3'
           borderWidth={1}
           borderColor='#ddd'
           value={message}
@@ -150,6 +134,7 @@ const styles = StyleSheet.create({
   },
 
   iconButton: {
-    padding: 8,
+    marginRight: -20,
+    padding: 6,
   },
 });

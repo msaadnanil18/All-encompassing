@@ -2,6 +2,7 @@
 import { initializeApp } from 'firebase/app';
 import { getAnalytics } from 'firebase/analytics';
 import { getFirestore } from 'firebase/firestore';
+import { getMessaging, onMessage, getToken } from 'firebase/messaging';
 import { getDatabase, ref, onValue } from 'firebase/database';
 
 // TODO: Add SDKs for Firebase products that you want to use
@@ -22,6 +23,7 @@ export const firebaseConfig = {
 
 // Initialize Firebase
 export const app = initializeApp(firebaseConfig);
+const messaging = getMessaging(app);
 // export const fireBaseDatabase = getDatabase(app);
 // export const analytics = getAnalytics(app);
 

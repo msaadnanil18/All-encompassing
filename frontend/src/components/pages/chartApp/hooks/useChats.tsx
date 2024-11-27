@@ -20,9 +20,7 @@ import { debounce } from 'lodash-es';
 import { addFiles } from '../../../types/addFiles';
 import { useDarkMode } from '../../../thems/useDarkMode';
 import socket from '../../../../helpers/socket';
-import { sendMessage } from '../../../hooks/chart';
 import { useSearchParams } from 'react-router-dom';
-import dayjs from 'dayjs';
 import { generateMessageId } from '../../../utills';
 
 const CONNECTED_EVENT = 'connected';
@@ -213,39 +211,54 @@ const useChats = ({ userId }: { userId: string | undefined }) => {
   }, []);
 
   const sendChatMessage = useCallback(async () => {
-    const _id = generateMessageId();
-    await form.validateFields();
-    const _message = form.getFieldValue('message');
+    try {
+      const _id = generateMessageId();
+      await form.validateFields();
+      const _message = form.getFieldValue('message') || '';
+      const attachmentUrls = attachments.map((file) => file.url);
 
-    if (_message.trim() === '') return;
+      if (_message?.trim() !== '' || attachmentUrls.length > 0) {
+        const chat = chatList.find(
+          (chats) => chats._id === searchParams.get('id')
+        );
+        socket.emit(NEW_CHAT_EVENT, {
+          messageId: _id,
+          ...(messageEditId ? { messageEditId } : {}),
+          content: _message,
+          chat,
+          attachments: attachmentUrls,
+        });
 
-    socket.emit(NEW_CHAT_EVENT, {
-      messageId: _id,
-      ...(messageEditId ? { messageEditId } : {}),
-      content: _message,
-      chat: chatList.find((chats) => chats._id === searchParams.get('id')),
-      attachments: attachments.map((file) => file.url),
-    });
+        const newChat = {
+          _id: messageEditId || _id,
+          sender: userId,
+          content: _message,
+          attachments: attachmentUrls.map((url) => ({ url })),
+        };
 
-    const newChat = {
-      _id: messageEditId || _id,
-      sender: userId,
-      content: _message,
-      attachments: attachments.map((file) => ({
-        url: file.url,
-      })),
-    };
+        setChats((prev) =>
+          prev.some((chat) => chat._id === messageEditId)
+            ? prev.map((chat) => (chat._id === messageEditId ? newChat : chat))
+            : [...prev, newChat]
+        );
 
-    setChats((prev) =>
-      prev.some((existingChat) => existingChat._id === messageEditId)
-        ? prev.map((existingChat) =>
-            existingChat._id === messageEditId ? newChat : existingChat
-          )
-        : [...prev, newChat]
-    );
-    form.resetFields();
-    setMessageEditId(null);
-  }, [attachments, searchParams.get('id'), userId, messageEditId, chatList]);
+        form.resetFields();
+        setAttachments([]);
+        setMessageEditId(null);
+      }
+    } catch (error) {
+      console.error('Failed to send message:', error);
+    }
+  }, [
+    attachments,
+    searchParams.get('id'),
+    userId,
+    messageEditId,
+    chatList,
+    form,
+    socket,
+    setChats,
+  ]);
 
   const connectSocket = useCallback(() => {
     if (socket) {

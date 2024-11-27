@@ -158,6 +158,9 @@ const loginUser = asyncHandler(async (req, res) => {
         .json(new ApiResponse(400, {}, 'Invalid credentials'));
     }
   } catch (error) {
+    return res
+      .status(400)
+      .json(new ApiResponse(400, {}, 'Invalid credentials'));
     console.log(error, '______error_____');
   }
 });

@@ -35,8 +35,6 @@ const Login: FC<NativeStackScreenProps<RootStackParamList, 'Welcome'>> = (
   useEffect(() => {
     if (me) {
       navigation.navigate('AfterLoginScreen', { userId: me._id });
-    } else {
-      navigation.navigate('/');
     }
   }, [me]);
 
