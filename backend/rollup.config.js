@@ -37,9 +37,6 @@ const config = {
     dev && run(),
     !dev && terser(),
     sentryRollupPlugin({
-      authToken: process.env.SENTRY_AUTH_TOKEN,
-      org: 'exa-3r',
-      project: 'node-express',
       telemetry: false,
     }),
   ],
