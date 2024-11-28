@@ -14,7 +14,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
-const FileSendButton = () => {
+const FileSendButton: React.FC<{ isDark: boolean }> = ({ isDark }) => {
   const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
   const [isOpened, setIsOpened] = useState(false);
 
@@ -59,7 +59,11 @@ const FileSendButton = () => {
           !isOpened && styles.hidden,
         ]}
       >
-        <FileText marginLeft='$-3.5' size={20} color='#555' />
+        <FileText
+          marginLeft='$-1'
+          size={20}
+          color={isDark ? '#EEEEEE' : '#222831'}
+        />
       </AnimatedPressable>
       <AnimatedPressable
         style={[
@@ -68,7 +72,11 @@ const FileSendButton = () => {
           !isOpened && styles.hidden,
         ]}
       >
-        <VideoIcon marginLeft='$-3.5' size={20} color='#555' />
+        <VideoIcon
+          marginLeft='$-1'
+          size={20}
+          color={isDark ? '#EEEEEE' : '#222831'}
+        />
       </AnimatedPressable>
       <AnimatedPressable
         style={[
@@ -77,7 +85,11 @@ const FileSendButton = () => {
           !isOpened && styles.hidden,
         ]}
       >
-        <ImageIcon marginLeft='$-3.5' size={20} color='#555' />
+        <ImageIcon
+          marginLeft='$-1'
+          size={20}
+          color={isDark ? '#EEEEEE' : '#222831'}
+        />
       </AnimatedPressable>
       <Pressable
         onPress={handleOnPress}
@@ -88,9 +100,18 @@ const FileSendButton = () => {
         }
       >
         {isOpened ? (
-          <Cancel size={22} marginLeft='$-3.5' color='#555' />
+          <Cancel
+            size={18}
+            marginLeft='$-1'
+            color={isDark ? '#EEEEEE' : '#222831'}
+          />
         ) : (
-          <Paperclip size={22} marginLeft='$-3.5' color='#555' />
+          <Paperclip
+            size={18}
+            marginLeft='$-1'
+            marginRight='$2'
+            color={isDark ? '#EEEEEE' : '#222831'}
+          />
         )}
       </Pressable>
     </View>

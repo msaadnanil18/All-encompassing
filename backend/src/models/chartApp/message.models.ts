@@ -7,6 +7,7 @@ const charMessageSchema = new Schema<IMessage>(
     sender: {
       type: mongoose.Types.ObjectId,
       ref: 'User',
+      required: true,
     },
     content: {
       type: String,
@@ -14,12 +15,13 @@ const charMessageSchema = new Schema<IMessage>(
     attachments: {
       type: [
         {
-          url: 'string',
+          url: { type: String },
+          fileType: { type: String },
         },
       ],
       default: [],
     },
-    chat: { type: mongoose.Types.ObjectId, ref: 'Chat' },
+    chat: { type: mongoose.Types.ObjectId, ref: 'Chat', required: true },
   },
   { timestamps: true }
 );

@@ -1,25 +1,30 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
-  View,
   Text,
   TouchableOpacity,
   StyleSheet,
   FlatList,
+  TextInput,
 } from 'react-native';
-import { Avatar, XStack, YStack, Input as TextInput, Spinner } from 'tamagui';
-import { Send, Paperclip } from '@tamagui/lucide-icons';
+import { Avatar, XStack, YStack, Input, Spinner, View, Button } from 'tamagui';
+import { Send, Paperclip, Camera, Mic } from '@tamagui/lucide-icons';
 import useMessage from './hook/useMessages';
 import { ChatMessageInterface } from './types';
 import { useRecoilValue } from 'recoil';
 import { $ME } from '@AllEcompassing/components/atoms/roots';
 import FileSendButton from './FileSendButton';
+import { useThemeMode } from '@AllEcompassing/components/hooks/useTheme';
 
 const ChatScreen = ({ chatId }: { chatId: string }) => {
+  const [message, setMessage] = useState('');
+  const onClearMessage = () => setMessage('');
+  const { isDark } = useThemeMode();
+
   const me = useRecoilValue($ME);
   const {
-    states: { chats, chatLoading, message, hasMore },
-    actons: { setMessage, handelOnSendMessage, setPage },
-  } = useMessage({ chatId, userId: me?._id });
+    states: { chats, chatLoading, hasMore },
+    actons: { handelOnSendMessage, setPage },
+  } = useMessage({ chatId, userId: me?._id, onClearMessage });
 
   const renderFooter = () => {
     if (!chatLoading) return null;
@@ -54,8 +59,12 @@ const ChatScreen = ({ chatId }: { chatId: string }) => {
     );
   };
 
+  const messageInput = useMemo(
+    () => <SendMessageInput {...{ message, setMessage, isDark }} />,
+    [message],
+  );
   return (
-    <YStack flex={1} padding='$4'>
+    <YStack flex={1} padding='$2'>
       <FlatList
         data={chats}
         keyExtractor={(item) => item._id || ''}
@@ -73,41 +82,79 @@ const ChatScreen = ({ chatId }: { chatId: string }) => {
 
       <XStack
         alignItems='center'
-        padding='$3'
+        padding='$2.5'
         borderTopWidth={1}
         borderColor='#ddd'
       >
-        <FileSendButton />
-        {/* <TouchableOpacity style={styles.iconButton}>
-          <Paperclip size={18} marginLeft='$-5' color='#555' />
-        </TouchableOpacity> */}
-        <TextInput
-          borderRadius='$10'
-          fontSize={14}
-          flex={1}
-          color='#333'
-          size='$3'
-          borderWidth={1}
-          borderColor='#ddd'
-          value={message}
-          onChangeText={setMessage}
-          placeholder='Type your message...'
-          placeholderTextColor='#aaa'
-        />
-        {message.trim().length > 0 && (
+        <FileSendButton isDark={isDark} />
+
+        {messageInput}
+
+        {message.trim().length > 0 ? (
           <TouchableOpacity
-            onPress={handelOnSendMessage}
+            onPress={() => handelOnSendMessage(message)}
             style={styles.iconButton}
           >
-            <Send size={20} color='#555' />
+            <Send
+              size={20}
+              color={isDark ? '#EEEEEE' : '#222831'}
+              marginRight='$4'
+            />
           </TouchableOpacity>
+        ) : (
+          <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
+            <TouchableOpacity style={styles.iconButton}>
+              <Camera
+                size={18}
+                marginLeft='$2'
+                color={isDark ? '#EEEEEE' : '#222831'}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.iconButton}>
+              <Mic
+                size={18}
+                marginLeft='$5'
+                marginRight='$4'
+                color={isDark ? '#EEEEEE' : '#222831'}
+              />
+            </TouchableOpacity>
+          </View>
         )}
       </XStack>
     </YStack>
   );
 };
 
-export default ChatScreen;
+export default React.memo(ChatScreen);
+
+const SendMessageInput: React.FC<{
+  message: string;
+  setMessage: React.Dispatch<React.SetStateAction<string>>;
+  isDark: boolean;
+}> = ({ message, setMessage, isDark }) => {
+  const [inputHeight, setInputHeight] = useState(38);
+  return (
+    <TextInput
+      style={[
+        styles.input,
+        {
+          height: inputHeight,
+          backgroundColor: isDark ? '#222831' : '#EEEEEE',
+          color: isDark ? '#EEEEEE' : '#222831',
+          borderColor: isDark ? '#222831' : '#EEEEEE',
+        },
+      ]}
+      value={message}
+      onChangeText={setMessage}
+      placeholder='Type your message...'
+      placeholderTextColor='#aaa'
+      multiline={true}
+      onContentSizeChange={(e) => {
+        setInputHeight(Math.max(38, e.nativeEvent.contentSize.height));
+      }}
+    />
+  );
+};
 
 const styles = StyleSheet.create({
   senderText: {
@@ -136,5 +183,20 @@ const styles = StyleSheet.create({
   iconButton: {
     marginRight: -20,
     padding: 6,
+  },
+  Inputcontainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  input: {
+    flex: 1,
+    fontSize: 13,
+    borderRadius: 20,
+    marginLeft: 20,
+    paddingHorizontal: 15,
+    textAlignVertical: 'center',
+    borderWidth: 1,
+
+    shadowOffset: { width: 0, height: 1 },
   },
 });

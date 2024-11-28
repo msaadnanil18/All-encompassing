@@ -28,7 +28,7 @@ export const useAuth = ({
         }),
         {},
       );
-      if (!data) return;
+      if (!data.data) return;
 
       Toast.show({
         text1: data?.message,

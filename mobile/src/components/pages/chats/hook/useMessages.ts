@@ -14,13 +14,13 @@ const NEW_CHAT_EVENT = 'newChat';
 const useMessage = ({
   chatId,
   userId,
+  onClearMessage,
 }: {
   chatId: string;
   userId: string | undefined;
+  onClearMessage: () => void;
 }) => {
   const socket = useSocket();
-
-  const [message, setMessage] = useState('');
   const [chats, setChats] = useState<ChatMessageInterface[]>([]);
   const [chatLoading, setChatLoading] = useState<boolean>(false);
   const {
@@ -70,7 +70,7 @@ const useMessage = ({
     loadMessages();
   }, [chatId, page]);
 
-  const handelOnSendMessage = useCallback(() => {
+  const handelOnSendMessage = (message: string) => {
     if (message.trim() === '') return;
     const _id = generateMessageId();
 
@@ -92,8 +92,8 @@ const useMessage = ({
       },
       ...prev,
     ]);
-    setMessage('');
-  }, [message, userId]);
+    onClearMessage();
+  };
 
   const handelOnConnect = useCallback(() => {
     setIsSocketConnected(true);
@@ -124,19 +124,18 @@ const useMessage = ({
     () => ({
       chats,
       chatLoading,
-      message,
+
       hasMore,
     }),
-    [chats, chatLoading, message, hasMore],
+    [chats, chatLoading, hasMore],
   );
 
   const actons = useMemo(
     () => ({
-      setMessage,
       handelOnSendMessage,
       setPage,
     }),
-    [setMessage, handelOnSendMessage, setPage],
+    [handelOnSendMessage, setPage],
   );
   return { states, actons };
 };
