@@ -1,4 +1,3 @@
-import { log } from 'console';
 import { Request } from 'express';
 import jwt from 'jsonwebtoken';
 import nodemailer from 'nodemailer';
@@ -38,9 +37,12 @@ export const sendVerificationEmail = async (email: string, token: string) => {
   }
 };
 
-export const emitEvent = (req: Request, event: any, users: any, data: any) => {
-  log('eminthg');
-};
+export const emitEvent = (
+  req: Request,
+  event: any,
+  users: any,
+  data: any
+) => {};
 
 export const getSokets = <users extends { _id: string }>(users: users[]) => {
   const sockets: string[] = [];

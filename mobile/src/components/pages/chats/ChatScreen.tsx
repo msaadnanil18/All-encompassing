@@ -1,25 +1,32 @@
 import React, { useState, useMemo } from 'react';
 import {
-  Text,
   TouchableOpacity,
   StyleSheet,
   FlatList,
   TextInput,
 } from 'react-native';
-import { Avatar, XStack, YStack, Input, Spinner, View, Button } from 'tamagui';
-import { Send, Paperclip, Camera, Mic } from '@tamagui/lucide-icons';
+import { Avatar, XStack, YStack, Spinner, View, Text } from 'tamagui';
+import {
+  Send as SendIcon,
+  Camera as CameraIcon,
+  Mic as MicIcon,
+} from '@tamagui/lucide-icons';
 import useMessage from './hook/useMessages';
 import { ChatMessageInterface } from './types';
 import { useRecoilValue } from 'recoil';
 import { $ME } from '@AllEcompassing/components/atoms/roots';
 import FileSendButton from './FileSendButton';
 import { useThemeMode } from '@AllEcompassing/components/hooks/useTheme';
-
+import Video, { ResizeMode, VideoRef } from 'react-native-video';
+import { UploadFileTypes } from '@AllEcompassing/appComponents/fileUploads/types';
 const ChatScreen = ({ chatId }: { chatId: string }) => {
   const [message, setMessage] = useState('');
   const onClearMessage = () => setMessage('');
-  const { isDark } = useThemeMode();
+  const [file, setFile] = useState<UploadFileTypes | null>(null);
+  console.log(file);
 
+  const { isDark } = useThemeMode();
+  const videoRef = React.useRef<VideoRef>(null);
   const me = useRecoilValue($ME);
   const {
     states: { chats, chatLoading, hasMore },
@@ -65,6 +72,17 @@ const ChatScreen = ({ chatId }: { chatId: string }) => {
   );
   return (
     <YStack flex={1} padding='$2'>
+      {/* <Video
+            ref={videoRef}
+            source={{ uri: file || '' }}
+            style={{ width: '100%', height: 10 }}
+            resizeMode={ResizeMode.COVER}
+            controls={true}
+            muted={false}
+            pictureInPicture={true}
+            repeat={true}
+            testID='video-player'
+          /> */}
       <FlatList
         data={chats}
         keyExtractor={(item) => item._id || ''}
@@ -86,7 +104,7 @@ const ChatScreen = ({ chatId }: { chatId: string }) => {
         borderTopWidth={1}
         borderColor='#ddd'
       >
-        <FileSendButton isDark={isDark} />
+        <FileSendButton isDark={isDark} useFiles={(r) => setFile(r)} />
 
         {messageInput}
 
@@ -95,7 +113,7 @@ const ChatScreen = ({ chatId }: { chatId: string }) => {
             onPress={() => handelOnSendMessage(message)}
             style={styles.iconButton}
           >
-            <Send
+            <SendIcon
               size={20}
               color={isDark ? '#EEEEEE' : '#222831'}
               marginRight='$4'
@@ -104,14 +122,14 @@ const ChatScreen = ({ chatId }: { chatId: string }) => {
         ) : (
           <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
             <TouchableOpacity style={styles.iconButton}>
-              <Camera
+              <CameraIcon
                 size={18}
                 marginLeft='$2'
                 color={isDark ? '#EEEEEE' : '#222831'}
               />
             </TouchableOpacity>
             <TouchableOpacity style={styles.iconButton}>
-              <Mic
+              <MicIcon
                 size={18}
                 marginLeft='$5'
                 marginRight='$4'
@@ -192,7 +210,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 13,
     borderRadius: 20,
-    marginLeft: 20,
+    marginLeft: 27,
     paddingHorizontal: 15,
     textAlignVertical: 'center',
     borderWidth: 1,

@@ -10,12 +10,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "6pp": "^1.2.16",
     "@ant-design/icons": "^5.4.0",
     "@types/chart.js": "^2.9.41",
     "@types/lodash-es": "^4.17.12",
     "@types/react-webcam": "^3.0.0",
     "@types/socket.io-client": "^3.0.0",
-    "6pp": "^1.2.16",
     "antd": "^5.20.2",
     "axios": "^1.7.3",
     "chart.js": "^4.4.4",
