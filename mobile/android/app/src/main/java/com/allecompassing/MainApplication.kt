@@ -12,6 +12,7 @@ import com.facebook.react.defaults.DefaultReactNativeHost
 import com.facebook.soloader.SoLoader
 import com.reactnativecompressor.CompressorPackage
 import com.rnfs.RNFSPackage
+import com.imagepicker.ImagePickerPackage
 
 
 
@@ -23,7 +24,8 @@ class MainApplication : Application(), ReactApplication {
           val packages = PackageList(this).packages.toMutableList()
          packages.add(CompressorPackage())
          packages.add(RNFSPackage()) 
-           return packages
+         packages.add(ImagePickerPackage()) 
+         return packages
         }
 
         override fun getJSMainModuleName(): String = "index"

@@ -23,9 +23,13 @@ authRouter.route('/verify-emai').post(verifyEmail);
 authRouter.route('/login').post(loginUser);
 authRouter.use(verifyJWT);
 authRouter.route('/init').post((req, res) => {
-  return res
-    .status(200)
-    .json(new ApiResponse(200, req.user, `${req.user.name} is logged in`));
+  try {
+    return res
+      .status(200)
+      .json(new ApiResponse(200, req.user, `${req.user.name} is logged in`));
+  } catch (error) {
+    return res.status(200).json({ message: 'Please login' });
+  }
 });
 authRouter.route('/logout').post(logOutUser);
 authRouter.route('/update/theme-config').post(updateThemeConfig);

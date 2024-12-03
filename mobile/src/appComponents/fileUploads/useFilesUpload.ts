@@ -1,17 +1,10 @@
 import React, { useState } from 'react';
-import DocumentPicker, {
-  DocumentPickerResponse,
-  types,
-} from 'react-native-document-picker';
-import { Image, Video, getFileSize, Audio } from 'react-native-compressor';
+import DocumentPicker, { types } from 'react-native-document-picker';
+import { Image, Video, getFileSize } from 'react-native-compressor';
 import RNFS from 'react-native-fs';
-import { UploadFileTypes } from './types';
+import * as ImagePicker from 'react-native-image-picker';
 
-export const useFilesUpload = <T = (r: any) => void>({
-  files,
-}: {
-  files: <T extends UploadFileTypes>(r: T) => void;
-}) => {
+export const useFilesUpload = () => {
   const [uploadStatus, setUploadStatus] = useState<string>('');
 
   const compressFile = async (
@@ -20,15 +13,15 @@ export const useFilesUpload = <T = (r: any) => void>({
     fileName: string | null,
   ): Promise<string | null> => {
     try {
-      const tempPath = RNFS.TemporaryDirectoryPath + '/' + fileName;
+      const tempPath = `${RNFS.TemporaryDirectoryPath}/${fileName}`;
       await RNFS.copyFile(fileUri, tempPath);
 
       if (type?.startsWith('image/')) {
-        return await Image?.compress(tempPath, {
+        return await Image.compress(tempPath, {
           compressionMethod: 'auto',
         });
       } else if (type?.startsWith('video/')) {
-        return await Video.compress(tempPath, { compressionMethod: 'auto' });
+        return await Video.compress(tempPath);
       } else {
         return fileUri;
       }
@@ -41,7 +34,7 @@ export const useFilesUpload = <T = (r: any) => void>({
   const validateFileSize = async (fileUri: string): Promise<boolean> => {
     try {
       const fileSize = await getFileSize(fileUri);
-      const maxFileSize = 10 * 1024 * 1024;
+      const maxFileSize = 10 * 1024 * 1024; // 10 MB
       return Number(fileSize) <= maxFileSize;
     } catch (error) {
       console.error('Error getting file size:', error);
@@ -49,53 +42,128 @@ export const useFilesUpload = <T = (r: any) => void>({
     }
   };
 
-  const uploadFile = async (file: DocumentPickerResponse) => {
+  const processFile = async (file: any) => {
     if (!file) {
       setUploadStatus('No file selected');
-      return;
+      return null;
     }
 
     try {
-      const compressedUri = await compressFile(file.uri, file?.type, file.name);
+      const isValidSize = await validateFileSize(file.uri);
+      const compressedUri = isValidSize
+        ? file.uri
+        : await compressFile(file.uri, file.type, file.name);
 
-      if (!compressedUri) {
-        setUploadStatus('Compression failed');
-        return;
-      }
-
-      const isValid = validateFileSize(compressedUri);
-      if (!isValid) {
-        setUploadStatus('File exceeds the 10 MB limit after compression');
-        return;
-      }
-
-      setUploadStatus('Uploading...');
-      files({ uri: compressedUri, fileName: file.name, fileType: file.type });
-
-      setUploadStatus('Upload successful');
+      return {
+        uri: compressedUri,
+        fileName: file.name,
+        fileType: file.type,
+      };
     } catch (error) {
-      console.error('Error uploading file:', error);
-      setUploadStatus('Upload failed');
+      console.error('Error processing file:', error);
+      setUploadStatus('Processing failed');
+      return null;
     }
+  };
+
+  const processMultipleFiles = async (files: any[]) => {
+    return Promise.all(files.map(processFile));
+  };
+
+  const openGallery = async (): Promise<any[]> => {
+    try {
+      const result = await ImagePicker.launchImageLibrary({
+        mediaType: 'mixed',
+        selectionLimit: 0, // 0 allows selecting multiple files
+      });
+      if (result.assets && result.assets.length > 0) {
+        return await processMultipleFiles(
+          result.assets.map((file) => ({
+            uri: file.uri!,
+            type: file.type || 'image/*',
+            name: file.fileName || 'unknown',
+          })),
+        );
+      }
+    } catch (error) {
+      console.error('Failed to open gallery:', error);
+    }
+    return [];
   };
 
   const pickFile = async (
-    fileTypes: Array<(typeof types)[keyof typeof types]>,
-  ) => {
+    fileTypes?: Array<(typeof types)[keyof typeof types]>,
+  ): Promise<any[]> => {
     try {
       const res = await DocumentPicker.pick({
         type: fileTypes,
+        allowMultiSelection: true,
       });
-      // setFile(res[0]);
-      await uploadFile(res[0]);
-    } catch (err) {
-      if (DocumentPicker.isCancel(err)) {
-        console.log('User cancelled the picker');
-      } else {
-        console.error('Error picking file:', err);
+      return await processMultipleFiles(
+        res.map((file) => ({
+          uri: file.uri,
+          type: file.type,
+          name: file.name,
+        })),
+      );
+    } catch (error) {
+      console.error('File selection failed:', error);
+    }
+    return [];
+  };
+
+  const openCameraImage = async () => {
+    try {
+      const result = await ImagePicker.launchCamera({ mediaType: 'photo' });
+      if (result.assets && result.assets.length > 0) {
+        return await processFile({
+          uri: result.assets[0].uri!,
+          type: result.assets[0].type || 'image/*',
+          name: result.assets[0].fileName || 'unknown',
+        });
       }
+    } catch (error) {
+      console.error('Failed to open camera for image:', error);
+    }
+    return null;
+  };
+
+  const openCameraVideo = async () => {
+    try {
+      const result = await ImagePicker.launchCamera({ mediaType: 'video' });
+      if (result.assets && result.assets.length > 0) {
+        return await processFile({
+          uri: result.assets[0].uri!,
+          type: result.assets[0].type || 'video/*',
+          name: result.assets[0].fileName || 'unknown',
+        });
+      }
+    } catch (error) {
+      console.error('Failed to open camera for video:', error);
+    }
+    return null;
+  };
+
+  const triggeredPickFiles = async ({
+    fileType,
+    triggeredUp,
+  }: {
+    fileType?: Array<(typeof types)[keyof typeof types]>;
+    triggeredUp: 'cameraImage' | 'cameraVideo' | 'audio' | 'file' | 'gallery';
+  }): Promise<any | any[]> => {
+    switch (triggeredUp) {
+      case 'cameraImage':
+        return await openCameraImage();
+      case 'cameraVideo':
+        return await openCameraVideo();
+      case 'gallery':
+        return await openGallery();
+      case 'file':
+        return await pickFile(fileType);
+      default:
+        return null;
     }
   };
 
-  return { pickFile, uploadStatus };
+  return { uploadStatus, triggeredPickFiles };
 };

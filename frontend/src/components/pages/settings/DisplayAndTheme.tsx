@@ -33,6 +33,7 @@ const DisplayAndTheme = () => {
   };
 
   const onThemeChange = (mode: 'DARK' | 'LIGHT') => {
+    localStorage.setItem('fallBackLoddingMode', mode);
     update({ mode });
   };
 
@@ -83,10 +84,10 @@ const DisplayAndTheme = () => {
   return (
     <Card
       // className=" w-full h-full"
-      className="inline-block"
+      className='inline-block'
     >
-      <Form layout="vertical" onFinish={onSave} className="w-80">
-        <Form.Item label="Display Size">
+      <Form layout='vertical' onFinish={onSave} className='w-80'>
+        <Form.Item label='Display Size'>
           <Radio.Group
             value={isCompact}
             options={[
@@ -96,10 +97,10 @@ const DisplayAndTheme = () => {
             onChange={onCompactChange}
           />
         </Form.Item>
-        <Form.Item label="Choose Theme">
-          <div className="flex flex-row items-center space-x-4">
+        <Form.Item label='Choose Theme'>
+          <div className='flex flex-row items-center space-x-4'>
             <div
-              className="w-16 h-16 all-center text-center  place-content-center cursor-pointer bg-slate-200 text-zinc-800"
+              className='w-16 h-16 all-center text-center  place-content-center cursor-pointer bg-slate-200 text-zinc-800'
               onClick={() => onThemeChange('LIGHT')}
               style={{ borderRadius }}
             >
@@ -107,7 +108,7 @@ const DisplayAndTheme = () => {
             </div>
             {!isCompact && (
               <div
-                className="w-16 h-16 all-center text-center place-content-center cursor-pointer bg-zinc-800 text-slate-200"
+                className='w-16 h-16 all-center text-center place-content-center cursor-pointer bg-zinc-800 text-slate-200'
                 onClick={() => onThemeChange('DARK')}
                 style={{ borderRadius }}
               >
@@ -116,7 +117,7 @@ const DisplayAndTheme = () => {
             )}
           </div>
         </Form.Item>
-        <Form.Item label="Primary Color">
+        <Form.Item label='Primary Color'>
           <Input
             value={primaryColor}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
@@ -124,16 +125,16 @@ const DisplayAndTheme = () => {
             }
             suffix={
               <Input
-                type="color"
+                type='color'
                 value={primaryColor}
                 onChange={(e) => onPrimColorChange(e.target.value)}
                 style={{ backgroundColor: primaryColor }}
-                className="w-8 h-8"
+                className='w-8 h-8'
               />
             }
           />
         </Form.Item>
-        <Form.Item label="Border Radius">
+        <Form.Item label='Border Radius'>
           <Slider
             min={1}
             max={20}
@@ -145,13 +146,13 @@ const DisplayAndTheme = () => {
             value={borderRadius}
           />
         </Form.Item>
-        <div className="flex mt-4 flex-row items-center justify-end space-x-2">
-          <Button type="link" onClick={onReset}>
+        <div className='flex mt-4 flex-row items-center justify-end space-x-2'>
+          <Button type='link' onClick={onReset}>
             Reset
           </Button>
           <Button
-            type="primary"
-            htmlType="submit"
+            type='primary'
+            htmlType='submit'
             icon={<ReloadOutlined spin={saving} />}
             loading={saving}
           >

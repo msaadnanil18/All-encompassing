@@ -36,6 +36,7 @@ const AppRoutes = () => {
         <Routes>
           <Route path='/resgister-user' Component={ResgisterUser} />
           <Route path='/verify-email' Component={VerifyEmail} />
+          {/* {!user && <Route path='/' Component={LoginUser} />} */}
           <Route path='/' Component={LoginUser} />
           <Route
             path='/dash-board/:id'

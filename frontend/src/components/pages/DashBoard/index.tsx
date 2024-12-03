@@ -63,8 +63,8 @@ const DashBoard = () => {
         <Sider
           collapsible
           defaultCollapsed={true}
-          theme="light"
-          width={250}
+          theme='light'
+          // width={250}
           style={{
             overflow: 'auto',
             height: '100vh',
@@ -76,7 +76,7 @@ const DashBoard = () => {
             scrollbarColor: 'unset',
           }}
         >
-          <div className="demo-logo-vertical" />
+          <div className='demo-logo-vertical' />
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -85,7 +85,7 @@ const DashBoard = () => {
             <Menu
               theme={'light'}
               style={{ ...(isDark ? { backgroundColor: ' #171717' } : {}) }}
-              mode="inline"
+              mode='inline'
               defaultSelectedKeys={['1']}
               items={menuItems}
             />

@@ -1,30 +1,20 @@
-import React, { useState, useMemo } from 'react';
-import {
-  TouchableOpacity,
-  StyleSheet,
-  FlatList,
-  TextInput,
-} from 'react-native';
+import React, { useState, useMemo, useRef } from 'react';
+import { StyleSheet, FlatList } from 'react-native';
 import { Avatar, XStack, YStack, Spinner, View, Text } from 'tamagui';
-import {
-  Send as SendIcon,
-  Camera as CameraIcon,
-  Mic as MicIcon,
-} from '@tamagui/lucide-icons';
 import useMessage from './hook/useMessages';
 import { ChatMessageInterface } from './types';
 import { useRecoilValue } from 'recoil';
 import { $ME } from '@AllEcompassing/components/atoms/roots';
-import FileSendButton from './FileSendButton';
 import { useThemeMode } from '@AllEcompassing/components/hooks/useTheme';
 import Video, { ResizeMode, VideoRef } from 'react-native-video';
 import { UploadFileTypes } from '@AllEcompassing/appComponents/fileUploads/types';
-const ChatScreen = ({ chatId }: { chatId: string }) => {
-  const [message, setMessage] = useState('');
-  const onClearMessage = () => setMessage('');
-  const [file, setFile] = useState<UploadFileTypes | null>(null);
-  console.log(file);
+import MessageInput from './MessageInput';
 
+const ChatScreen = ({ chatId }: { chatId: string }) => {
+  const onClearInputMessageRef = useRef<any>();
+  const onClearMessage = () => onClearInputMessageRef.current._clear();
+  const [file, setFile] = useState<UploadFileTypes | null>(null);
+  const [fileLoading, setFileLoading] = useState<boolean>(false);
   const { isDark } = useThemeMode();
   const videoRef = React.useRef<VideoRef>(null);
   const me = useRecoilValue($ME);
@@ -47,7 +37,6 @@ const ChatScreen = ({ chatId }: { chatId: string }) => {
     return (
       <XStack flex={1}>
         <XStack
-          //   space='$4'
           flex={1}
           justifyContent={isMyMessage ? 'flex-end' : 'flex-start'}
           padding='$4'
@@ -67,8 +56,12 @@ const ChatScreen = ({ chatId }: { chatId: string }) => {
   };
 
   const messageInput = useMemo(
-    () => <SendMessageInput {...{ message, setMessage, isDark }} />,
-    [message],
+    () => (
+      <MessageInput
+        {...{ handelOnSendMessage, isDark, onClearInputMessageRef }}
+      />
+    ),
+    [handelOnSendMessage],
   );
   return (
     <YStack flex={1} padding='$2'>
@@ -104,75 +97,13 @@ const ChatScreen = ({ chatId }: { chatId: string }) => {
         borderTopWidth={1}
         borderColor='#ddd'
       >
-        <FileSendButton isDark={isDark} useFiles={(r) => setFile(r)} />
-
         {messageInput}
-
-        {message.trim().length > 0 ? (
-          <TouchableOpacity
-            onPress={() => handelOnSendMessage(message)}
-            style={styles.iconButton}
-          >
-            <SendIcon
-              size={20}
-              color={isDark ? '#EEEEEE' : '#222831'}
-              marginRight='$4'
-            />
-          </TouchableOpacity>
-        ) : (
-          <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
-            <TouchableOpacity style={styles.iconButton}>
-              <CameraIcon
-                size={18}
-                marginLeft='$2'
-                color={isDark ? '#EEEEEE' : '#222831'}
-              />
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.iconButton}>
-              <MicIcon
-                size={18}
-                marginLeft='$5'
-                marginRight='$4'
-                color={isDark ? '#EEEEEE' : '#222831'}
-              />
-            </TouchableOpacity>
-          </View>
-        )}
       </XStack>
     </YStack>
   );
 };
 
 export default React.memo(ChatScreen);
-
-const SendMessageInput: React.FC<{
-  message: string;
-  setMessage: React.Dispatch<React.SetStateAction<string>>;
-  isDark: boolean;
-}> = ({ message, setMessage, isDark }) => {
-  const [inputHeight, setInputHeight] = useState(38);
-  return (
-    <TextInput
-      style={[
-        styles.input,
-        {
-          height: inputHeight,
-          backgroundColor: isDark ? '#222831' : '#EEEEEE',
-          color: isDark ? '#EEEEEE' : '#222831',
-          borderColor: isDark ? '#222831' : '#EEEEEE',
-        },
-      ]}
-      value={message}
-      onChangeText={setMessage}
-      placeholder='Type your message...'
-      placeholderTextColor='#aaa'
-      multiline={true}
-      onContentSizeChange={(e) => {
-        setInputHeight(Math.max(38, e.nativeEvent.contentSize.height));
-      }}
-    />
-  );
-};
 
 const styles = StyleSheet.create({
   senderText: {
@@ -199,8 +130,9 @@ const styles = StyleSheet.create({
   },
 
   iconButton: {
-    marginRight: -20,
-    padding: 6,
+    // marginRight: -10,
+    // padding: 6,
+    marginBottom: 5,
   },
   Inputcontainer: {
     flexDirection: 'row',

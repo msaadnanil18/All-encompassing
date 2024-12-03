@@ -5,10 +5,11 @@ import { useRecoilState } from 'recoil';
 import { $ME } from '../atoms/root';
 import { notification } from 'antd';
 import { ServiceErrorManager } from '../../helpers/service';
+import { useNavigate } from 'react-router-dom';
 
 export const useAuth = () => {
   const [loading, setLoading] = React.useState<boolean>(false);
-
+  // const navigate = useNavigate();
   const [me, setMe] = useRecoilState($ME);
   const [theme, setTheme] = useRecoilState($THEME_C0NFIG);
 
@@ -29,6 +30,11 @@ export const useAuth = () => {
       setMe(data.data.user);
       setTheme(data.data.user.themConfig);
       localStorage.setItem('token', data.data.accessToken);
+      localStorage.setItem(
+        'fallBackLoddingMode',
+        data.data.user.themConfig.mode
+      );
+      // navigate(`/dash-board/${data.data.user?._id}`);
     } catch (error) {
       console.log(error);
     } finally {
@@ -38,6 +44,7 @@ export const useAuth = () => {
 
   const logOut = async () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('fallBackLoddingMode');
     // localStorage.removeItem('user');
     // localStorage.removeItem('storedThemeConfig');
     setMe(null);

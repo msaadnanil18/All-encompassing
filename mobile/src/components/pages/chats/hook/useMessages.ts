@@ -98,8 +98,19 @@ const useMessage = ({
   const handelOnConnect = useCallback(() => {
     setIsSocketConnected(true);
   }, []);
+
   const handelOnNewChat = useCallback((chat: any) => {
-    setChats((prev) => [chat.message, ...prev]);
+    if (chatId === chat.message.chat) {
+      setChats((prev) =>
+        prev.some((existingChat) => existingChat._id === chat.message._id)
+          ? prev.map((existingChat) =>
+              existingChat._id === chat.message._id
+                ? chat.message
+                : existingChat,
+            )
+          : [chat.message, ...prev],
+      );
+    }
   }, []);
 
   const connectSocket = useCallback(() => {

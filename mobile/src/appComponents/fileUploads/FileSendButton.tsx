@@ -19,8 +19,12 @@ import { UploadFileTypes } from '@AllEcompassing/appComponents/fileUploads/types
 const FileSendButton: React.FC<{
   isDark: boolean;
   useFiles: (r: UploadFileTypes) => void;
-}> = ({ isDark, useFiles }) => {
-  const { pickFile } = useFilesUpload({ files: useFiles });
+  handelOnFileLoading: (r: boolean) => void;
+}> = ({ isDark, useFiles, handelOnFileLoading }) => {
+  const { pickFile } = useFilesUpload({
+    files: useFiles,
+    handelOnLoading: handelOnFileLoading,
+  });
   const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
   const [isOpened, setIsOpened] = useState(false);
   const videoRef = React.useRef<VideoRef>(null);

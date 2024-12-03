@@ -22,13 +22,14 @@ import { useDarkMode } from '../../../thems/useDarkMode';
 import socket from '../../../../helpers/socket';
 import { useSearchParams } from 'react-router-dom';
 import { generateMessageId } from '../../../utills';
+import dayjs from 'dayjs';
 
 const CONNECTED_EVENT = 'connected';
 const DISCONNECT_EVENT = 'disconnect';
 const JOIN_CHAT_EVENT = 'joinChat';
 const NEW_CHAT_EVENT = 'newChat';
 const DELETE_MESSAGE_EVENT = 'deleteMessage';
-
+const UPDATED_CHATS_LIST = 'updatedChatList';
 const useChats = ({ userId }: { userId: string | undefined }) => {
   const [searchOptions, setSearchOptions] = useState<
     AutoCompleteProps['options']
@@ -53,7 +54,7 @@ const useChats = ({ userId }: { userId: string | undefined }) => {
   const [chatLoading, setChatLoading] = useState<boolean>(false);
   const [page, setPage] = useState<number>(1);
   const [messageEditId, setMessageEditId] = useState<string | null>(null);
-  const [messageDeleteId, setMessageDeleteId] = useState<string | null>(null);
+
   const {
     open: openSearchBar,
     close: closeSearchBar,
@@ -169,16 +170,13 @@ const useChats = ({ userId }: { userId: string | undefined }) => {
           payload: {},
           options: {
             sort: { updatedAt: -1 },
+            limit: 1000,
             populate: [
               {
                 path: 'members',
 
                 select: '-themConfig -refreshToken -password',
               },
-              // {
-              //   path: 'creator',
-              //   match: { name: 'pintu' },
-              // },
             ],
           },
           query: { members: userId },
@@ -200,15 +198,22 @@ const useChats = ({ userId }: { userId: string | undefined }) => {
     setIsConnected(true);
   }, []);
 
-  const onNewChat = useCallback((chat: any) => {
-    setChats((prev) =>
-      prev.some((existingChat) => existingChat._id === chat.message._id)
-        ? prev.map((existingChat) =>
-            existingChat._id === chat.message._id ? chat.message : existingChat
-          )
-        : [...prev, chat.message]
-    );
-  }, []);
+  const onNewChat = useCallback(
+    (chat: any) => {
+      if (searchParams.get('id') === chat.message.chat) {
+        setChats((prev) =>
+          prev.some((existingChat) => existingChat._id === chat.message._id)
+            ? prev.map((existingChat) =>
+                existingChat._id === chat.message._id
+                  ? chat.message
+                  : existingChat
+              )
+            : [...prev, chat.message]
+        );
+      }
+    },
+    [searchParams]
+  );
 
   const sendChatMessage = useCallback(async () => {
     try {
@@ -242,6 +247,11 @@ const useChats = ({ userId }: { userId: string | undefined }) => {
             : [...prev, newChat]
         );
 
+        setChatList((prev) =>
+          prev.map((i) =>
+            i._id === chat?._id ? { ...i, updatedAt: dayjs().toISOString() } : i
+          )
+        );
         form.resetFields();
         setAttachments([]);
         setMessageEditId(null);
@@ -260,6 +270,22 @@ const useChats = ({ userId }: { userId: string | undefined }) => {
     setChats,
   ]);
 
+  const _updatedChatList = useCallback(
+    ({ updatedChatList }: any) => {
+      setChatList((prev) =>
+        prev.map((t) =>
+          t._id === updatedChatList._id
+            ? {
+                ...t,
+                updatedAt: dayjs(updatedChatList.updatedChatList).toISOString(),
+              }
+            : t
+        )
+      );
+    },
+    [setChatList]
+  );
+
   const connectSocket = useCallback(() => {
     if (socket) {
       socket.on(CONNECTED_EVENT, onConnect);
@@ -267,6 +293,7 @@ const useChats = ({ userId }: { userId: string | undefined }) => {
       socket.on(DELETE_MESSAGE_EVENT, ({ deleteMessageId }) =>
         setChats((prev) => prev.filter((chat) => chat._id !== deleteMessageId))
       );
+      socket.on(UPDATED_CHATS_LIST, _updatedChatList);
     }
 
     return () => {
@@ -274,9 +301,10 @@ const useChats = ({ userId }: { userId: string | undefined }) => {
         socket.off(CONNECTED_EVENT, onConnect);
         socket.off(NEW_CHAT_EVENT, onNewChat);
         socket.off(DELETE_MESSAGE_EVENT, (e) => console.log(e, 'edeelllee'));
+        socket.off(UPDATED_CHATS_LIST, _updatedChatList);
       }
     };
-  }, [onConnect, onNewChat]);
+  }, [onConnect, onNewChat, chatList, _updatedChatList]);
 
   const getMessages = useCallback(() => {
     socket.emit(JOIN_CHAT_EVENT, userId);

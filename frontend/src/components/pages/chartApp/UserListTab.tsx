@@ -1,13 +1,15 @@
-import React, { Ref } from 'react';
-import { Layout, List, Avatar, Grid, AutoCompleteProps } from 'antd';
+import React from 'react';
+import { Layout, List, Avatar } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
+import { motion } from 'framer-motion';
+import { useSearchParams } from 'react-router-dom';
 import UserListHeader from './UserListHeader';
 import { useDarkMode } from '../../thems/useDarkMode';
-const { Content, Sider } = Layout;
-import { useSearchParams } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import Chats from './Chats';
 import useChats from './hooks/useChats';
+import Chats from './Chats';
+import { reverse, sortBy } from 'lodash-es';
+
+const { Content, Sider } = Layout;
 
 const UserListTab: React.FC<{
   userId: string | undefined;
@@ -41,7 +43,8 @@ const UserListTab: React.FC<{
   } = useChats({ userId });
 
   const isDark = useDarkMode();
-  const [_, setSearchParams] = useSearchParams();
+
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const siderStyle: React.CSSProperties = {
     overflow: 'auto',
@@ -59,6 +62,7 @@ const UserListTab: React.FC<{
     flex: 1,
     minWidth: 0,
     boxSizing: 'border-box',
+    scrollbarWidth: 'thin',
   };
 
   const scrollToBottom = () => {
@@ -72,6 +76,7 @@ const UserListTab: React.FC<{
   React.useEffect(() => {
     scrollToBottom();
   }, [chats]);
+
   return (
     <Layout style={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
       <Sider theme='light' width={455} style={siderStyle}>
@@ -92,13 +97,16 @@ const UserListTab: React.FC<{
             />
           }
           itemLayout='horizontal'
-          dataSource={chatList}
+          dataSource={reverse(sortBy(chatList, 'updatedAt'))}
           renderItem={(chat, index) => {
             const prevChats = chat.members.find((user) => user._id !== userId);
             let _prevChats = { ...prevChats };
             if (!prevChats?.avatar) {
               _prevChats.avatar = `https://api.dicebear.com/7.x/miniavs/svg?seed=${index}`;
             }
+
+            const isSelected = searchParams.get('id') === chat._id;
+
             return (
               <motion.div
                 initial={{ opacity: 0, x: '-100%' }}
@@ -111,7 +119,18 @@ const UserListTab: React.FC<{
                       id: chat._id,
                     });
                   }}
-                  style={{ cursor: 'pointer', padding: '10px 15px' }}
+                  style={{
+                    cursor: 'pointer',
+                    padding: '10px 15px',
+                    backgroundColor: isSelected
+                      ? isDark
+                        ? '#403b3b'
+                        : '#e6e0d8'
+                      : undefined,
+                    // borderLeft: isSelected
+                    //   ? '4px solid #1890ff'
+                    //   : '4px solid transparent',
+                  }}
                 >
                   <List.Item.Meta
                     avatar={

@@ -11,9 +11,7 @@ const ProtectRoute = ({
   user: User | null;
   redirect: string;
 }) => {
-  if (!user) return <Navigate to={redirect} />;
-
-  return children ? children : <Outlet />;
+  return user ? children ? children : <Outlet /> : <Navigate to={redirect} />;
 };
 
 export default ProtectRoute;

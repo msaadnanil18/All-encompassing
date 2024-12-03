@@ -128,6 +128,7 @@ dependencies {
     implementation("com.facebook.react:react-android")
     implementation project(':react-native-compressor')
     implementation project(':react-native-fs')
+    implementation project(':react-native-image-picker')
 
     if (hermesEnabled.toBoolean()) {
         implementation("com.facebook.react:hermes-android")
