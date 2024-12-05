@@ -3,30 +3,74 @@ import DocumentPicker, { types } from 'react-native-document-picker';
 import { Image, Video, getFileSize } from 'react-native-compressor';
 import RNFS from 'react-native-fs';
 import * as ImagePicker from 'react-native-image-picker';
-
+import { Platform } from 'react-native';
 export const useFilesUpload = () => {
   const [uploadStatus, setUploadStatus] = useState<string>('');
+
+  // const compressFile = async (
+  //   fileUri: string,
+  //   type: string | null,
+  //   fileName: string | null,
+  // ): Promise<string | null> => {
+  //   try {
+  //     const tempPath = `${RNFS.TemporaryDirectoryPath}/${fileName}`;
+  //     await RNFS.copyFile(fileUri, tempPath);
+
+  //     if (type?.startsWith('image/')) {
+  //       return await Image.compress(tempPath, {
+  //         compressionMethod: 'auto',
+  //       });
+  //     } else if (type?.startsWith('video/')) {
+  //       return await Video.compress(tempPath);
+  //     } else {
+  //       return fileUri;
+  //     }
+  //   } catch (error) {
+  //     console.error('Compression error:', error);
+  //     return null;
+  //   }
+  // };
 
   const compressFile = async (
     fileUri: string,
     type: string | null,
     fileName: string | null,
   ): Promise<string | null> => {
+    const tempPath = `${RNFS.TemporaryDirectoryPath}/${fileName}`;
+
     try {
-      const tempPath = `${RNFS.TemporaryDirectoryPath}/${fileName}`;
+      // Copy the file to a temporary location
       await RNFS.copyFile(fileUri, tempPath);
 
+      let compressedFilePath: string | null = null;
+
+      // Compress based on the file type
       if (type?.startsWith('image/')) {
-        return await Image.compress(tempPath, {
+        compressedFilePath = await Image.compress(tempPath, {
           compressionMethod: 'auto',
         });
       } else if (type?.startsWith('video/')) {
-        return await Video.compress(tempPath);
+        compressedFilePath = await Video.compress(tempPath);
       } else {
-        return fileUri;
+        compressedFilePath = fileUri;
       }
+
+      await RNFS.unlink(tempPath);
+      console.log('Temporary file removed successfully!');
+
+      return compressedFilePath;
     } catch (error) {
       console.error('Compression error:', error);
+
+      try {
+        if (await RNFS.exists(tempPath)) {
+          await RNFS.unlink(tempPath);
+          console.log('Temporary file removed after error!');
+        }
+      } catch (cleanupError) {
+        console.error('Error during cleanup:', cleanupError);
+      }
+
       return null;
     }
   };
@@ -74,7 +118,9 @@ export const useFilesUpload = () => {
     try {
       const result = await ImagePicker.launchImageLibrary({
         mediaType: 'mixed',
-        selectionLimit: 0, // 0 allows selecting multiple files
+        selectionLimit: 0,
+        ...(Platform.OS === 'ios' && { presentationStyle: 'overFullScreen' }),
+        assetRepresentationMode: 'auto',
       });
       if (result.assets && result.assets.length > 0) {
         return await processMultipleFiles(

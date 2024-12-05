@@ -22,6 +22,12 @@ const charMessageSchema = new Schema<IMessage>(
       default: [],
     },
     chat: { type: mongoose.Types.ObjectId, ref: 'Chat', required: true },
+    messageType: {
+      type: String,
+      enum: ['text', 'image', 'video', 'file', 'audio'],
+      default: 'text',
+    },
+    readBy: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
   },
   { timestamps: true }
 );

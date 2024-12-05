@@ -1,6 +1,6 @@
-import React from 'react';
-import { Layout, List, Avatar } from 'antd';
-import { UserOutlined } from '@ant-design/icons';
+import React, { useState } from 'react';
+import { Layout, List, Avatar, Card, Button } from 'antd';
+import { SmileOutlined, UserOutlined } from '@ant-design/icons';
 import { motion } from 'framer-motion';
 import { useSearchParams } from 'react-router-dom';
 import UserListHeader from './UserListHeader';
@@ -8,12 +8,19 @@ import { useDarkMode } from '../../thems/useDarkMode';
 import useChats from './hooks/useChats';
 import Chats from './Chats';
 import { reverse, sortBy } from 'lodash-es';
+import EmojiPiker from '../../emojiPicker/EmojiPiker';
+import DriveFileUpload from '../../../driveFileUpload';
+import MessageInput from './MessageInput';
+import MessageSendButton from './MessageSendButton';
+import { addFiles } from '../../types/addFiles';
 
 const { Content, Sider } = Layout;
 
 const UserListTab: React.FC<{
   userId: string | undefined;
 }> = ({ userId }) => {
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [_attachments, set_Attachments] = useState<addFiles[]>([]);
   const {
     actions: {
       handelOnCreateChatSelect,
@@ -77,9 +84,14 @@ const UserListTab: React.FC<{
     scrollToBottom();
   }, [chats]);
 
+  const handelOnAttachments = <t extends addFiles>(file: t[]) => {
+    set_Attachments(file);
+    setAttachments(file);
+    setIsModalOpen(true);
+  };
   return (
     <Layout style={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
-      <Sider theme='light' width={455} style={siderStyle}>
+      <Sider theme='light' width={400} style={siderStyle}>
         <List
           loading={chatListLoading}
           header={
@@ -167,20 +179,53 @@ const UserListTab: React.FC<{
             <Chats
               {...{
                 handleOnMessageChange,
-                emojiPikerProps,
-                emojiToggleRef,
                 sendChatMessage,
-                setAttachments,
                 form,
                 chats,
                 userId,
                 chatLoading,
                 setMessageEditId,
                 handelOnDeleteMessage,
+                _attachments,
+                isModalOpen,
+                setIsModalOpen,
               }}
             />
           </div>
         </Content>
+
+        {searchParams.get('id') && (
+          <>
+            <div>
+              <EmojiPiker {...emojiPikerProps} />
+            </div>
+            <div>
+              <Card
+                style={{
+                  backgroundColor: isDark ? '#171717' : '#f0f2f5',
+                  width: '100%',
+                }}
+              >
+                <div className='flex items-center space-x-3'>
+                  <DriveFileUpload chooseFiles={handelOnAttachments} />
+
+                  <Button
+                    type='text'
+                    shape='circle'
+                    icon={<SmileOutlined style={{ fontSize: '20px' }} />}
+                    onClick={() => {
+                      if ((emojiToggleRef as any).current) {
+                        (emojiToggleRef as any).current.toggle();
+                      }
+                    }}
+                  />
+
+                  <MessageInput {...{ form, sendChatMessage }} />
+                </div>
+              </Card>
+            </div>
+          </>
+        )}
       </Layout>
     </Layout>
   );

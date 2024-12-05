@@ -1,22 +1,25 @@
-import React, { useState, useMemo, useRef } from 'react';
+import React, { useState, useMemo, useRef, FC } from 'react';
 import { StyleSheet, FlatList } from 'react-native';
 import { Avatar, XStack, YStack, Spinner, View, Text } from 'tamagui';
 import useMessage from './hook/useMessages';
 import { ChatMessageInterface } from './types';
 import { useRecoilValue } from 'recoil';
 import { $ME } from '@AllEcompassing/components/atoms/roots';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { RootStackParamList } from '@AllEcompassing/types/screens';
 import { useThemeMode } from '@AllEcompassing/components/hooks/useTheme';
-import Video, { ResizeMode, VideoRef } from 'react-native-video';
-import { UploadFileTypes } from '@AllEcompassing/appComponents/fileUploads/types';
 import MessageInput from './MessageInput';
+import RNFS from 'react-native-fs';
+import { UploadFileTypes } from '@AllEcompassing/appComponents/fileUploads/types';
 
-const ChatScreen = ({ chatId }: { chatId: string }) => {
+const ChatScreen: FC<
+  NativeStackScreenProps<RootStackParamList, 'Messages'>
+> = ({ route, navigation }) => {
+  const { chatId } = route.params;
   const onClearInputMessageRef = useRef<any>();
   const onClearMessage = () => onClearInputMessageRef.current._clear();
-  const [file, setFile] = useState<UploadFileTypes | null>(null);
-  const [fileLoading, setFileLoading] = useState<boolean>(false);
+  const [attachment, setAttachment] = useState<Array<UploadFileTypes>>([]);
   const { isDark } = useThemeMode();
-  const videoRef = React.useRef<VideoRef>(null);
   const me = useRecoilValue($ME);
   const {
     states: { chats, chatLoading, hasMore },
@@ -55,27 +58,8 @@ const ChatScreen = ({ chatId }: { chatId: string }) => {
     );
   };
 
-  const messageInput = useMemo(
-    () => (
-      <MessageInput
-        {...{ handelOnSendMessage, isDark, onClearInputMessageRef }}
-      />
-    ),
-    [handelOnSendMessage],
-  );
   return (
     <YStack flex={1} padding='$2'>
-      {/* <Video
-            ref={videoRef}
-            source={{ uri: file || '' }}
-            style={{ width: '100%', height: 10 }}
-            resizeMode={ResizeMode.COVER}
-            controls={true}
-            muted={false}
-            pictureInPicture={true}
-            repeat={true}
-            testID='video-player'
-          /> */}
       <FlatList
         data={chats}
         keyExtractor={(item) => item._id || ''}
@@ -97,13 +81,21 @@ const ChatScreen = ({ chatId }: { chatId: string }) => {
         borderTopWidth={1}
         borderColor='#ddd'
       >
-        {messageInput}
+        <MessageInput
+          {...{
+            handelOnSendMessage,
+            isDark,
+            onClearInputMessageRef,
+            attachment,
+            setAttachment,
+          }}
+        />
       </XStack>
     </YStack>
   );
 };
 
-export default React.memo(ChatScreen);
+export default ChatScreen;
 
 const styles = StyleSheet.create({
   senderText: {

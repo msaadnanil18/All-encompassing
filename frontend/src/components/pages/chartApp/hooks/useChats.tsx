@@ -323,12 +323,14 @@ const useChats = ({ userId }: { userId: string | undefined }) => {
     return cleanup;
   }, [connectSocket]);
 
-  const handleEmojiSelect = useCallback((event: React.MouseEvent) => {
-    const selectedEmoji = (event as any).emoji;
-    const _message = form.getFieldValue('message');
-    form.setFieldValue('message', _message + selectedEmoji);
-    // setMessage((prevMessage) => prevMessage + selectedEmoji);
-  }, []);
+  const handleEmojiSelect = useCallback(
+    (event: React.MouseEvent) => {
+      const selectedEmoji = (event as any).emoji;
+      const _message = form.getFieldsValue().message;
+      form.setFieldsValue({ message: _message + selectedEmoji });
+    },
+    [form]
+  );
 
   const emojiPikerProps = useMemo(
     () => ({
