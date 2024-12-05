@@ -14,14 +14,14 @@ import { useSearchParams } from 'react-router-dom';
 
 interface ChartProps {
   chatLoading: boolean;
-  emojiPikerProps: any;
+  isModalOpen: boolean;
   setMessageEditId: Dispatch<SetStateAction<string | null>>;
-  emojiToggleRef: Ref<{ toggle: () => void }>;
+  setIsModalOpen: Dispatch<SetStateAction<boolean>>;
   handleOnMessageChange: (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => void;
   form: FormInstance;
-  setAttachments: React.Dispatch<React.SetStateAction<addFiles[]>>;
+  _attachments: addFiles[];
   sendChatMessage: () => void;
   chats: ChatMessageInterface[];
   userId: string | undefined;
@@ -30,27 +30,18 @@ interface ChartProps {
 
 const Chats = ({
   handleOnMessageChange,
-  emojiPikerProps,
-  emojiToggleRef,
   form,
-  setAttachments,
+  isModalOpen,
+  setIsModalOpen,
   sendChatMessage,
   chats,
   userId,
   chatLoading,
   setMessageEditId,
   handelOnDeleteMessage,
+  _attachments,
 }: ChartProps) => {
   const isDark = useDarkMode();
-  const [isModalOpen, setIsModalOpen] = React.useState<boolean>(false);
-  const [_attachments, set_Attachments] = React.useState<addFiles[]>([]);
-
-  let [searchParams] = useSearchParams();
-  const handelOnAttachments = <t extends addFiles>(file: t[]) => {
-    set_Attachments(file);
-    setAttachments(file);
-    setIsModalOpen(true);
-  };
 
   const onEdit = (editData: ChatMessageInterface) => {
     const data = { target: { value: editData.content } };
@@ -108,44 +99,6 @@ const Chats = ({
             key={chat._id}
           />
         ))
-      )}
-
-      {searchParams.get('id') && (
-        <>
-          <div style={{ marginBottom: '10rem' }}>
-            <EmojiPiker {...emojiPikerProps} />
-          </div>
-          <div className='fixed bottom-0' style={{ width: '67%' }}>
-            <Card
-              style={{
-                backgroundColor: isDark ? '#171717' : '#f0f2f5',
-                width: '100%',
-              }}
-            >
-              <div className='flex items-center space-x-3'>
-                <DriveFileUpload chooseFiles={handelOnAttachments} />
-
-                <Button
-                  type='text'
-                  shape='circle'
-                  icon={<SmileOutlined style={{ fontSize: '20px' }} />}
-                  onClick={() => {
-                    if ((emojiToggleRef as any).current) {
-                      (emojiToggleRef as any).current.toggle();
-                    }
-                  }}
-                />
-
-                <MessageInput {...{ form }} />
-                <MessageSendButton sendChatMessage={sendChatMessage} />
-
-                {/* {form.getFieldValue('message')?.length > 0 && (
-                  <MessageSendButton sendChatMessage={sendChatMessage} />
-                )} */}
-              </div>
-            </Card>
-          </div>
-        </>
       )}
     </div>
   );

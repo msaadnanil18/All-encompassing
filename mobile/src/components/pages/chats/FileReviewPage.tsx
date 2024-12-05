@@ -15,21 +15,20 @@ interface FileItem {
 }
 
 interface FileReviewPageProps {
-  files: FileItem[];
-  onSubmit: (files: FileItem[]) => void;
+  // files: FileItem[];
+  // onSubmit: (files: FileItem[]) => void;
+  fileList: any[];
 }
 
-const FileReviewPage: React.FC<FileReviewPageProps> = ({ files, onSubmit }) => {
-  const [fileList, setFileList] = useState<FileItem[]>(files);
-
-  const handleCaptionChange = (index: number, caption: string) => {
-    const updatedFiles = [...fileList];
-    updatedFiles[index].caption = caption;
-    setFileList(updatedFiles);
-  };
+const FileReviewPage: React.FC<FileReviewPageProps> = ({ fileList }) => {
+  // const handleCaptionChange = (index: number, caption: string) => {
+  //   const updatedFiles = [...fileList];
+  //   updatedFiles[index].caption = caption;
+  //   setFileList(updatedFiles);
+  // };
 
   const handleSubmit = () => {
-    onSubmit(fileList);
+    // onSubmit(fileList);
   };
 
   return (
@@ -41,7 +40,7 @@ const FileReviewPage: React.FC<FileReviewPageProps> = ({ files, onSubmit }) => {
         renderItem={({ item, index }) => (
           <View style={styles.slide}>
             <Image
-              source={{ uri: item.uri }}
+              source={{ uri: item?.uri }}
               style={styles.image}
               resizeMode='contain'
             />
@@ -49,7 +48,7 @@ const FileReviewPage: React.FC<FileReviewPageProps> = ({ files, onSubmit }) => {
               style={styles.captionInput}
               placeholder='Add a caption...'
               value={item.caption}
-              onChangeText={(text) => handleCaptionChange(index, text)}
+              // onChangeText={(text) => handleCaptionChange(index, text)}
             />
           </View>
         )}

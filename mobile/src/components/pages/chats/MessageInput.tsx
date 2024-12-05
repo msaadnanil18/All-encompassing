@@ -1,38 +1,72 @@
-import React, { useState, FC, useImperativeHandle } from 'react';
+import React, {
+  useState,
+  FC,
+  useImperativeHandle,
+  Dispatch,
+  SetStateAction,
+} from 'react';
 import {
   View,
   TextInput,
   StyleSheet,
   TouchableOpacity,
-  Text,
   KeyboardAvoidingView,
   Platform,
-  TouchableWithoutFeedback,
 } from 'react-native';
-import {
-  Paperclip,
-  Camera,
-  Send,
-  Mic,
-  Image as ImageIcon,
-  FileText,
-  Video,
-  Music,
-  Headphones,
-} from '@tamagui/lucide-icons';
+import { Paperclip, Camera, Send, Mic } from '@tamagui/lucide-icons';
 import { useFilesUpload } from '@AllEcompassing/appComponents/fileUploads/useFilesUpload';
-
+import {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+  withSpring,
+} from 'react-native-reanimated';
+import SendFileButtons from './SendFileButtons';
+import { UploadFileTypes } from '@AllEcompassing/appComponents/fileUploads/types';
 const MessageInput: FC<{
   isDark: boolean;
   handelOnSendMessage: (R: string) => void;
   onClearInputMessageRef: any;
-}> = ({ isDark, handelOnSendMessage, onClearInputMessageRef }) => {
+  attachment: Array<UploadFileTypes>;
+  setAttachment: Dispatch<SetStateAction<Array<UploadFileTypes>>>;
+}> = ({
+  isDark,
+  handelOnSendMessage,
+  onClearInputMessageRef,
+  attachment,
+  setAttachment,
+}) => {
+  const [reviewAttachments, setReviewAttachments] = useState<
+    Array<UploadFileTypes>
+  >([]);
+  const { triggeredPickFiles } = useFilesUpload();
   const [message, setMessage] = useState<string>('');
   const [inputHeight, setInputHeight] = useState(38);
   const [isModalVisible, setModalVisible] = useState(false);
 
+  const modalOpacity = useSharedValue(0);
+  const modalScale = useSharedValue(0.5);
+  const modalOpenOpacity = useSharedValue(0);
+  const modalOpenScale = useSharedValue(0.9);
+
+  const toggleModal = () => {
+    if (isModalVisible) {
+      modalOpacity.value = withTiming(0, { duration: 300 });
+      modalScale.value = withSpring(0.5, { damping: 10 });
+      modalOpenOpacity.value = withTiming(0, { duration: 300 });
+      modalOpenScale.value = withTiming(0.5, { duration: 300 });
+      setTimeout(() => setModalVisible(false), 300);
+    } else {
+      setModalVisible(true);
+      modalOpenOpacity.value = withTiming(1, { duration: 300 });
+      modalOpenScale.value = withTiming(1, { duration: 300 });
+      modalOpacity.value = withSpring(1, { damping: 10 });
+      modalScale.value = withSpring(0.9, { damping: 10 });
+    }
+  };
+
   const _clear = () => setMessage('');
-  const { triggeredPickFiles } = useFilesUpload();
+
   useImperativeHandle(
     onClearInputMessageRef,
     () => ({
@@ -40,97 +74,32 @@ const MessageInput: FC<{
     }),
     [_clear],
   );
-  const iconColors = isDark
-    ? { image: '#FF5733', file: '#33C3FF', video: '#FFC300', music: '#C70039' }
-    : { image: '#FF6F61', file: '#3498DB', video: '#F4D03F', music: '#D35400' };
 
-  const toggleModal = () => setModalVisible((prev) => !prev);
+  const animatedModalStyle = useAnimatedStyle(() => ({
+    opacity: modalOpacity.value,
+    transform: [{ scale: modalScale.value }],
+  }));
 
+  const animatedOpenModal = useAnimatedStyle(() => ({
+    opacity: modalOpenOpacity.value,
+    transform: [{ scale: modalOpenScale.value }],
+  }));
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={styles.wrapper}
     >
       {isModalVisible && (
-        <View style={styles.modalOverlay}>
-          <TouchableWithoutFeedback onPress={toggleModal}>
-            <View style={styles.overlay} />
-          </TouchableWithoutFeedback>
-          <View
-            style={[
-              styles.modalContent,
-              { backgroundColor: isDark ? '#222831' : '#EEEEEE' },
-            ]}
-          >
-            <View style={styles.modalIconsContainer}>
-              <TouchableOpacity
-                style={{
-                  ...styles.modalIcons,
-                  backgroundColor: iconColors.image,
-                }}
-                onPress={async () => {
-                  const r = await triggeredPickFiles({
-                    triggeredUp: 'gallery',
-                  });
-                  console.log(r, 'rrrr');
-                }}
-              >
-                <ImageIcon size={24} color={isDark ? '#EEEEEE' : '#222831'} />
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={{
-                  ...styles.modalIcons,
-                  backgroundColor: iconColors.file,
-                }}
-                onPress={async () => {
-                  const file = await triggeredPickFiles({
-                    triggeredUp: 'file',
-                    fileType: [
-                      'application/pdf',
-                      '.ppt',
-                      '.csv',
-                      '.pdf',
-                      '.pptx',
-                      '.zip .gz',
-                      'application/vnd.ms-excel',
-                      'image/*',
-                      'audio/*',
-                      'video/*',
-                    ],
-                  });
-                  console.log(file, '____files___');
-                }}
-              >
-                <FileText size={24} color={isDark ? '#EEEEEE' : '#222831'} />
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={{
-                  ...styles.modalIcons,
-                  backgroundColor: iconColors.video,
-                }}
-                onPress={async () =>
-                  await triggeredPickFiles({ triggeredUp: 'cameraVideo' })
-                }
-              >
-                <Video size={24} color={isDark ? '#EEEEEE' : '#222831'} />
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={{
-                  ...styles.modalIcons,
-                  backgroundColor: iconColors.music,
-                }}
-                onPress={async () =>
-                  await triggeredPickFiles({
-                    triggeredUp: 'file',
-                    fileType: ['audio/*'],
-                  })
-                }
-              >
-                <Headphones size={24} color={isDark ? '#EEEEEE' : '#222831'} />
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
+        <SendFileButtons
+          {...{
+            isDark,
+            animatedModalStyle,
+            animatedOpenModal,
+            toggleModal,
+            reviewAttachments,
+            setReviewAttachments,
+          }}
+        />
       )}
 
       <View
@@ -169,26 +138,23 @@ const MessageInput: FC<{
           />
 
           <View style={styles.iconContainer}>
-            <TouchableOpacity onPress={() => setModalVisible((r) => !r)}>
+            <TouchableOpacity onPress={toggleModal}>
               <Paperclip size={20} color={isDark ? '#EEEEEE' : '#222831'} />
             </TouchableOpacity>
             <TouchableOpacity
-              onPress={async () =>
-                await triggeredPickFiles({ triggeredUp: 'cameraImage' })
-              }
+              onPress={async () => {
+                const r = await triggeredPickFiles({
+                  triggeredUp: 'cameraImage',
+                });
+                setAttachment([r]);
+              }}
             >
               <Camera size={20} color={isDark ? '#EEEEEE' : '#222831'} />
             </TouchableOpacity>
           </View>
         </View>
 
-        <TouchableOpacity
-        // onPress={() =>
-        //   message.trim()
-        //     ? console.log('Message Sent:', message)
-        //     : console.log('Mic Activated')
-        // }
-        >
+        <TouchableOpacity>
           {message.trim().length > 0 ? (
             <TouchableOpacity
               style={{
@@ -242,31 +208,6 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     gap: 15,
   },
-  modalOverlay: {},
-  overlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-  },
-  modalContent: {
-    borderRadius: 10,
-    padding: 10,
-    paddingHorizontal: -10,
-    marginBottom: 10,
-    marginTop: 10,
-  },
-  modalIcons: {
-    borderRadius: 35,
-    padding: 20,
-  },
-  modalIconsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    padding: 20,
-  },
 });
 
-export default React.memo(MessageInput);
+export default MessageInput;

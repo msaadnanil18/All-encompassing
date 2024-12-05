@@ -8,6 +8,8 @@ export interface IMessage extends Document {
   chat: IChat;
   createdAt: Date;
   updatedAt: Date;
+  readBy: IChat[];
+  messageType: 'text' | 'image' | 'video' | 'file' | 'audio';
 }
 
 export interface DB {

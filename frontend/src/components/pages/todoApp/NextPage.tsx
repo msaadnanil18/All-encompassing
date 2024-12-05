@@ -1,8 +1,15 @@
 import { Typography } from 'antd';
 import React from 'react';
+import Sidebar from './Sidebar';
+import ChatWindow from './ChatWindow';
 
 const NextPage = () => {
-  return <Typography.Text strong>NextPage -- on</Typography.Text>;
+  return (
+    <div className='h-screen flex'>
+      <Sidebar />
+      <ChatWindow />
+    </div>
+  );
 };
 
 export default NextPage;

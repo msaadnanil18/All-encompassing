@@ -13,6 +13,7 @@ const charSchema = new Schema<IChat>(
       type: Boolean,
       default: false,
     },
+    groupAvatar: { type: String },
     creator: {
       type: mongoose.Types.ObjectId,
       ref: 'User',
@@ -23,6 +24,13 @@ const charSchema = new Schema<IChat>(
         ref: 'User',
       },
     ],
+    lastMessage: { type: mongoose.Schema.Types.ObjectId, ref: 'Message' },
+    groupName: {
+      type: String,
+      required: function () {
+        return this.groupChat;
+      },
+    },
   },
   { timestamps: true }
 );
