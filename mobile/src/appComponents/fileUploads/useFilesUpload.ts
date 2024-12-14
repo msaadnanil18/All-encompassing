@@ -7,6 +7,14 @@ import { Platform } from 'react-native';
 export const useFilesUpload = () => {
   const [uploadStatus, setUploadStatus] = useState<string>('');
 
+  const compressFile = async (
+    fileUri: string,
+    type: string | null,
+    fileName: string | null,
+  ) => {
+    return fileUri;
+  };
+
   // const compressFile = async (
   //   fileUri: string,
   //   type: string | null,
@@ -31,49 +39,49 @@ export const useFilesUpload = () => {
   //   }
   // };
 
-  const compressFile = async (
-    fileUri: string,
-    type: string | null,
-    fileName: string | null,
-  ): Promise<string | null> => {
-    const tempPath = `${RNFS.TemporaryDirectoryPath}/${fileName}`;
+  // const compressFile = async (
+  //   fileUri: string,
+  //   type: string | null,
+  //   fileName: string | null,
+  // ): Promise<string | null> => {
+  //   const tempPath = `${RNFS.TemporaryDirectoryPath}/${fileName}`;
 
-    try {
-      // Copy the file to a temporary location
-      await RNFS.copyFile(fileUri, tempPath);
+  //   try {
+  //     // Copy the file to a temporary location
+  //     await RNFS.copyFile(fileUri, tempPath);
 
-      let compressedFilePath: string | null = null;
+  //     let compressedFilePath: string | null = null;
 
-      // Compress based on the file type
-      if (type?.startsWith('image/')) {
-        compressedFilePath = await Image.compress(tempPath, {
-          compressionMethod: 'auto',
-        });
-      } else if (type?.startsWith('video/')) {
-        compressedFilePath = await Video.compress(tempPath);
-      } else {
-        compressedFilePath = fileUri;
-      }
+  //     // Compress based on the file type
+  //     if (type?.startsWith('image/')) {
+  //       compressedFilePath = await Image.compress(tempPath, {
+  //         compressionMethod: 'auto',
+  //       });
+  //     } else if (type?.startsWith('video/')) {
+  //       compressedFilePath = await Video.compress(tempPath);
+  //     } else {
+  //       compressedFilePath = fileUri;
+  //     }
 
-      await RNFS.unlink(tempPath);
-      console.log('Temporary file removed successfully!');
+  //     await RNFS.unlink(tempPath);
+  //     console.log('Temporary file removed successfully!');
 
-      return compressedFilePath;
-    } catch (error) {
-      console.error('Compression error:', error);
+  //     return compressedFilePath;
+  //   } catch (error) {
+  //     console.error('Compression error:', error);
 
-      try {
-        if (await RNFS.exists(tempPath)) {
-          await RNFS.unlink(tempPath);
-          console.log('Temporary file removed after error!');
-        }
-      } catch (cleanupError) {
-        console.error('Error during cleanup:', cleanupError);
-      }
+  //     try {
+  //       if (await RNFS.exists(tempPath)) {
+  //         await RNFS.unlink(tempPath);
+  //         console.log('Temporary file removed after error!');
+  //       }
+  //     } catch (cleanupError) {
+  //       console.error('Error during cleanup:', cleanupError);
+  //     }
 
-      return null;
-    }
-  };
+  //     return null;
+  //   }
+  // };
 
   const validateFileSize = async (fileUri: string): Promise<boolean> => {
     try {
