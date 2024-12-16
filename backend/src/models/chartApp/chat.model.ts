@@ -7,7 +7,6 @@ const charSchema = new Schema<IChat>(
   {
     name: {
       type: String,
-      required: true,
     },
     groupChat: {
       type: Boolean,
@@ -25,12 +24,12 @@ const charSchema = new Schema<IChat>(
       },
     ],
     lastMessage: { type: mongoose.Schema.Types.ObjectId, ref: 'Message' },
-    groupName: {
-      type: String,
-      required: function () {
-        return this.groupChat;
+    archivedBy: [
+      {
+        user: { type: mongoose.Types.ObjectId, ref: 'User' },
+        archivedAt: { type: Date },
       },
-    },
+    ],
   },
   { timestamps: true }
 );

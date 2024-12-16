@@ -11,8 +11,13 @@ export interface IChat extends Document {
   updatedAt: Date;
   groupAvatar: string;
   lastMessage: IMessage | mongoose.ObjectId;
-  groupName: string;
+  archivedBy: Array<ArchivedBy>;
 }
+
+type ArchivedBy = {
+  user: IUser;
+  archivedAt: Date;
+};
 
 export interface DB {
   Chat: IChat;

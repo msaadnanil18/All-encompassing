@@ -25,10 +25,10 @@ const UserProfile = () => {
 
   return (
     <Card
-      className="inline-block"
+      className='inline-block'
       //className="w-full h-full"
     >
-      <div className="w-80">
+      <div className='w-80'>
         <Card
           onClick={() =>
             document.querySelector<HTMLInputElement>('#file-upload')?.click()
@@ -43,7 +43,7 @@ const UserProfile = () => {
         {avatarUrl && <Button onClick={updateProfile}>Upload</Button>}
 
         <DriveFileUpload
-          chooseFiles={(e) => setAvatarUrl(e?.[0]?.url)}
+          chooseFiles={(e) => {}}
           buttonProps={{
             // @ts-ignore
             style: { display: 'none' },

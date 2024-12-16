@@ -1,4 +1,3 @@
-// src/components/Sidebar.tsx
 import React from 'react';
 import { Avatar } from 'antd';
 import { chatList } from './dummyData';

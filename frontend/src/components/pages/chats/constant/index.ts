@@ -1,0 +1,4 @@
+export const Chatevent = {
+  CHAT_CREATE_CHAT: 'CHAT_CREATE_CHAT',
+  CHAT_CREATE_GROUP_CHAT: 'CHAT_CREATE_GROUP_CHAT',
+};

@@ -28,6 +28,12 @@ const charMessageSchema = new Schema<IMessage>(
       default: 'text',
     },
     readBy: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+    deletedForMe: [
+      {
+        user: { type: mongoose.Types.ObjectId, ref: 'User' },
+        deletedAt: { type: Date },
+      },
+    ],
   },
   { timestamps: true }
 );

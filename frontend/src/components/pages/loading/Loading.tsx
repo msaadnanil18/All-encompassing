@@ -7,7 +7,7 @@ const Loading: React.FC = () => {
     <div
       style={
         mode === 'LIGHT'
-          ? { backgroundColor: '#f1ede6' }
+          ? { backgroundColor: '#fdffeb' }
           : { backgroundColor: '#212121' }
       }
       className='grid place-content-center h-screen'

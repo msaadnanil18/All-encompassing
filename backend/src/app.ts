@@ -7,7 +7,8 @@ import router from './routes/routes';
 import http from 'http';
 import { Server as IOServer } from 'socket.io';
 import dbMiddleware from './middlewares/dbMiddleware';
-import { initialize_socket_setup } from './sokets/socket';
+import { configureSocket } from './sockets/socket';
+
 dotenv.config({
   path: './.env',
 });
@@ -17,20 +18,14 @@ const server = http.createServer(app);
 
 const io = new IOServer(server, {
   cors: {
-    origin: [
-      process.env.CROS_ORIGIN as any,
-      'https://1a8b-27-100-13-114.ngrok-free.app',
-    ],
+    origin: [process.env.CROS_ORIGIN as string],
     credentials: true,
   },
 });
 app.set('io', io);
 app.use(
   cors({
-    origin: [
-      process.env.CROS_ORIGIN as any,
-      'https://1a8b-27-100-13-114.ngrok-free.app',
-    ],
+    origin: [process.env.CROS_ORIGIN as string],
     credentials: true,
   })
 );
@@ -57,9 +52,9 @@ app.use(
     cookie: { secure: false },
   })
 );
-initialize_socket_setup(io);
-app.use(dbMiddleware);
 
+app.use(dbMiddleware);
 app.use('/api', router);
+configureSocket(io);
 
 export { server };

@@ -11,6 +11,7 @@ const Container = () => {
   const {
     token: { colorBgLayout },
   } = theme.useToken();
+
   return (
     <div
       className='w-screen h-screen'
@@ -31,7 +32,7 @@ const Bootstrap = () => {
         ...config,
         token: {
           ...config?.token,
-          colorBgBase: isDark ? '#212121' : '#f1ede6',
+          colorBgBase: isDark ? '#212121' : '#fdffeb',
         },
       }}
       isDark={isDark}

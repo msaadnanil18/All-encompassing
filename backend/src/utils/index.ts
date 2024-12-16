@@ -1,7 +1,7 @@
 import { Request } from 'express';
 import jwt from 'jsonwebtoken';
 import nodemailer from 'nodemailer';
-import { userSocketIDS } from '../sokets/socket';
+import { userSocketIDS } from '../sockets/socket';
 
 export const generateVerificationToken = (userId: string): string => {
   const token = jwt.sign(
@@ -44,7 +44,7 @@ export const emitEvent = (
   data: any
 ) => {};
 
-export const getSokets = <users extends { _id: string }>(users: users[]) => {
+export const getSockets = <users extends { _id: string }>(users: users[]) => {
   const sockets: string[] = [];
   (users || []).forEach((user) => {
     const userSockets = userSocketIDS.get(user._id.toString());

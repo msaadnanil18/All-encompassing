@@ -2,7 +2,7 @@ import { Socket } from 'socket.io';
 import { ChatEventEnum } from '../constants/chatapp/constants';
 import mongoose from 'mongoose';
 import dayjs from 'dayjs';
-import { getSokets } from '../utils';
+import { getSockets } from '../utils';
 import { Message } from '../models/chartApp/message.models';
 import { Chat } from '../models/chartApp/chat.model';
 import { userSocketIDS } from './socket';
@@ -70,7 +70,7 @@ const newChats = (socket: Socket) => {
           _updatedChat = updatedChatsList;
         }
 
-        const usersInSocket = getSokets(members);
+        const usersInSocket = getSockets(members);
         usersInSocket.forEach((socketId) => {
           if (socketId) {
             socket.to(socketId).emit(ChatEventEnum.NEW_CHAT_EVENT, {
@@ -110,7 +110,7 @@ const delteMessage = (socket: Socket) => {
           }),
         ]);
 
-        const usersInSocket = getSokets(members);
+        const usersInSocket = getSockets(members);
         usersInSocket.forEach((socketId) => {
           if (socketId) {
             socket

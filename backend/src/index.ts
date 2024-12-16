@@ -1,7 +1,6 @@
 import { server } from './app';
 import connectDB from './db';
 import dotenv from 'dotenv';
-
 import ip from 'ip';
 
 dotenv.config({

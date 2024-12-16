@@ -10,8 +10,13 @@ export interface IMessage extends Document {
   updatedAt: Date;
   readBy: IChat[];
   messageType: 'text' | 'image' | 'video' | 'file' | 'audio';
+  deletedForMe: Array<DeletedForMe>;
 }
 
+type DeletedForMe = {
+  user: IUser;
+  deletedAt: Date;
+};
 export interface DB {
   Message: IMessage;
 }
