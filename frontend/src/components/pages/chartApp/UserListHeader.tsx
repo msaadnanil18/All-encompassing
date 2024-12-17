@@ -11,7 +11,7 @@ export const RenderItem: React.FC<{ resource: User; index: number }> = ({
   if (!_resource?.avatar) {
     _resource.avatar = `https://api.dicebear.com/7.x/miniavs/svg?seed=${index}`;
   }
-
+  console.log(_resource);
   return (
     <div key={_resource._id}>
       <div>
