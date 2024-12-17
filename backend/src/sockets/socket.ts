@@ -7,6 +7,7 @@ import { ObjectId } from 'mongoose';
 import { registerAllHandlers } from './registerAllHandlers';
 
 export const userSocketIDS = new Map<string, Set<string>>();
+export const onlineUsers = new Set();
 
 export const configureSocket = (io: IOServer) => {
   io.on('connection', async (socket) => {
@@ -39,6 +40,7 @@ export const configureSocket = (io: IOServer) => {
       }
 
       const userId = user._id.toString();
+      onlineUsers.add(userId);
       if (!userSocketIDS.has(userId)) {
         userSocketIDS.set(userId, new Set());
       }
@@ -46,7 +48,8 @@ export const configureSocket = (io: IOServer) => {
 
       socket.user = user;
       console.log(`User connected 🗼. userId:`, userSocketIDS);
-
+      console.log('online users:', Array.from(onlineUsers));
+      io.emit('ONLINE_USERS_UPDATE', Array.from(onlineUsers));
       registerAllHandlers(io, socket);
 
       socket.on('disconnect', (reason) => {
@@ -57,6 +60,8 @@ export const configureSocket = (io: IOServer) => {
           userSockets.delete(socket.id);
           if (userSockets.size === 0) {
             userSocketIDS.delete(userId);
+            onlineUsers.delete(userId);
+            io.emit('ONLINE_USERS_UPDATE', Array.from(onlineUsers));
           }
         }
       });

@@ -1,5 +1,5 @@
 import { Breakpoint, Dropdown, Empty, Menu, Spin, Typography } from 'antd';
-import React, { FC, useMemo, useState } from 'react';
+import { FC, useMemo, useState } from 'react';
 import SideBarHeader from './SideBarHeader';
 import useChat from './hooks/useChat';
 import { reverse, sortBy } from 'lodash-es';
@@ -75,7 +75,7 @@ const SideBar: FC<{
         style={{
           scrollbarWidth: 'thin',
           overflowY: 'auto',
-          // height: screen.xs ? '' : 'calc(100 - 100px)',
+          scrollbarColor: isDark ? '#302d2d #171717' : '#d9dbc5 #f4f7d5',
         }}
       >
         {chatListLoding ? (

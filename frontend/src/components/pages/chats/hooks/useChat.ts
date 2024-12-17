@@ -33,7 +33,6 @@ const useChat = () => {
   }, []);
 
   const onRealtimeChat = useCallback((newChat: ChatListItem) => {
-    console.log(newChat, 'newChat');
     if (newChat) {
       setChatList((prevChat) => {
         const existingIndex = prevChat.findIndex(
@@ -74,20 +73,26 @@ const useChat = () => {
     },
     []
   );
-  const connectSockect = useCallback(() => {
+  const onlineUsers = useCallback((value) => {
+    console.log(value, 'values_onLine_');
+  }, []);
+
+  const onRealTimeListen = useCallback(() => {
     socket.on(Chatevent.CHAT_CREATE_CHAT, onRealtimeChat);
     socket.on(Chatevent.CHAT_CREATE_GROUP_CHAT, onRealtimeGroupChat);
+    socket.on(Chatevent.ONLINE_USERS_UPDATE, onlineUsers);
 
     return () => {
       socket.off(Chatevent.CHAT_CREATE_CHAT, onRealtimeChat);
       socket.off(Chatevent.CHAT_CREATE_GROUP_CHAT, onRealtimeGroupChat);
+      socket.off(Chatevent.ONLINE_USERS_UPDATE, onlineUsers);
     };
   }, []);
 
   useEffect(() => {
-    const cleanUp = connectSockect();
+    const cleanUp = onRealTimeListen();
     return cleanUp;
-  }, [connectSockect]);
+  }, [onRealTimeListen]);
 
   const createChat = useCallback(async (value: User) => {
     setSubmitLoading(true);

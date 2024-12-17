@@ -6,6 +6,7 @@ import {
 } from '@ant-design/icons';
 import {
   Breakpoint,
+  Button,
   Dropdown,
   FormInstance,
   Input,
@@ -60,7 +61,7 @@ const SideBarHeader: FC<SideBarHeaderProps> = (props) => {
               </Menu>
             }
           >
-            <Typography.Text>
+            <Typography.Text className=' cursor-pointer'>
               <MoreOutlined style={{ fontSize: '18px' }} />
             </Typography.Text>
           </Dropdown>

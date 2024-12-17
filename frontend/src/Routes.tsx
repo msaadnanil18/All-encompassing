@@ -34,20 +34,15 @@ const AppRoutes = () => {
         <Routes>
           <Route path='/resgister-user' Component={ResgisterUser} />
           <Route path='/verify-email' Component={VerifyEmail} />
-          {/* {!user && <Route path='/' Component={LoginUser} />} */}
           <Route path='/' Component={LoginUser} />
-          <Route
-            path='/dash-board/:id'
-            element={
-              <ProtectRoute user={user} redirect='/'>
-                <DashBoard />
-              </ProtectRoute>
-            }
-          />
-          <Route path='/chat-app--/:id/*' Component={ChatApp} />
-          <Route path='/setting--/:id' Component={Setting} />
-          <Route path='/todo-app--/:id/*' Component={TodoApp} />
-          <Route path='/community-app--/:id/*' Component={CommunityApp} />
+          <Route element={<ProtectRoute user={user} redirect='/' />}>
+            <Route path='/dash-board/:id' element={<DashBoard />} />
+            <Route path='/chat-app--/:id/*' Component={ChatApp} />
+            <Route path='/setting--/:id' Component={Setting} />
+            <Route path='/todo-app--/:id/*' Component={TodoApp} />
+            <Route path='/community-app--/:id/*' Component={CommunityApp} />
+          </Route>
+
           <Route path='*' element={<NotFound404 />} />
         </Routes>
       </QueryParamProvider>

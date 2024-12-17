@@ -59,7 +59,14 @@ const GroupCreateForm: FC<{
 
   return (
     <>
-      <Form layout='vertical' form={props.chatForm}>
+      <Form
+        layout='vertical'
+        form={props.chatForm}
+        onFinish={async () => {
+          await props.createGroupChat();
+          props.handelOnCancel();
+        }}
+      >
         <Form.Item name='members' noStyle />
         <Form.Item className='flex justify-center' name='groupAvatar'>
           <Upload
@@ -77,7 +84,11 @@ const GroupCreateForm: FC<{
             )}
           </Upload>
         </Form.Item>
-        <Form.Item label='Group Name' name='name' required>
+        <Form.Item
+          label='Group Name'
+          name='name'
+          rules={[{ required: true, message: 'Please Enter group name' }]}
+        >
           <Input placeholder='Enter group name' />
         </Form.Item>
         <Divider />
@@ -92,10 +103,11 @@ const GroupCreateForm: FC<{
           <Button
             disabled={props.submitLoading}
             loading={props.submitLoading}
-            onClick={async () => {
-              await props.createGroupChat();
-              props.handelOnCancel();
-            }}
+            htmlType='submit'
+            // onClick={async () => {
+            //   await props.createGroupChat();
+            //   props.handelOnCancel();
+            // }}
             type='primary'
           >
             Create
