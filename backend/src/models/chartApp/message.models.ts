@@ -17,6 +17,7 @@ const charMessageSchema = new Schema<IMessage>(
         {
           url: { type: String },
           fileType: { type: String },
+          publicId: { type: String },
         },
       ],
       default: [],

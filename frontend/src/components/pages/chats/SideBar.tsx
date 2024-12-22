@@ -7,6 +7,7 @@ import { useRecoilValue } from 'recoil';
 import { $ME } from '../../atoms/root';
 import RenderAvatar from './RenderAavtar';
 import dayjs from 'dayjs';
+import { darkModeColors, lightModeColors } from '../../utills';
 
 const SideBar: FC<{
   isDark: boolean;
@@ -53,7 +54,7 @@ const SideBar: FC<{
 
   return (
     <div
-      className={`md:w-1/4 lg:w-1/4 w-full ${isDark ? 'bg-[#171717] border-r-black' : 'bg-[#f4f7d5] border-r-[#f4f7d5]'} h-full flex flex-col`}
+      className={`md:w-1/4 lg:w-1/4 w-full ${isDark ? `bg-[${darkModeColors.background}]` : `bg-[${lightModeColors.background}]`} h-full flex flex-col`}
     >
       <SideBarHeader
         {...{
@@ -75,7 +76,7 @@ const SideBar: FC<{
         style={{
           scrollbarWidth: 'thin',
           overflowY: 'auto',
-          scrollbarColor: isDark ? '#302d2d #171717' : '#d9dbc5 #f4f7d5',
+          scrollbarColor: isDark ? '#302d2d #171717' : '#f2e9e9 #ffffff',
         }}
       >
         {chatListLoding ? (
@@ -104,20 +105,7 @@ const SideBar: FC<{
                   key={chat?._id}
                   className={`p-4 ${
                     false ? 'bg-gray-300' : ''
-                  } ${isDark ? 'hover:bg-[#2e2c2c]  ' : ' hover:bg-[#fcfde9]'} cursor-pointer flex items-center`}
-                  // onClick={() => {
-
-                  //   if (screen.xs) {
-                  //     sdk.navigate({
-
-                  //       path: `/${kebabCase(chat?.name || receiver?.name)}--${
-                  //         chat?._id
-                  //       }`,
-                  //     });
-                  //   } else {
-                  //     setSelectedChat(chat);
-                  //   }
-                  // }}
+                  } ${isDark ? `hover:bg-[${darkModeColors.hoverBackground}]` : `hover:bg-[${lightModeColors.hoverBackground}]`} cursor-pointer flex items-center`}
                 >
                   <RenderAvatar {...{ receiver, chat }} />
                   <div className='ml-3'>

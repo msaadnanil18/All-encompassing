@@ -32,7 +32,7 @@ const Bootstrap = () => {
         ...config,
         token: {
           ...config?.token,
-          colorBgBase: isDark ? '#212121' : '#fdffeb',
+          colorBgBase: isDark ? '#212121' : '#ffffff',
         },
       }}
       isDark={isDark}

@@ -59,7 +59,6 @@ const createGroupChat = (io: Server, socket: Socket) => {
   socket.on(
     ChatEvent.CHAT_CREATE_GROUP_CHAT,
     async ({ groupAvatar = '', members = [], name }) => {
-      console.log(groupAvatar, members, name);
       try {
         if (!name || !Array.isArray(members) || members.length < 1) {
           throw new Error(
@@ -86,6 +85,7 @@ const createGroupChat = (io: Server, socket: Socket) => {
         ]);
 
         const usersInSocket = getSockets(newGroupChat.members);
+
         usersInSocket.forEach((socketId) => {
           if (socketId) {
             io.to(socketId).emit(

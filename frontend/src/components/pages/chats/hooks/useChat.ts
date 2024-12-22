@@ -7,8 +7,11 @@ import { ChatListItem } from '../types';
 import { ServiceErrorManager } from '../../../../helpers/service';
 import { ChatListService } from '../service';
 import { getUploadFile } from '../../../../driveFileUpload/getUploadFile';
+import { useRecoilValue } from 'recoil';
+import { $ME } from '../../../atoms/root';
 
 const useChat = () => {
+  const me = useRecoilValue($ME);
   const socket = getSocketHelper();
   const [chatForm] = Form.useForm();
   const [openDrawe, setOpenDrawer] = useState<boolean>(false);
@@ -51,7 +54,6 @@ const useChat = () => {
 
   const onRealtimeGroupChat = useCallback(
     async (newGroupChat: ChatListItem) => {
-      console.log(newGroupChat, 'newGroupChat');
       if (newGroupChat) {
         setChatList((prevChat) => {
           const existingIndex = prevChat.findIndex(
@@ -73,9 +75,30 @@ const useChat = () => {
     },
     []
   );
-  const onlineUsers = useCallback((value) => {
-    console.log(value, 'values_onLine_');
-  }, []);
+  const onlineUsers = useCallback(
+    (value: { user: User; isOnline: boolean }) => {
+      setChatList((prevChatList) =>
+        prevChatList.map((chat) => ({
+          ...chat,
+          members: chat.members.map((member) => {
+            if (member._id.toString() === value?.user?._id.toString()) {
+              return {
+                ...member,
+                status: {
+                  ...(member as any).status,
+                  isOnline: value.isOnline,
+                  user: value.user,
+                },
+              };
+            }
+
+            return member;
+          }),
+        }))
+      );
+    },
+    []
+  );
 
   const onRealTimeListen = useCallback(() => {
     socket.on(Chatevent.CHAT_CREATE_CHAT, onRealtimeChat);
@@ -90,8 +113,12 @@ const useChat = () => {
   }, []);
 
   useEffect(() => {
+    socket.emit(Chatevent.ONLINE_USERS_UPDATE, { userId: me?._id });
     const cleanUp = onRealTimeListen();
-    return cleanUp;
+
+    return () => {
+      cleanUp;
+    };
   }, [onRealTimeListen]);
 
   const createChat = useCallback(async (value: User) => {
@@ -105,27 +132,38 @@ const useChat = () => {
 
   const createGroupChat = useCallback(async () => {
     setSubmitLoading(true);
-    await chatForm.validateFields();
-    const value = chatForm.getFieldsValue();
-    let file = null;
-    if (value.groupAvatar) {
-      file = await getUploadFile({
-        file: value.groupAvatar,
-        uploadType: 'cloud2',
-      });
-    }
+    try {
+      await chatForm.validateFields();
+      const value = chatForm.getFieldsValue();
+      let file = null;
+      if (value.groupAvatar) {
+        file = await getUploadFile({
+          file: value.groupAvatar,
+          uploadType: 'cloud2',
+        });
+      }
 
-    socket.emit(Chatevent.CHAT_CREATE_GROUP_CHAT, {
-      groupAvatar: file?.[0]?.url || null,
-      name: value.name,
-      members: value.members,
-    });
-    console.log(file, 'files');
-    console.log(value, 'value');
-    setOpenDrawer(false);
-    setSubmitLoading(false);
-    chatForm.resetFields();
-    setIsGroupChatCrate(false);
+      socket.emit(Chatevent.CHAT_CREATE_GROUP_CHAT, {
+        groupAvatar: file?.[0]?.url || null,
+        name: value.name,
+        members: value.members,
+      });
+
+      setOpenDrawer(false);
+      setSubmitLoading(false);
+      chatForm.resetFields();
+      setIsGroupChatCrate(false);
+    } catch (error) {
+      notification.error({
+        message: 'Error while creating group please try again',
+      });
+      console.error(error);
+    } finally {
+      setOpenDrawer(false);
+      setSubmitLoading(false);
+      chatForm.resetFields();
+      setIsGroupChatCrate(false);
+    }
   }, []);
 
   const state = useMemo(

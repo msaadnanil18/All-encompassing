@@ -4,7 +4,13 @@ import { IChat } from './chat';
 export interface IMessage extends Document {
   sender: IUser;
   content: string;
-  attachments: string[];
+  attachments: [
+    {
+      url: string;
+      fileType: string;
+      publicId: string;
+    },
+  ];
   chat: IChat;
   createdAt: Date;
   updatedAt: Date;

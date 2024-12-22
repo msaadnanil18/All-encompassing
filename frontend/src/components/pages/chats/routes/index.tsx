@@ -2,7 +2,8 @@ import React, { FC } from 'react';
 import { Routes as Router, Route } from 'react-router-dom';
 import { initSocketHelper } from '../../../../helpers/socket.helper';
 import { ChatProvider } from '../states/ChatContext';
-const App = React.lazy(() => import('../index'));
+// const App = React.lazy(() => import('../index'));
+import Chats from '..';
 
 const Routes: FC = () => {
   initSocketHelper(import.meta.env.VITE_SERVER_URI, {
@@ -12,11 +13,11 @@ const Routes: FC = () => {
     },
   });
   return (
-    <ChatProvider>
-      <Router>
-        <Route path='/' Component={App} />
-      </Router>
-    </ChatProvider>
+    // <ChatProvider>
+    <Router>
+      <Route path='/' Component={Chats} />
+    </Router>
+    //   </ChatProvider>
   );
 };
 

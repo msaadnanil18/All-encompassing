@@ -5,6 +5,9 @@ import { ApiError } from '../utils/ApiError';
 import { User } from '../models/user.model';
 import { ObjectId } from 'mongoose';
 import { registerAllHandlers } from './registerAllHandlers';
+import { ChatEvent } from '../constants/chatapp/constants';
+import { Status } from '../models/chartApp/status.model';
+import dayjs from 'dayjs';
 
 export const userSocketIDS = new Map<string, Set<string>>();
 export const onlineUsers = new Set();
@@ -40,19 +43,29 @@ export const configureSocket = (io: IOServer) => {
       }
 
       const userId = user._id.toString();
+
       onlineUsers.add(userId);
+
       if (!userSocketIDS.has(userId)) {
         userSocketIDS.set(userId, new Set());
       }
-      userSocketIDS.get(userId)?.add(socket.id);
 
+      userSocketIDS.get(userId)?.add(socket.id);
       socket.user = user;
+      await Status.findOneAndUpdate(
+        { user: userId },
+        { $set: { user: user._id, isOnline: true } },
+        { upsert: true, new: true }
+      );
+
       console.log(`User connected 🗼. userId:`, userSocketIDS);
       console.log('online users:', Array.from(onlineUsers));
-      io.emit('ONLINE_USERS_UPDATE', Array.from(onlineUsers));
+
+      io.emit(ChatEvent.ONLINE_USERS_UPDATE, { user, isOnline: true });
+
       registerAllHandlers(io, socket);
 
-      socket.on('disconnect', (reason) => {
+      socket.on('disconnect', async (reason) => {
         console.log(`Client disconnected: ${socket.id}, Reason: ${reason}`);
 
         const userSockets = userSocketIDS.get(userId);
@@ -61,7 +74,15 @@ export const configureSocket = (io: IOServer) => {
           if (userSockets.size === 0) {
             userSocketIDS.delete(userId);
             onlineUsers.delete(userId);
-            io.emit('ONLINE_USERS_UPDATE', Array.from(onlineUsers));
+
+            await Status.findOneAndUpdate(
+              { user: userId },
+              {
+                lastSeen: dayjs().toISOString(),
+                isOnline: false,
+              }
+            );
+            io.emit(ChatEvent.ONLINE_USERS_UPDATE, { user, isOnline: false });
           }
         }
       });

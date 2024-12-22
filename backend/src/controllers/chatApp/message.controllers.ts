@@ -6,12 +6,6 @@ import { emitEvent } from '../../utils';
 import { ALERT, REFETCH_CHATS } from '../../constants/chatapp/constants';
 import create from '../crudControllers/create';
 
-const sendMessage = asyncHandler(async (req, res) => {
-  // console.log(req.body, 'message');
-
-  res.status(200).json(new ApiResponse(200, {}, 'stable'));
-});
-
 const newChatGroup = asyncHandler(async (req, res) => {
   const { payload } = req.body;
   const { name, members } = payload;
@@ -72,4 +66,4 @@ const createChat = asyncHandler(async (req, res, next) => {
   })(req, res, next);
 });
 
-export { sendMessage, newChatGroup, createChat };
+export { newChatGroup, createChat };

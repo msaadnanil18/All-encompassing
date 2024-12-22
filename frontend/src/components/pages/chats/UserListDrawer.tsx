@@ -15,6 +15,7 @@ import { head, startCase } from 'lodash-es';
 import { User } from '../../types/partialUser';
 import { ArrowLeftOutlined, ArrowRightOutlined } from '@ant-design/icons';
 import GroupCreateForm from './GroupCreateForm';
+import { darkModeColors, lightModeColors } from '../../utills';
 
 const UserListDrawer: FC<{
   isGroupChatCrate: boolean;
@@ -116,7 +117,7 @@ const UserListDrawer: FC<{
                       }
                     }}
                     style={!isGroupChatCrate ? { padding: '10px 30px' } : {}}
-                    className={` ${!isGroupChatCrate ? `${isDark ? 'hover:bg-[#17171785]  ' : ' hover:bg-[#f4f7d5]'} cursor-pointer` : ''} `}
+                    className={` ${!isGroupChatCrate ? `${isDark ? `hover:bg-[${darkModeColors.hoverBackground}]` : `hover:bg-[${lightModeColors.hoverBackground}]`} cursor-pointer` : ''} `}
                   >
                     {isGroupChatCrate ? (
                       <div
@@ -136,7 +137,7 @@ const UserListDrawer: FC<{
                               e.target.checked
                                 ? [...selectedUsers, user]
                                 : selectedUsers.filter(
-                                    (user) => user._id !== user._id
+                                    (_user) => _user._id !== user._id
                                   )
                             )
                           }

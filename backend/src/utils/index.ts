@@ -44,13 +44,19 @@ export const emitEvent = (
   data: any
 ) => {};
 
-export const getSockets = <users extends { _id: string }>(users: users[]) => {
+export const getSockets = <T extends { _id: string } | string>(
+  users: T[]
+): string[] => {
   const sockets: string[] = [];
+
   (users || []).forEach((user) => {
-    const userSockets = userSocketIDS.get(user._id.toString());
+    const userId = typeof user === 'string' ? user : user._id;
+    const userSockets = userSocketIDS.get(userId.toString());
+
     if (userSockets) {
       sockets.push(...Array.from(userSockets));
     }
   });
+
   return sockets;
 };

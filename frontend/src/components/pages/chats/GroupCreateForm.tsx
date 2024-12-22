@@ -62,9 +62,12 @@ const GroupCreateForm: FC<{
       <Form
         layout='vertical'
         form={props.chatForm}
-        onFinish={async () => {
-          await props.createGroupChat();
-          props.handelOnCancel();
+        onFinish={() => {
+          props
+            .createGroupChat()
+            .then(() => props.handelOnCancel())
+            .catch()
+            .finally(() => props.handelOnCancel());
         }}
       >
         <Form.Item name='members' noStyle />
@@ -75,6 +78,7 @@ const GroupCreateForm: FC<{
             onChange={handleChange}
             fileList={fileList}
             maxCount={1}
+            accept='image/*'
           >
             {fileList.length < 1 && (
               <button style={{ border: 0, background: 'none' }} type='button'>

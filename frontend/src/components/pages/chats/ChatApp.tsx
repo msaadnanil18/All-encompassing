@@ -14,7 +14,7 @@ const ChatApp = () => {
   return (
     <div className='h-screen md:flex lg:flex'>
       <Sidebar {...{ isDark, screen }} />
-      {!screen.xs && <ChatWindow />}
+      {!screen.xs && <ChatWindow {...{ screen, isDark }} />}
     </div>
   );
 };
