@@ -38,7 +38,7 @@ const ChatWindow: FC<{
       className='md:w-3/4 lg:w-3/4 w-full flex flex-col h-full'
     >
       <div
-        className={`p-2 flex items-center ${isDark ? `bg-[${darkModeColors.background}]` : `bg-[${lightModeColors.background}]`}`}
+        className={`p-2 flex items-center ${isDark ? 'bg-darkBg' : 'bg-ligthBg'}`}
       >
         <div className='ml-3 mt-2'>
           <RenderAvatar

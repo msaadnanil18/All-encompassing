@@ -1,0 +1,121 @@
+$animationSteps: 20;
+$animationDuration: 50;
+$animationElement: span;
+$animationElementsCount: 100;
+$delayBetweenLetters: 0.2;
+
+
+.anim-text-flow,
+.anim-text-flow-hover:hover {
+  #{$animationElement} {
+    animation-name: anim-text-flow-keys;
+    animation-duration: #{$animationDuration}s;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+    animation-fill-mode: forwards;
+  }
+
+  @keyframes anim-text-flow-keys {
+    @for $i from 0 through $animationSteps {
+      #{percentage($i * (1 / $animationSteps))} {
+        color: hsla(random(365), 60%, 60%, 1);
+      }
+    }
+  }
+
+  $totalDelayTime: $animationElementsCount * $delayBetweenLetters;
+
+  @for $i from 1 through $animationElementsCount {
+    #{$animationElement}:nth-of-type(#{$i}) {
+      animation-delay: #{($i * $delayBetweenLetters) - $totalDelayTime}s;
+    }
+  }
+}
+
+
+.container {
+  font-family: 'Ubuntu', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  font-size: 3em;
+  line-height: 2;
+  font-weight: 300;
+  text-rendering: optimizeLegibility;
+  text-align: center;
+ 
+  animation: fade-in 2s ease-out forwards;
+}
+
+// Text Styles
+.txt {
+  display: block;
+}
+
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+    transform: translateY(20px); 
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+@keyframes glow {
+  0% {
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+  }
+  50% {
+    text-shadow: 0 0 20px rgba(255, 255, 255, 1);
+  }
+  100% {
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+  }
+}
+
+
+.anim-text-flow {
+  opacity: 0; // Initial state
+  animation: fade-in 2s ease-out forwards; 
+}
+
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0); 
+  }
+}
+
+
+@keyframes glow {
+  0% {
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+  }
+  50% {
+    text-shadow: 0 0 20px rgba(255, 255, 255, 1);
+  }
+  100% {
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+  }
+}
+
+a {
+  text-decoration: none;
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  text-align: right;
+  color: #eee;
+  font-size: 10px;
+  line-height: 1px;
+}
+
+@import url('https://fonts.googleapis.com/css?family=Ubuntu:300');

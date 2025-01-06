@@ -5,10 +5,15 @@ import { getSocketHelper } from '../../../../helpers/socket.helper';
 import { Chatevent } from '../constant';
 import { ChatListItem } from '../types';
 import { ServiceErrorManager } from '../../../../helpers/service';
-import { ChatListService } from '../service';
+import {
+  ArchivedChatService,
+  ChatListService,
+  UnArchivedChatService,
+} from '../service';
 import { getUploadFile } from '../../../../driveFileUpload/getUploadFile';
 import { useRecoilValue } from 'recoil';
 import { $ME } from '../../../atoms/root';
+import dayjs from 'dayjs';
 
 const useChat = () => {
   const me = useRecoilValue($ME);
@@ -166,6 +171,80 @@ const useChat = () => {
     }
   }, []);
 
+  const hendelOnArchive = useCallback(
+    async (chatId?: string) => {
+      if (!chatId) return;
+
+      const archiveEntry = {
+        user: me || undefined,
+        archivedAt: dayjs().toISOString(),
+      };
+
+      setChatList((prevChat) => {
+        return prevChat.map((chat) =>
+          chat._id === chatId
+            ? {
+                ...chat,
+                archivedBy: [...(chat.archivedBy || []), archiveEntry],
+              }
+            : chat
+        );
+      });
+
+      await ServiceErrorManager(
+        ArchivedChatService({
+          data: {
+            usePayloadUpdate: true,
+            query: { _id: chatId },
+            payload: {
+              $push: { archivedBy: archiveEntry },
+            },
+          },
+        }),
+        {
+          failureMessage: 'Error while archiving chat',
+        }
+      );
+    },
+    [chatList, me]
+  );
+
+  const handelOnUnArchive = useCallback(
+    async (chatId?: string) => {
+      if (!chatId) return;
+
+      setChatList((prevChat) => {
+        const updatedChats = prevChat.map((chat) =>
+          chat._id === chatId
+            ? {
+                ...chat,
+                archivedBy: chat.archivedBy?.filter(
+                  (arch) => arch.user?._id !== me?._id
+                ),
+              }
+            : chat
+        );
+        return updatedChats;
+      });
+
+      if (me?._id) {
+        await ServiceErrorManager(
+          UnArchivedChatService({
+            data: {
+              usePayloadUpdate: true,
+              query: { _id: chatId },
+              payload: { $pull: { archivedBy: { user: me._id } } },
+            },
+          }),
+          {
+            failureMessage: 'Error while unarchiving chat',
+          }
+        );
+      }
+    },
+    [chatList, me]
+  );
+
   const state = useMemo(
     () => ({
       openDrawe,
@@ -184,8 +263,18 @@ const useChat = () => {
       setIsGroupChatCrate,
       onSelectUser: createChat,
       createGroupChat,
+      hendelOnArchive,
+      handelOnUnArchive,
     }),
-    [chatForm, createChat, createGroupChat, setOpenDrawer, setIsGroupChatCrate]
+    [
+      chatForm,
+      createChat,
+      createGroupChat,
+      setOpenDrawer,
+      setIsGroupChatCrate,
+      hendelOnArchive,
+      handelOnUnArchive,
+    ]
   );
 
   return {

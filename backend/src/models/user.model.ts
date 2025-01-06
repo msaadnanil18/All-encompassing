@@ -28,6 +28,7 @@ const userSchema = new Schema<IUser>(
     refreshToken: {
       type: String,
     },
+    about: { type: String },
     themConfig: {
       token: {
         type: Map,

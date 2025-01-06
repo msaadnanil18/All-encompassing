@@ -1,22 +1,30 @@
-import { Breakpoint, Dropdown, Empty, Menu, Spin, Typography } from 'antd';
+import {
+  Breakpoint,
+  Button,
+  Dropdown,
+  Empty,
+  Menu,
+  Spin,
+  Typography,
+} from 'antd';
 import { FC, useMemo, useState } from 'react';
 import SideBarHeader from './SideBarHeader';
 import useChat from './hooks/useChat';
 import { reverse, sortBy } from 'lodash-es';
 import { useRecoilValue } from 'recoil';
 import { $ME } from '../../atoms/root';
-import RenderAvatar from './RenderAavtar';
-import dayjs from 'dayjs';
-import { darkModeColors, lightModeColors } from '../../utills';
+import { AllChat, ArchivedChats } from './chatList';
+import { DisplayView } from './types';
+import AllGroups from './chatList/AllGroups';
 
 const SideBar: FC<{
   isDark: boolean;
   screen: Partial<Record<Breakpoint, boolean>>;
 }> = (props) => {
+  const { isDark, screen } = props;
   const me = useRecoilValue($ME);
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const { isDark, screen } = props;
-
+  const [displayView, setDisplayView] = useState<DisplayView>('all');
   const {
     state: {
       openDrawe,
@@ -31,6 +39,8 @@ const SideBar: FC<{
       onSelectUser,
       chatForm,
       createGroupChat,
+      hendelOnArchive,
+      handelOnUnArchive,
     },
   } = useChat();
 
@@ -49,12 +59,12 @@ const SideBar: FC<{
 
   const sortedChats = useMemo(
     () => reverse(sortBy(filteredChats, 'updatedAt')),
-    [filteredChats]
+    [filteredChats, chatList]
   );
 
   return (
     <div
-      className={`md:w-1/4 lg:w-1/4 w-full ${isDark ? `bg-[${darkModeColors.background}]` : `bg-[${lightModeColors.background}]`} h-full flex flex-col`}
+      className={`md:w-1/4 lg:w-1/4 w-full ${isDark ? 'bg-darkBg' : 'bg-ligthBg'} h-full flex flex-col`}
     >
       <SideBarHeader
         {...{
@@ -70,8 +80,11 @@ const SideBar: FC<{
           createGroupChat,
           setSearchQuery,
           searchQuery,
+          setDisplayView,
+          displayView,
         }}
       />
+
       <div
         style={{
           scrollbarWidth: 'thin',
@@ -85,56 +98,14 @@ const SideBar: FC<{
           </div>
         ) : !filteredChats.length ? (
           <Empty description='No chat founded' />
+        ) : displayView === 'all' ? (
+          <AllChat {...{ me, sortedChats, hendelOnArchive, isDark }} />
+        ) : displayView === 'archived' ? (
+          <ArchivedChats {...{ me, sortedChats, isDark, handelOnUnArchive }} />
+        ) : displayView === 'groups' ? (
+          <AllGroups {...{ sortedChats, isDark, hendelOnArchive, me }} />
         ) : (
-          sortedChats.map((chat) => {
-            const receiver = chat.members.find((m) => m._id !== me?._id);
-            // const isSelected = selectedChat?._id === chat?._id;
-            return (
-              <Dropdown
-                key={chat._id}
-                overlayStyle={{ margin: 0, padding: 0 }}
-                overlay={
-                  <Menu>
-                    <Menu.Item>Archive chat</Menu.Item>
-                  </Menu>
-                }
-                trigger={['contextMenu']}
-                placement='bottomLeft'
-              >
-                <div
-                  key={chat?._id}
-                  className={`p-4 ${
-                    false ? 'bg-gray-300' : ''
-                  } ${isDark ? `hover:bg-[${darkModeColors.hoverBackground}]` : `hover:bg-[${lightModeColors.hoverBackground}]`} cursor-pointer flex items-center`}
-                >
-                  <RenderAvatar {...{ receiver, chat }} />
-                  <div className='ml-3'>
-                    <Typography.Text strong style={{ margin: 0, padding: 0 }}>
-                      {chat?.name || receiver?.name}
-                    </Typography.Text>
-                    <Typography.Paragraph
-                      type='secondary'
-                      className='text-sm '
-                      style={{ margin: 0, padding: 0 }}
-                    >
-                      {chat?.lastMessage?.content || 'Meeting at 3 PM'}
-                    </Typography.Paragraph>
-                    {chat.groupChat ? null : (receiver as any)?.status
-                        ?.isOnline ? (
-                      <span className='text-xs text-gray-500'>Online</span>
-                    ) : (receiver as any)?.status?.lastSeen ? (
-                      <span className='text-xs text-gray-500'>
-                        Last seen{' '}
-                        {dayjs((receiver as any).status?.lastSeen).fromNow()}
-                      </span>
-                    ) : (
-                      <span className='text-xs text-gray-500'>Offline</span>
-                    )}
-                  </div>
-                </div>
-              </Dropdown>
-            );
-          })
+          ''
         )}
       </div>
     </div>

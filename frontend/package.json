@@ -22,7 +22,6 @@
     "chart.js": "^4.4.4",
     "chartjs": "^0.3.24",
     "dayjs": "^1.11.13",
-    "emoji-mart": "^5.6.0",
     "emoji-picker-react": "^4.11.1",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.2.1",
@@ -30,6 +29,7 @@
     "framer-motion": "^11.9.0",
     "imagekit": "^5.2.0",
     "lodash-es": "^4.17.21",
+    "mic-recorder-to-mp3": "^2.2.2",
     "mongoose": "^8.8.2",
     "prettier": "^3.3.3",
     "query-string": "^9.1.0",
@@ -41,6 +41,7 @@
     "react-router-dom": "^6.26.0",
     "react-webcam": "^7.2.0",
     "recoil": "^0.7.7",
+    "sass": "^1.83.1",
     "socket.io-client": "^4.7.5",
     "use-query-params": "^2.2.1"
   },

@@ -40,7 +40,7 @@ const registerUser = asyncHandler(async (req, res) => {
   if (exitedUser) {
     return res
       .status(201)
-      .json(new ApiResponse(201, {}, 'User already exists'));
+      .json(new ApiResponse(201, {}, 'Your are already exists'));
   }
   const user = await User.create({
     name,

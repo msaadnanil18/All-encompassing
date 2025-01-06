@@ -7,6 +7,7 @@ export interface IUser extends Document {
   isVerified: boolean;
   createdAt: Date;
   updatedAt: Date;
+  about: string;
   avatar?: 'string';
   themConfig: {
     token?: {

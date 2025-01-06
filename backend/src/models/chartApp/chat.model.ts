@@ -31,7 +31,7 @@ const charSchema = new Schema<IChat>(
       },
     ],
   },
-  { timestamps: true }
+  { timestamps: { createdAt: true, updatedAt: false } }
 );
 charSchema.plugin(mongoosePaginate);
 

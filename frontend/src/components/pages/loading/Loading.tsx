@@ -5,12 +5,7 @@ const Loading: React.FC = () => {
   const mode = localStorage.getItem('fallBackLoddingMode');
   return (
     <div
-      style={
-        mode === 'LIGHT'
-          ? { backgroundColor: '#fdffeb' }
-          : { backgroundColor: '#212121' }
-      }
-      className='grid place-content-center h-screen'
+      className={`grid place-content-center h-screen ${mode === 'LIGHT' ? 'bg-ligthBg' : 'bg-darkBg'} `}
     >
       <div className='loader' />
     </div>

@@ -12,9 +12,13 @@ export interface ChatListItem {
   lastMessage?: MessageListItems;
   createdAt: Date;
   updatedAt: Date;
-  archivedBy?: Array<User>;
+  archivedBy: Array<ArchiveChat>;
 }
 
+type ArchiveChat = {
+  user?: User;
+  archivedAt: string;
+};
 export interface MessageListItems {
   _id?: string;
   sender: PartialUser | null;
@@ -26,3 +30,5 @@ export interface MessageListItems {
   createdAt?: string;
   updatedAt?: string;
 }
+
+export type DisplayView = 'all' | 'unread' | 'archived' | 'groups';

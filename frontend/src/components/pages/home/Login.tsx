@@ -4,21 +4,28 @@ import { LoginOutlined, UserAddOutlined } from '@ant-design/icons';
 import { useAuth } from '../../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import Welcome from './welcome';
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
   const { me, logIn, loading } = useAuth();
 
-  React.useEffect(() => {
-    if (me) {
-      navigate(`/dash-board/${me?._id}`);
-    }
-  }, [me]);
-
   const formOnSubmit = async (value: Record<string, any>) => {
     await logIn(value);
   };
-  return (
+  return me ? (
+    <div className='grid place-content-center h-screen'>
+      <Welcome me={me} />
+      <div className=' flex justify-center'>
+        <Button
+          type='primary'
+          onClick={() => navigate(`/dash-board/${me?._id}`)}
+        >
+          Go To Dashboard
+        </Button>
+      </div>
+    </div>
+  ) : (
     <Row>
       <Col span={8}></Col>
       <Col sm={8} xs={24} className=' mt-40'>

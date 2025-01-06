@@ -33,11 +33,11 @@ const Settings = () => {
     []
   );
   return (
-    <div className="p-2 flex flex-col">
-      <div className="p-2 md:p-4">
+    <div className='p-2 flex flex-col'>
+      <div className='p-2 md:p-2'>
         <Typography.Title level={3}>Settings</Typography.Title>
         <Tabs
-          type="line"
+          type='line'
           tabBarStyle={{
             width: screen.xs ? '100%' : '10rem',
           }}

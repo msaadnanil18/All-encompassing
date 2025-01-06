@@ -15,7 +15,6 @@ import { head, startCase } from 'lodash-es';
 import { User } from '../../types/partialUser';
 import { ArrowLeftOutlined, ArrowRightOutlined } from '@ant-design/icons';
 import GroupCreateForm from './GroupCreateForm';
-import { darkModeColors, lightModeColors } from '../../utills';
 
 const UserListDrawer: FC<{
   isGroupChatCrate: boolean;
@@ -99,7 +98,7 @@ const UserListDrawer: FC<{
             />
             <div
               style={{
-                height: '400px',
+                height: '380px',
                 overflow: 'auto',
                 padding: '8px',
                 scrollbarWidth: 'none',
@@ -117,7 +116,7 @@ const UserListDrawer: FC<{
                       }
                     }}
                     style={!isGroupChatCrate ? { padding: '10px 30px' } : {}}
-                    className={` ${!isGroupChatCrate ? `${isDark ? `hover:bg-[${darkModeColors.hoverBackground}]` : `hover:bg-[${lightModeColors.hoverBackground}]`} cursor-pointer` : ''} `}
+                    className={` ${!isGroupChatCrate ? `${isDark ? ' hover:bg-darkHover' : 'hover:bg-lightHover'} cursor-pointer` : ''} `}
                   >
                     {isGroupChatCrate ? (
                       <div
@@ -192,7 +191,7 @@ const UserListDrawer: FC<{
               )}
             </div>
             {selectedUsers.length > 1 && isGroupChatCrate ? (
-              <div className=' flex items-center justify-items-center justify-center mt-2'>
+              <div className=' flex items-center justify-items-center justify-center '>
                 <Button
                   icon={<ArrowRightOutlined />}
                   type='primary'
