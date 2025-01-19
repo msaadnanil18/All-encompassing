@@ -12,6 +12,7 @@ export interface IChat extends Document {
   groupAvatar: string;
   lastMessage: IMessage | mongoose.ObjectId;
   archivedBy: Array<ArchivedBy>;
+  deletedFor: Array<IUser>;
 }
 
 type ArchivedBy = {

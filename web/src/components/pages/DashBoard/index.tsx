@@ -47,34 +47,38 @@ const DashBoard: FC = () => {
     {
       key: '1',
       icon: <MessageOutlined />,
-      label: <Typography.Text strong>Chat</Typography.Text>,
+      label: <label className=' font-semibold'>Chat</label>,
       onClick: () => navigate(`/chat-app--/${id}`),
     },
     {
       key: '2',
       icon: <CheckCircleOutlined />,
-      label: <Typography.Text strong>Project</Typography.Text>,
+      label: <label className=' font-semibold'>Project</label>,
       onClick: () => navigate(`/todo-app--/${id}`),
     },
     {
       key: '3',
       icon: <UsergroupAddOutlined />,
-      label: <Typography.Text strong>Community</Typography.Text>,
+      label: <label className=' font-semibold'>Community</label>,
       onClick: () => navigate(`/community-app--/${id}`),
     },
     {
       key: '4',
       icon: <SettingOutlined />,
-      label: <Typography.Text strong>Settings</Typography.Text>,
+      label: <label className=' font-semibold'>Settings</label>,
       onClick: () => navigate(`/setting--/${id}`),
     },
     {
       key: '5',
       icon: <LogoutOutlined />,
-      label: <Typography.Text strong>Logout</Typography.Text>,
+      label: <label className=' font-semibold'>Logout</label>,
       onClick: () => confirm(),
     },
   ];
+
+  const p = <T extends {}>(t: Array<T>) => {
+    return t[0];
+  };
 
   return (
     <Layout>

@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { FC } from 'react';
 import ChatApp from './ChatApp';
 
-const Chats = () => {
+const Chats: FC = () => {
   return <ChatApp />;
 };
 

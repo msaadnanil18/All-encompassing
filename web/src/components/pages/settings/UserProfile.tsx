@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import {
   Avatar,
+  Button,
   Card,
   Modal,
   Tooltip,
@@ -9,7 +10,12 @@ import {
   UploadFile,
 } from 'antd';
 import { useRecoilState } from 'recoil';
-import { CheckOutlined, EditOutlined, UserOutlined } from '@ant-design/icons';
+import {
+  CheckOutlined,
+  CloseOutlined,
+  EditOutlined,
+  UserOutlined,
+} from '@ant-design/icons';
 import { ServiceErrorManager } from '../../../helpers/service';
 import { ProfileEditService } from '../../services/auth';
 import { $ME } from '../../atoms/root';
@@ -184,7 +190,9 @@ const UserProfile: React.FC = () => {
       <Modal
         visible={previewOpen}
         title={previewTitle}
-        // footer={null}
+        closeIcon={
+          <Button type='text' disabled={uploading} icon={<CloseOutlined />} />
+        }
         onCancel={() => setPreviewOpen(false)}
         width={600}
         cancelButtonProps={{

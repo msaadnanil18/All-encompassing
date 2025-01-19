@@ -2,8 +2,8 @@ import React, { FC } from 'react';
 import { Routes as Router, Route } from 'react-router-dom';
 import { initSocketHelper } from '../../../../helpers/socket.helper';
 import { ChatProvider } from '../states/ChatContext';
-// const App = React.lazy(() => import('../index'));
 import Chats from '..';
+import ChatWindowSmallScreen from '../ChatWindowSmallScreen';
 
 const Routes: FC = () => {
   initSocketHelper(import.meta.env.VITE_SERVER_URI, {
@@ -16,6 +16,7 @@ const Routes: FC = () => {
     // <ChatProvider>
     <Router>
       <Route path='/' Component={Chats} />
+      <Route path='/:chatId' Component={ChatWindowSmallScreen} />
     </Router>
     //   </ChatProvider>
   );

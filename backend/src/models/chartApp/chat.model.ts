@@ -30,6 +30,7 @@ const charSchema = new Schema<IChat>(
         archivedAt: { type: Date },
       },
     ],
+    deletedFor: [{ type: mongoose.Types.ObjectId, ref: 'User' }],
   },
   { timestamps: { createdAt: true, updatedAt: false } }
 );

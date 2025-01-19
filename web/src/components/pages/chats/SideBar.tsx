@@ -1,21 +1,12 @@
-import {
-  Breakpoint,
-  Button,
-  Dropdown,
-  Empty,
-  Menu,
-  Spin,
-  Typography,
-} from 'antd';
+import { Breakpoint, Empty, Spin } from 'antd';
 import { FC, useMemo, useState } from 'react';
 import SideBarHeader from './SideBarHeader';
 import useChat from './hooks/useChat';
 import { reverse, sortBy } from 'lodash-es';
 import { useRecoilValue } from 'recoil';
 import { $ME } from '../../atoms/root';
-import { AllChat, ArchivedChats } from './chatList';
+import { AllChat, ArchivedChats, AllGroups } from './chatList';
 import { DisplayView } from './types';
-import AllGroups from './chatList/AllGroups';
 
 const SideBar: FC<{
   isDark: boolean;
@@ -99,11 +90,13 @@ const SideBar: FC<{
         ) : !filteredChats.length ? (
           <Empty description='No chat founded' />
         ) : displayView === 'all' ? (
-          <AllChat {...{ me, sortedChats, hendelOnArchive, isDark }} />
+          <AllChat {...{ me, sortedChats, hendelOnArchive, ...props }} />
         ) : displayView === 'archived' ? (
-          <ArchivedChats {...{ me, sortedChats, isDark, handelOnUnArchive }} />
+          <ArchivedChats
+            {...{ me, sortedChats, handelOnUnArchive, ...props }}
+          />
         ) : displayView === 'groups' ? (
-          <AllGroups {...{ sortedChats, isDark, hendelOnArchive, me }} />
+          <AllGroups {...{ sortedChats, ...props, hendelOnArchive, me }} />
         ) : (
           ''
         )}

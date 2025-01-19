@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, lazy, useCallback } from 'react';
 import { RecoilRoot } from 'recoil';
 import dayjs from 'dayjs';
 import { HelmetProvider } from 'react-helmet-async';
@@ -9,17 +9,17 @@ import { User } from './components/types/partialUser';
 import relativeTime from 'dayjs/plugin/relativeTime';
 dayjs.extend(relativeTime);
 
-const Bootstrap = React.lazy(() => import('./Bootstrap'));
-const CustumLoading = React.lazy(
+const Bootstrap = lazy(() => import('./Bootstrap'));
+const CustumLoading = lazy(
   () => import('./components/pages/home/LoadingSpinner')
 );
 
 import Loading from './components/pages/loading/Loading';
 
 const App = () => {
-  const [init, setInit] = React.useState<User>();
-  const [loading, setLoding] = React.useState<boolean>(false);
-  const initializeApp = React.useCallback(async () => {
+  const [init, setInit] = useState<User>();
+  const [loading, setLoding] = useState<boolean>(false);
+  const initializeApp = useCallback(async () => {
     setLoding(true);
     ServiceErrorManager(initService({}), {})
       .then(([_, data]) => {
@@ -34,7 +34,7 @@ const App = () => {
     initializeApp().catch(console.log);
   }, []);
 
-  if (loading) return <CustumLoading />;
+  if (loading) return <Loading />;
   return (
     <React.Suspense fallback={<Loading />}>
       <HelmetProvider>

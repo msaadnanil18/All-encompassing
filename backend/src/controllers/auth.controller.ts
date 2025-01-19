@@ -27,7 +27,7 @@ const gerateAccessAndRefreshToken = async (userId: string) => {
 };
 
 const registerUser = asyncHandler(async (req, res) => {
-  const { name, email, username, password } = req.body.payload;
+  const { name, email, username, password, avatar } = req.body.payload;
 
   if ([name, email, username, password].some((field) => field?.trim() === '')) {
     return res.status(400).send({ message: 'All fields are required' });
@@ -47,6 +47,7 @@ const registerUser = asyncHandler(async (req, res) => {
     email,
     password,
     username,
+    avatar,
   });
 
   const token = generateVerificationToken(user._id);
@@ -62,15 +63,9 @@ const registerUser = asyncHandler(async (req, res) => {
     });
   }
 
-  return res.status(201).json(
-    new ApiResponse(
-      200,
-      {
-        createdUseer,
-      },
-      'user registered successfully'
-    )
-  );
+  return res
+    .status(201)
+    .json(new ApiResponse(200, {}, 'user registered successfully'));
 });
 
 const verifyEmail = asyncHandler(async (req: Request, res: Response) => {

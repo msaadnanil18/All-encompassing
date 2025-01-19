@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+export type FileType = Parameters<any['beforeUpload']>[0];
 
 export const generateMessageId = (): string => {
   return new mongoose.Types.ObjectId().toHexString();
@@ -19,3 +20,11 @@ export const getBackgroundColor = (isDark: boolean) =>
 
 export const getHoverBackgroundColor = (isDark: boolean) =>
   isDark ? darkModeColors.hoverBackground : lightModeColors.hoverBackground;
+
+export const getBase64 = (file: FileType): Promise<string> =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file as any);
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = (error) => reject(error);
+  });

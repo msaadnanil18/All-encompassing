@@ -2,14 +2,14 @@
   "name": "all-encompassing",
   "private": true,
   "workspaces": [
-    "frontend",
+    "web",
     "backend"
   ],
   "scripts": {
-    "install-all": "npm-run-all -p install-frontend install-backend",
-    "install-frontend": "npm install --prefix frontend",
+    "install-all": "npm-run-all -p install-web install-backend",
+    "install-web": "npm install --prefix web",
     "install-backend": "npm install --prefix backend",
-    "dev": "concurrently \"npm run dev --prefix=frontend\" \"npm run dev --prefix=backend\"",
+    "dev": "concurrently \"npm run dev --prefix=web\" \"npm run dev --prefix=backend\"",
     "prepare": "husky install",
     "lint": "eslint .",
     "precommit": "lint-staged"
