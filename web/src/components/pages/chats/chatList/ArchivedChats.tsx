@@ -19,7 +19,9 @@ const ArchivedChats: FC<{
       {contextHolder}
       {sortedChats
         .filter((chat) =>
-          chat.archivedBy.some((archive) => archive.user?._id === props.me?._id)
+          (chat?.archivedBy || []).some(
+            (archive) => archive.user?._id === props.me?._id
+          )
         )
         .map((chat) => {
           return (
@@ -29,7 +31,7 @@ const ArchivedChats: FC<{
               overlay={
                 <Menu>
                   <Menu.Item onClick={() => handelOnUnArchive(chat._id)}>
-                    Archive chat
+                    Unchive chat
                   </Menu.Item>
                   <Menu.Item>
                     <ConfirmDelete

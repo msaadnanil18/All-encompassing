@@ -12,7 +12,7 @@ const charSchema = new Schema<IChat>(
       type: Boolean,
       default: false,
     },
-    groupAvatar: { type: String },
+
     creator: {
       type: mongoose.Types.ObjectId,
       ref: 'User',
@@ -32,7 +32,7 @@ const charSchema = new Schema<IChat>(
     ],
     deletedFor: [{ type: mongoose.Types.ObjectId, ref: 'User' }],
   },
-  { timestamps: { createdAt: true, updatedAt: false } }
+  { timestamps: true }
 );
 charSchema.plugin(mongoosePaginate);
 

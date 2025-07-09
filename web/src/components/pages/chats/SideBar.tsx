@@ -12,31 +12,14 @@ const SideBar: FC<{
   isDark: boolean;
   screen: Partial<Record<Breakpoint, boolean>>;
 }> = (props) => {
-  const { isDark, screen } = props;
   const me = useRecoilValue($ME);
+  const { state, action } = useChat();
+  const { handelOnDeleteChat, hendelOnArchive, handelOnUnArchive } = action;
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [displayView, setDisplayView] = useState<DisplayView>('all');
-  const {
-    state: {
-      openDrawe,
-      isGroupChatCrate,
-      submitLoading,
-      chatList,
-      chatListLoding,
-    },
-    action: {
-      setIsGroupChatCrate,
-      setOpenDrawer,
-      onSelectUser,
-      chatForm,
-      createGroupChat,
-      hendelOnArchive,
-      handelOnUnArchive,
-    },
-  } = useChat();
 
   const filteredChats = useMemo(() => {
-    return chatList.filter((chat) => {
+    return state.chatList.filter((chat) => {
       const receiverName = chat.members.find((m) => m._id !== me?._id)?.name;
       const chatName = chat.name || receiverName || '';
       const lastMessage = chat?.lastMessage?.content || '';
@@ -46,33 +29,26 @@ const SideBar: FC<{
         lastMessage.toLowerCase().includes(searchQuery.toLowerCase())
       );
     });
-  }, [chatList, searchQuery]);
+  }, [state.chatList, searchQuery]);
 
   const sortedChats = useMemo(
     () => reverse(sortBy(filteredChats, 'updatedAt')),
-    [filteredChats, chatList]
+    [filteredChats, state.chatList]
   );
 
   return (
     <div
-      className={`md:w-1/4 lg:w-1/4 w-full ${isDark ? 'bg-darkBg' : 'bg-ligthBg'} h-full flex flex-col`}
+      className={`md:w-1/4 lg:w-1/4 w-full ${props.isDark ? 'bg-darkBg' : 'bg-ligthBg'} h-full flex flex-col`}
     >
       <SideBarHeader
+        {...state}
+        {...action}
+        {...props}
         {...{
-          openDrawe,
-          isGroupChatCrate,
-          setIsGroupChatCrate,
-          setOpenDrawer,
-          onSelectUser,
-          screen,
-          isDark,
-          chatForm,
-          submitLoading,
-          createGroupChat,
-          setSearchQuery,
           searchQuery,
           setDisplayView,
           displayView,
+          setSearchQuery,
         }}
       />
 
@@ -80,26 +56,44 @@ const SideBar: FC<{
         style={{
           scrollbarWidth: 'thin',
           overflowY: 'auto',
-          scrollbarColor: isDark ? '#302d2d #171717' : '#f2e9e9 #ffffff',
+          scrollbarColor: props.isDark ? '#302d2d #171717' : '#f2e9e9 #ffffff',
         }}
       >
-        {chatListLoding ? (
+        {state.chatListLoding ? (
           <div className=' grid place-content-center '>
             <Spin />
           </div>
         ) : !filteredChats.length ? (
           <Empty description='No chat founded' />
         ) : displayView === 'all' ? (
-          <AllChat {...{ me, sortedChats, hendelOnArchive, ...props }} />
+          <AllChat
+            {...{
+              ...props,
+              me,
+              sortedChats,
+              hendelOnArchive,
+              handelOnDeleteChat,
+            }}
+          />
         ) : displayView === 'archived' ? (
           <ArchivedChats
-            {...{ me, sortedChats, handelOnUnArchive, ...props }}
+            {...{
+              ...props,
+              me,
+              sortedChats,
+              handelOnUnArchive,
+            }}
           />
         ) : displayView === 'groups' ? (
-          <AllGroups {...{ sortedChats, ...props, hendelOnArchive, me }} />
-        ) : (
-          ''
-        )}
+          <AllGroups
+            {...{
+              ...props,
+              sortedChats,
+              hendelOnArchive,
+              me,
+            }}
+          />
+        ) : null}
       </div>
     </div>
   );

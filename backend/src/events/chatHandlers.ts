@@ -1,4 +1,5 @@
 import { Server, Socket } from 'socket.io';
+import { Types } from 'mongoose';
 import { ChatEvent } from '../constants/chatapp/constants';
 import { getSockets } from '../utils';
 import { Chat } from '../models/chartApp/chat.model';
@@ -10,20 +11,37 @@ export const registerChatHandlers = (io: Server, socket: Socket) => {
 
 const createChat = (io: Server, socket: Socket) => {
   socket.on(ChatEvent.CHAT_CREATE_CHAT, async (receiver) => {
+    console.log(receiver, 'sdfasdf');
     try {
       if (!receiver || !receiver._id) {
         throw new Error('Receiver information is missing.');
       }
-
-      let chat = await Chat.findOne({
-        groupChat: false,
-        members: { $all: [socket.user?._id, receiver._id] },
-      }).populate([
+      let chat = await Chat.findOneAndUpdate(
         {
-          path: 'members',
-          select: '-password -refreshToken -themConfig -isVerified',
+          groupChat: false,
+          members: {
+            $all: [
+              new Types.ObjectId(socket.user?._id),
+              new Types.ObjectId(receiver?._id),
+            ],
+          },
         },
-      ]);
+        {
+          $pull: {
+            deletedFor: socket.user._id,
+          },
+        },
+        { new: true }
+      );
+
+      if (chat) {
+        chat = await chat.populate([
+          {
+            path: 'members',
+            select: '-password -refreshToken -themConfig -isVerified',
+          },
+        ]);
+      }
 
       if (!chat) {
         const newChat = new Chat({

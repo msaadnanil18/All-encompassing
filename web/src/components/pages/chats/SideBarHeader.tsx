@@ -1,4 +1,4 @@
-import React, { FC, Dispatch, SetStateAction } from 'react';
+import React, { FC, Dispatch, SetStateAction, memo } from 'react';
 import {
   MoreOutlined,
   PlusOutlined,
@@ -103,4 +103,4 @@ const SideBarHeader: FC<SideBarHeaderProps> = (props) => {
   );
 };
 
-export default SideBarHeader;
+export default memo(SideBarHeader);

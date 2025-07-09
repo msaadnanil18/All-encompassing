@@ -13,6 +13,7 @@ export interface ChatListItem {
   createdAt: Date;
   updatedAt: Date;
   archivedBy: Array<ArchiveChat>;
+  deletedFor: Array<User>;
 }
 
 type ArchiveChat = {

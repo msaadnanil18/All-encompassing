@@ -9,15 +9,16 @@ const AllChat: FC<{
   sortedChats: Array<ChatListItem>;
   me: User | null;
   hendelOnArchive: (r?: string) => void;
+  handelOnDeleteChat: (r?: string) => void;
 }> = (props) => {
-  const { sortedChats, me, hendelOnArchive } = props;
+  const { sortedChats, me, hendelOnArchive, handelOnDeleteChat } = props;
   const [modal, contextHolder] = Modal.useModal();
   return (
     <Fragment>
       {contextHolder}
       {sortedChats
         .filter((chat) =>
-          chat.archivedBy.length > 0
+          (chat?.archivedBy || []).length > 0
             ? !chat.archivedBy.some((arch) => arch.user?._id === me?._id)
             : true
         )
@@ -34,6 +35,7 @@ const AllChat: FC<{
                   <Menu.Item>
                     <ConfirmDelete
                       modal={modal}
+                      onOk={handelOnDeleteChat}
                       title='Are you sure you want to delete this chat?'
                       content='Delete Chat'
                       chat={chat}

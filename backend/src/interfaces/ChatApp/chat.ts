@@ -9,7 +9,6 @@ export interface IChat extends Document {
   members: IUser[];
   createdAt: Date;
   updatedAt: Date;
-  groupAvatar: string;
   lastMessage: IMessage | mongoose.ObjectId;
   archivedBy: Array<ArchivedBy>;
   deletedFor: Array<IUser>;

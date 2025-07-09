@@ -21,4 +21,14 @@ chatRouts.route('/archive-chat').post((req, res, next) => {
 chatRouts.route('/unarchive-chat').post((req, res, next) => {
   Edit(req.db.Chat, {})(req, res, next);
 });
+chatRouts.route('/delete-chat').post((req, res, next) => {
+  Edit(req.db.Chat, {
+    payloadTransformer: async ({ user, payload }) => {
+      return {
+        ...payload,
+        $push: { deletedFor: user },
+      };
+    },
+  })(req, res, next);
+});
 export { chatRouts };

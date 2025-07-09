@@ -1,4 +1,4 @@
-import React, { FC, ReactNode } from 'react';
+import { FC, ReactNode } from 'react';
 import { ChatListItem } from '../types';
 
 const ConfirmDelete: FC<{
@@ -7,7 +7,8 @@ const ConfirmDelete: FC<{
   title: string;
   content: string;
   modal: any;
-}> = ({ children, title, content, chat, modal }) => {
+  onOk?: (r?: string) => Promise<void>;
+}> = ({ children, title, content, chat, modal, onOk }) => {
   const showConfirm = (title: string, content: string, onOk: () => void) => {
     modal.confirm({
       title,
@@ -18,14 +19,8 @@ const ConfirmDelete: FC<{
     });
   };
 
-  const handelOnDeleteAndExite = (chat: ChatListItem) => {};
-
   return (
-    <div
-      onClick={() =>
-        showConfirm(title, content, () => handelOnDeleteAndExite(chat))
-      }
-    >
+    <div onClick={() => showConfirm(title, content, () => onOk?.(chat._id))}>
       {children}
     </div>
   );

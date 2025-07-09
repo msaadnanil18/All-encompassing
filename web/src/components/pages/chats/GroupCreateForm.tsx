@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import React, { FC, memo, useState } from 'react';
 import {
   ArrowRightOutlined,
   CloseOutlined,
@@ -131,4 +131,4 @@ const GroupCreateForm: FC<{
   );
 };
 
-export default GroupCreateForm;
+export default memo(GroupCreateForm);

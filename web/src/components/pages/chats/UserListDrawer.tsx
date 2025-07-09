@@ -1,4 +1,11 @@
-import React, { FC, useState, Dispatch, SetStateAction, Fragment } from 'react';
+import React, {
+  FC,
+  useState,
+  Dispatch,
+  SetStateAction,
+  Fragment,
+  memo,
+} from 'react';
 import {
   Avatar,
   Breakpoint,
@@ -211,4 +218,4 @@ const UserListDrawer: FC<{
   );
 };
 
-export default UserListDrawer;
+export default memo(UserListDrawer);

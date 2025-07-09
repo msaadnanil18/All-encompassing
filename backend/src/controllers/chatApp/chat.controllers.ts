@@ -4,7 +4,15 @@ import { asyncHandler } from '../../utils/asyncHandler';
 const fetchChatList = asyncHandler(async (req, res) => {
   try {
     const pipeLine: PipelineStage[] = [
-      { $match: { members: { $in: [req.user._id] } } },
+      {
+        $match: {
+          members: { $in: [req.user._id] },
+          deletedFor: { $ne: req.user._id },
+        },
+      },
+      {
+        $addFields: {},
+      },
       {
         $lookup: {
           from: 'users',
@@ -78,11 +86,11 @@ const fetchChatList = asyncHandler(async (req, res) => {
           'creator.refreshToken': 0,
           'creator.password': 0,
           'creator.isVerified': 0,
-          'archivedBy.themConfig': 0,
-          'archivedBy.refreshToken': 0,
-          'archivedBy.password': 0,
-          'archivedBy.isVerified': 0,
-          'archivedBy.avatar': 0,
+          'archivedBy.user.themConfig': 0,
+          'archivedBy.user.refreshToken': 0,
+          'archivedBy.user.password': 0,
+          'archivedBy.user.isVerified': 0,
+          'archivedBy.user.avatar': 0,
         },
       },
       {
@@ -92,7 +100,6 @@ const fetchChatList = asyncHandler(async (req, res) => {
           groupChat: { $first: '$groupChat' },
           groupAvatar: { $first: '$groupAvatar' },
           lastMessage: { $first: '$lastMessage' },
-          avatarColor: { $first: '$avatarColor' },
           archivedBy: {
             $addToSet: {
               $cond: [
@@ -111,7 +118,7 @@ const fetchChatList = asyncHandler(async (req, res) => {
             },
           },
           members: { $push: '$members' },
-          createdBy: { $first: '$createdBy' },
+          creator: { $first: '$creator' },
           createdAt: { $first: '$createdAt' },
           updatedAt: { $first: '$updatedAt' },
         },

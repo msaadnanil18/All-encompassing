@@ -2,7 +2,7 @@ import React, { FC, Fragment } from 'react';
 import { ChatListItem } from '../types';
 import { User } from '../../../types/partialUser';
 import { Dropdown, Menu, Modal } from 'antd';
-import { useTogglers } from '../../../hooks/togglers';
+
 import ConfirmDelete from './ConfirmDelete';
 import ChatList from '../ChatList';
 
@@ -22,7 +22,7 @@ const AllGroups: FC<{
         .filter(
           (chat) =>
             chat.groupChat &&
-            (chat.archivedBy.length > 0
+            ((chat?.archivedBy || []).length > 0
               ? !chat.archivedBy.some((arch) => arch.user?._id === me?._id)
               : true)
         )

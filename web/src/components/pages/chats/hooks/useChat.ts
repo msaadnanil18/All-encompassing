@@ -8,6 +8,7 @@ import { ServiceErrorManager } from '../../../../helpers/service';
 import {
   ArchivedChatService,
   ChatListService,
+  DeleteChatService,
   UnArchivedChatService,
 } from '../service';
 import { getUploadFile } from '../../../../driveFileUpload/getUploadFile';
@@ -27,7 +28,7 @@ const useChat = () => {
 
   const fetchChatList = useCallback(async () => {
     setChatListLoding(true);
-    const [err, data] = await ServiceErrorManager(ChatListService(), {
+    const [err, data] = await ServiceErrorManager(ChatListService({}), {
       failureMessage: 'Error while featcing chat list',
     });
     if (err || !data) return;
@@ -41,6 +42,7 @@ const useChat = () => {
   }, []);
 
   const onRealtimeChat = useCallback((newChat: ChatListItem) => {
+    console.log(newChat, 'osifjosi');
     if (newChat) {
       setChatList((prevChat) => {
         const existingIndex = prevChat.findIndex(
@@ -212,7 +214,6 @@ const useChat = () => {
   const handelOnUnArchive = useCallback(
     async (chatId?: string) => {
       if (!chatId) return;
-
       setChatList((prevChat) => {
         const updatedChats = prevChat.map((chat) =>
           chat._id === chatId
@@ -245,6 +246,25 @@ const useChat = () => {
     [chatList, me]
   );
 
+  const handelOnDeleteChat = useCallback(
+    async (chatId?: string) => {
+      await ServiceErrorManager(
+        DeleteChatService({
+          data: {
+            usePayloadUpdate: true,
+            query: { _id: chatId },
+          },
+        }),
+        {
+          failureMessage: 'Error while deleting chat',
+        }
+      );
+      setChatList((prev) =>
+        prev.filter((prevChatList) => prevChatList._id !== chatId)
+      );
+    },
+    [chatList]
+  );
   const state = useMemo(
     () => ({
       openDrawe,
@@ -265,6 +285,7 @@ const useChat = () => {
       createGroupChat,
       hendelOnArchive,
       handelOnUnArchive,
+      handelOnDeleteChat,
     }),
     [
       chatForm,
@@ -274,6 +295,7 @@ const useChat = () => {
       setIsGroupChatCrate,
       hendelOnArchive,
       handelOnUnArchive,
+      handelOnDeleteChat,
     ]
   );
 
