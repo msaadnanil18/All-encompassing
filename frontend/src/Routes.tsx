@@ -15,7 +15,7 @@ const NavBar = React.lazy(
 );
 const VerifyEmail = React.lazy(() => import('./components/pages/VerifyEmail'));
 const LoginUser = React.lazy(() => import('./components/pages/home/Login'));
-const ChatApp = React.lazy(() => import('./components/pages/chats/routes'));
+const ChatApp = React.lazy(() => import('./components/pages/chartApp/Index'));
 const Setting = React.lazy(() => import('./components/pages/settings'));
 
 const TodoApp = React.lazy(

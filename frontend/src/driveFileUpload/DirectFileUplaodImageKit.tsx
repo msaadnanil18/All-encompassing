@@ -19,7 +19,7 @@ const imagekit = new ImageKit({
 const DirectFileUploadImageKit: FC<{
   addFiles?: (r: addFiles) => void;
   fileTypes?: FileType;
-}> = ({ addFiles, fileTypes = 'document' }) => {
+}> = ({ addFiles, fileTypes = 'video' }) => {
   const uniqueFiles = useRef<Set<string>>(new Set());
   const [loading, setLoading] = useState<boolean>(false);
   const openNativeFileSelector = () => {
